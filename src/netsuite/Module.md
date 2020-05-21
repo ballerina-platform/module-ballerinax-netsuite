@@ -1,41 +1,25 @@
-[![Build Status](https://travis-ci.org/ballerina-platform/module-ballerinax-netsuite.svg?branch=master)](https://travis-ci.org/ballerina-platform/module-ballerinax-netsuite)
-# Ballerina NetSuite Connector
+Connects to NetSuite from Ballerina.
 
-This module allows you to access the NetSuite's SuiteTalk REST Web services API though ballerina. NetSuite is used for 
-enterprise resource planning (ERP) and to manage inventory, track their financials, host e-commerce stores and maintain 
-customer relationship management (CRM) systems. The NetSuite connector can execute CRUD (create, read, update, delete) 
-and search operations to perform business processing on NetSuite records and to navigate dynamically between records.
+## Module Overview
 
-The following sections provide you details on how to use the NetSuite connector.
-
-- [Compatibility](#compatibility)
-- [Getting Started](#getting-started)
-- [Samples](#samples)
+Ballerina NetSuite Connector provides the capability to create, read, update, delete, upsert and search NetSuite 
+records to perform business processing and to navigate dynamically between records through SuiteTalk REST Web services 
+API
 
 ## Compatibility
+|                     |    Version     |
+|:-------------------:|:--------------:|
+| Ballerina Language  | 1.2.x          |
+| NetSuite REST API   | Beta           |
 
-|                             |           Version           |
-|:---------------------------:|:---------------------------:|
-| Ballerina Language          |            1.2.x            |
-| NetSuite REST API           |            Beta             |
+## Configurations
 
-## Getting Started
+Instantiate the connector by giving authentication details in the NetSuite client config, which has built-in support 
+for OAuth 2.0. NetSuite uses OAuth 2.0 to authenticate and authorize requests. The NetSuite connector can be minimally 
+instantiated in the NetSuite client config using the Access Token or by using the Client ID, Client Secret and Refresh 
+Token.
 
-### Prerequisites
-Download and install [Ballerina](https://ballerinalang.org/downloads/).
-
-### Pull the Module
-Execute the below command to pull the NetSuite module from Ballerina Central:
-```ballerina
-$ ballerina pull ballerinax/netsuite
-```
-## Sample
-
-Instantiate the connector by giving authentication details in the HTTP client config, which has built-in support for 
-OAuth 2.0. NetSuite uses OAuth 2.0 to authenticate and authorize requests. The NetSuite connector can be instantiated 
-in the HTTP client config using the access token or using the client ID, client secret, and refresh token.
-
-**Obtaining Tokens**
+**Obtaining Tokens to Run the Sample**
 
 1. Visit [NetSuite](https://www.netsuite.com) and create an Account.
 2. Enable SuiteTalk Webservice features of the account (Setup->Company->Enable Features).
@@ -49,8 +33,6 @@ following credentials:
     * Access Token
     * Refresh Token
     * Refresh Token URL
-
-**Create the NetSuite client**
 
 ```ballerina
 // Create NetSuite client configuration by reading from config file.
@@ -70,9 +52,7 @@ netsuite:Configuration nsConfig = {
 netsuite:Client nsClient = new(nsConfig);
 ```
 
-**Perform NetSuite operations**
-
-Following sample shows how NetSuite `Currency` entity can be manipulated
+## Sample
 
 ```ballerina
 import ballerina/io;
@@ -131,7 +111,7 @@ public function main() {
         io:println("LKR currency id = " + resultId[0]);
     }
 
-    // Delete inserted records
+    //Delete inserted records
     netsuite:Error? deleted = nsClient->delete(<@untainted> currency);
     if deleted is netsuite:Error {
         io:println("Error: " + deleted.detail()?.message.toString());
