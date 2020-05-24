@@ -335,3 +335,42 @@ function testSearchOperationWithMultipleResultPages() {
         test:assertTrue(res.length() != 0, msg = "search failed");
     }
 }
+
+type BalTestCustomRecord record {
+    string id = "";
+    string name;
+    float custrecord_version;
+    string custrecord_address;
+};
+
+@test:Config { enable:false }
+// Before enabling the test case, create the BalTestCustomRecord type in NetSuite account providing the record type
+// id as "customrecord_bal_test".
+function testCustomizedCompanySpecificRecord() {
+    log:printInfo("Testing Custom Record :");
+
+    string customPath = "/customrecord_bal_test";
+    readExistingRecord(BalTestCustomRecord, customPath);
+
+    BalTestCustomRecord customRecord = {
+        name: "ballerina testing",
+        custrecord_version: 1.2,
+        custrecord_address: "Col 3"
+    };
+
+    createOrSearchIfExist(customRecord, "name IS ballerina testing", customPath);
+
+    updateAPartOfARecord(customRecord, { "custrecord_version": 3.13 }, "custrecord_version", "3.13", customPath);
+    
+    BalTestCustomRecord replaceCustomRecord = { name: "Replaced ballerina testing", custrecord_version: 1.4,
+                                                custrecord_address: "pg" };
+    updateCompleteRecord(customRecord, replaceCustomRecord, "custrecord_version", "1.4", customPath);
+
+    BalTestCustomRecord newCustomRecord = { name: "Updated ballerina testing", custrecord_version: 5.1, 
+                                            custrecord_address: "pg" };
+    upsertCompleteRecord(newCustomRecord, "168334D", customPath);
+    upsertAPartOfARecord(newCustomRecord, { "custrecord_address": "USA" }, "168334D", "custrecord_address", "USA", customPath);
+
+    deleteRecordTest(<@untainted> customRecord, customPath);
+    deleteRecordTest(<@untainted> newCustomRecord, customPath);
+}

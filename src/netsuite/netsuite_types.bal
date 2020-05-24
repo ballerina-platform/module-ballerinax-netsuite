@@ -33,14 +33,21 @@ public type Configuration record {|
     http:RetryConfig retryConfig?;
 |};
 
+# The type of the user-defined custom record.
+#
+# + id - The internal id of the record
+type CustomRecord record {|
+    string id;
+    anydata...;
+|};
+
 # The types of records that support write NetSuite operations such as create, update and delete.
 public type WritableRecord Customer|SalesOrder|Currency|NonInventoryItem|Invoice|AccountingPeriod|CustomerPayment|
-                               Account|Opportunity|Partner|Classification;
+                           Account|Opportunity|Partner|Classification|CustomRecord;
 # The types of records that support read NetSuite operations such as read and search.
-public type ReadableRecord Customer|SalesOrder|Subsidiary|Currency|NonInventoryItem|Invoice|AccountingPeriod|
-                               CustomerPayment|Account|Opportunity|Partner|Classification;
+public type ReadableRecord Subsidiary|WritableRecord;
 # The types of nested records that reside inside a parent record.
-public type SubRecord AddressBook|Currency|ItemCollection|AccountingPeriod;
+public type SubRecord AddressBook|Currency|ItemCollection|AccountingPeriod|CustomRecord;
 
 # The type description of records that support write NetSuite operations.
 public type WritableRecordType typedesc<WritableRecord>;

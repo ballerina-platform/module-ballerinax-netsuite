@@ -17,19 +17,19 @@
 import ballerina/log;
 import ballerina/test;
 
-function createOrSearchIfExist(@tainted WritableRecord recordValue, string? filter = ()) {
+function createOrSearchIfExist(@tainted WritableRecord recordValue, string? filter = (), string? customPath = ()) {
     log:printInfo("Creating...");
-    var created = nsClient->create(<@untained> recordValue);
+    var created = nsClient->create(<@untained> recordValue, customPath);
     if (created is Error) {
         log:printInfo("Search...");
-        searchForRecord(recordValue, filter);
+        searchForRecord(recordValue, filter, customPath);
     } else {
         test:assertTrue(recordValue.id != "", msg = "record creation failed");
     }
 }
 
-function searchForRecord(@tainted WritableRecord recordValue, string? filter = ()) {
-    var searched = nsClient->search(<@untainted>typeof recordValue, filter);
+function searchForRecord(@tainted WritableRecord recordValue, string? filter = (), string? customPath = ()) {
+    var searched = nsClient->search(<@untainted>typeof recordValue, filter, customPath);
     if (searched is Error) {
         test:assertFail(msg = "search operation failed: " + searched.toString());
     } else {
@@ -38,9 +38,10 @@ function searchForRecord(@tainted WritableRecord recordValue, string? filter = (
     }
 }
 
-function updateAPartOfARecord(@tainted WritableRecord recordValue, json input, string key, string value) {
+function updateAPartOfARecord(@tainted WritableRecord recordValue, json input, string key, string value,
+                              string? customPath = ()) {
     log:printInfo("Updating a part of the record...");
-    Error? updated = nsClient->update(<@untainted> recordValue, input);
+    Error? updated = nsClient->update(<@untainted> recordValue, input, customPath);
     if (updated is Error) {
         test:assertFail(msg = " update operation failed: " + updated.toString());
     }
@@ -48,23 +49,23 @@ function updateAPartOfARecord(@tainted WritableRecord recordValue, json input, s
 }
 
 function updateCompleteRecord(@tainted WritableRecord recordValue, WritableRecord newValue, string key,
-                                  string value) {
+                              string value, string? customPath = ()) {
     log:printInfo("Updating a complete record...");
-    Error? updateCustom = nsClient->update(<@untainted> recordValue, <@untained> newValue);
+    Error? updateCustom = nsClient->update(<@untainted> recordValue, <@untained> newValue, customPath);
     if (updateCustom is Error) {
         test:assertFail(msg = "update operation failed: " + updateCustom.toString());
     }
     test:assertTrue(recordValue[key].toString() == value, msg = "update failed");
 }
 
-function deleteRecordTest(@tainted WritableRecord recordValue) {
+function deleteRecordTest(@tainted WritableRecord recordValue, string? customPath = ()) {
     log:printInfo("Deleting...");
-    var deleted = nsClient->delete(recordValue);
+    var deleted = nsClient->delete(recordValue, customPath);
     if (deleted is Error) {
         test:assertFail(msg = "delete operation failed: " + deleted.toString());
     }
 
-    var res = nsClient->get(recordValue.id, typeof recordValue);
+    var res = nsClient->get(recordValue.id, typeof recordValue, customRecordPath = customPath);
     if (res is Error) {
         test:assertTrue(res.detail()["errorCode"].toString() == "NONEXISTENT_ID", msg = "record deletion failed");
     } else {
@@ -72,26 +73,28 @@ function deleteRecordTest(@tainted WritableRecord recordValue) {
     }
 }
 
-function upsertCompleteRecord(WritableRecord newValue, string exId) {
+function upsertCompleteRecord(WritableRecord newValue, string exId, string? customPath = ()) {
     log:printInfo("Upserting a complete record...");
-    Error? upserted = nsClient->upsert(exId, typeof newValue, <@untained> newValue);
+    Error? upserted = nsClient->upsert(exId, typeof newValue, <@untained> newValue, customPath);
     if (upserted is Error) {
         test:assertFail(msg = "upsert record operation failed: " + upserted.toString());
     }
+
     test:assertTrue(newValue.id != "", msg = "upsertion failed");
     test:assertTrue(newValue["externalId"] == exId, msg = "upsertion failed");
 }
 
-function upsertAPartOfARecord(@tainted WritableRecord recordValue, json input, string exId, string key, string value) {
+function upsertAPartOfARecord(@tainted WritableRecord recordValue, json input, string exId, string key, string value,
+                              string? customPath = ()) {
     log:printInfo("Upsert a part of the record...");
-    Error? upserted = nsClient->upsert(exId, typeof recordValue, input);
+    Error? upserted = nsClient->upsert(exId, typeof recordValue, input, customPath);
     if (upserted is Error) {
         test:assertFail(msg = "upsert json operation failed: " + upserted.toString());
     }
 
     // The upsertion with a JSON does not update any local records as it does not take a record as a param. So user
     // should do a get specifically to verify the change
-    ReadableRecord|Error res = nsClient->get(exId, typeof recordValue, EXTERNAL);
+    ReadableRecord|Error res = nsClient->get(exId, typeof recordValue, EXTERNAL, customPath);
     if (res is Error) {
         test:assertFail(msg = "access operation failed: " + res.toString());
     } else {
@@ -99,7 +102,7 @@ function upsertAPartOfARecord(@tainted WritableRecord recordValue, json input, s
     }
 }
 
-function subRecordTest(@tainted ReadableRecord recordValue, SubRecordType subRecordType, string key, string value)  {
+function subRecordTest(@tainted ReadableRecord recordValue, SubRecordType subRecordType, string key, string value) {
     log:printInfo("Accessing Sub Record...");
     var subRecord = nsClient->getSubRecord(recordValue, subRecordType);
     if (subRecord is Error) {
@@ -109,9 +112,9 @@ function subRecordTest(@tainted ReadableRecord recordValue, SubRecordType subRec
     }
 }
 
-function readExistingRecord(ReadableRecordType recordType) {
+function readExistingRecord(ReadableRecordType recordType, string? customPath = ()) {
     log:printInfo("Reading...");
-    string[]|Error lists = nsClient->search(recordType);
+    string[]|Error lists = nsClient->search(recordType, customRecordPath = customPath);
     if (lists is Error) {
         if (lists is NoResultError) {
             return;
@@ -120,7 +123,7 @@ function readExistingRecord(ReadableRecordType recordType) {
     }
 
     string[] ids = <string[]> lists;
-    ReadableRecord|Error getResult = nsClient->get(<@untained> ids[0], recordType);
+    ReadableRecord|Error getResult = nsClient->get(<@untained> ids[0], recordType, customRecordPath = customPath);
     if (getResult is Error) {
         test:assertFail(msg = "read operation failed: "+ getResult.toString());
     } else {
@@ -141,7 +144,6 @@ function getARandomPrerequisiteRecord(ReadableRecordType recordType, public stri
     if (getResult is Error) {
         test:assertFail(msg = "test cannot be proceeded without prerequisite '" + recordName + "':"
                             + getResult.toString());
-        return;
     } else {
         test:assertTrue(getResult.id != "", msg = "record retrieval failed");
         return getResult;

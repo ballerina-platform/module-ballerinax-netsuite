@@ -49,7 +49,8 @@ function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recor
     } else if (recordTypedesc is typedesc<Classification>) {
         return RECORD_NAME_CLASSIFICATION;
     } else {
-        return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString());
+        return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString() +
+                                   ", try implementing as a custom record");
     }
 }
 
@@ -84,14 +85,17 @@ function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType rec
         return Partner.constructFrom(payload);
     } else if (recordTypedesc is typedesc<Classification>) {
         return Classification.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<CustomRecord>) {
+        return <CustomRecord> recordTypedesc.constructFrom(payload);
     } else {
-        return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString());
+        return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString() +
+                                   ", try implementing as a custom record");
     }
 }
 
-function updatePassedInRecord(http:Client nsclient, string internalId, @tainted WritableRecord passedInValue)
-                              returns @tainted Error? {
-    ReadableRecord|Error nsRecordValue = getRecord(nsclient, internalId, typeof passedInValue, INTERNAL);
+function updatePassedInRecord(http:Client nsclient, string internalId, @tainted WritableRecord passedInValue, string
+                              recordName) returns @tainted Error? {
+    ReadableRecord|Error nsRecordValue = getRecord(nsclient, internalId, typeof passedInValue, INTERNAL, recordName);
     if (nsRecordValue is Error) {
         return getError("NetSuite record updated successful. But local record population failed", nsRecordValue);
     } else if (nsRecordValue is Customer) {
@@ -134,8 +138,12 @@ function updatePassedInRecord(http:Client nsclient, string internalId, @tainted 
         foreach var [key, val] in nsRecordValue.entries() {
             passedInValue[key] = val;
         }
+    } else if (nsRecordValue is Account) {
+        foreach var [key, val] in nsRecordValue.entries() {
+          passedInValue[key] = val;
+        }
     } else {
-        Account value = <Account> nsRecordValue;
+        CustomRecord value = <CustomRecord> nsRecordValue;
         foreach var [key, val] in value.entries() {
             passedInValue[key] = val;
         }
@@ -144,7 +152,7 @@ function updatePassedInRecord(http:Client nsclient, string internalId, @tainted 
 
 function getJsonPayload(http:Client nsclient, string resourcePath, string recordName) returns @tainted json|Error {
     http:Response|error result = nsclient->get(resourcePath);
-    if result is error {
+    if (result is error) {
         return getError("'" + recordName + "' record retrival request failed", result);
     }
     return processJson(<http:Response> result, recordName);
@@ -152,7 +160,7 @@ function getJsonPayload(http:Client nsclient, string resourcePath, string record
 
 function processJson(http:Response response, string? recordName = ()) returns @tainted json|Error{
     json|error responsePayload = response.getJsonPayload();
-    if responsePayload is error {
+    if (responsePayload is error) {
         string identifier = recordName is () ? "JSON payload" : "'" + recordName + "' record";
         return getError(identifier + " retrieval failed: Invalid payload", responsePayload);
     } else {
@@ -173,7 +181,7 @@ function isErrorResponse(http:Response response) returns boolean {
             return "Error response content type: " + contentType;
         });
     var value = http:parseHeader(contentType);
-    if value is error {
+    if (value is error) {
         return false;
     }
 
@@ -182,6 +190,13 @@ function isErrorResponse(http:Response response) returns boolean {
         return true;
     }
     return false;
+}
+
+function resolveRecordName(string? customRecordPath, ReadableRecordType targetType) returns string|Error {
+    if (customRecordPath is string) {
+        return customRecordPath;
+    }
+    return getRecordName(targetType);
 }
 
 function extractInternalId(http:Response response) returns string {
@@ -193,4 +208,3 @@ function spitAndGetLastElement(string receiver, string delimiter) returns string
     string[] directives = stringutils:split(receiver, delimiter);
     return directives[directives.length() - 1];
 }
-
