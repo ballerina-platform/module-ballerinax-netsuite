@@ -20,41 +20,41 @@ import ballerina/log;
 import ballerina/oauth2;
 import ballerina/stringutils;
 
-# The NetSuite Client object that allows ballerina to connecto with NetSuite Account to execute CRUD and search
+# The NetSuite Client object that allows ballerina to connector with NetSuite Account to execute CRUD and search
 # operations to perform business processing on NetSuite records and to navigate dynamically between records.
 public type Client client object {
     private http:Client netsuiteClient;
 
     # Gets invoked to initialize the `client`.
     #
-    # + netSuiteConfig - The configurations to be used when initializing the `client`
-    public function __init(Configuration netSuiteConfig) {
-        oauth2:OutboundOAuth2Provider oauth2Provider = new (netSuiteConfig.oauth2Config);
+    # + netsuiteConfig - The configurations to be used when initializing the `client`
+    public function __init(Configuration netsuiteConfig) {
+        oauth2:OutboundOAuth2Provider oauth2Provider = new (netsuiteConfig.oauth2Config);
         http:BearerAuthHandler bearerHandler = new (oauth2Provider);
 
         http:ClientConfiguration httpClientConfig = {
             auth: {
                 authHandler: bearerHandler
             },
-            secureSocket: netSuiteConfig?.secureSocketConfig,
-            timeoutInMillis: netSuiteConfig.timeoutInMillis,
-            retryConfig: netSuiteConfig?.retryConfig,
+            secureSocket: netsuiteConfig?.secureSocketConfig,
+            timeoutInMillis: netsuiteConfig.timeoutInMillis,
+            retryConfig: netsuiteConfig?.retryConfig,
             http1Settings: {
                 keepAlive: http:KEEPALIVE_NEVER
             }
         };
 
-        self.netsuiteClient = new(netSuiteConfig.baseUrl, httpClientConfig);
+        self.netsuiteClient = new(netsuiteConfig.baseUrl, httpClientConfig);
     }
 
-    # Creates the NetSuite record and populates the passed-in record.
+    # Creates the NetSuite record and returns it's internal identifier.
     #
     # + value - The value that needs to be inserted as a NetSuite record
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
-    # + return - The `netSuite:Error` if it is a failure or else `()`
+    # + return - The `netsuite:Error` if it is a failure or else the internal id of created record
     public remote function create(@tainted WritableRecord value, public string? customRecordPath = ()) returns
-                                  @tainted Error? {
+                                  @tainted string|Error {
         return createRecord(self.netsuiteClient, value, customRecordPath);
     }
 
@@ -67,7 +67,7 @@ public type Client client object {
     # + idType - The type of the provided record identifier, either INTERNAL or EXTERNAL
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
-    # + return - The `netSuite:Error` if it is a failure or else the record
+    # + return - The `netsuite:Error` if it is a failure or else the record
     public remote function get(string id, ReadableRecordType targetType, public IdType idType = INTERNAL,
                                public string? customRecordPath = ()) returns @tainted ReadableRecord|Error {
         return getRecord(self.netsuiteClient, id, targetType, idType, customRecordPath);
@@ -79,9 +79,9 @@ public type Client client object {
     # + newValue - The record or a part of record which needs to be replaced with
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
-    # + return - The `netSuite:Error` if it is a failure or else `()`
+    # + return - The `netsuite:Error` if it is a failure or else the internal id of updated record
     public remote function update(@tainted WritableRecord existingValue, WritableRecord|json newValue,
-                                  public string? customRecordPath = ()) returns @tainted Error? {
+                                  public string? customRecordPath = ()) returns @tainted string|Error {
         return updateRecord(self.netsuiteClient, existingValue, newValue, customRecordPath);
     }
 
@@ -90,7 +90,7 @@ public type Client client object {
     # + value - The record that needs to be deleted from NetSuite
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
-    # + return - The `netSuite:Error` if it is a failure or else `()`
+    # + return - The `netsuite:Error` if it is a failure or else `()`
     public remote function delete(WritableRecord value, public string? customRecordPath = ()) returns @tainted Error? {
         return deleteRecord(self.netsuiteClient, value, customRecordPath);
     }
@@ -103,9 +103,9 @@ public type Client client object {
     # + value - The record or a part of a record, which needs to be created or updated
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
-    # + return - The `netSuite:Error` if it is a failure or else `()` if created or updated
+    # + return - The `netsuite:Error` if it is a failure or else the internal id of created or updated record
     public remote function upsert(string externalId, WritableRecordType targetType, WritableRecord|json value,
-                                  public string? customRecordPath = ()) returns @tainted Error? {
+                                  public string? customRecordPath = ()) returns @tainted string|Error {
         return upsertRecord(self.netsuiteClient, targetType, externalId, value, customRecordPath);
     }
 
@@ -119,7 +119,7 @@ public type Client client object {
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
     # + limit - The limit used to specify the number of results on a single request
     # + offset - The offset used for selecting a specific starting point of a set of results
-    # + return - The `netSuite:Error` if it is a failure/no records found or else an array of string ids
+    # + return - The `netsuite:Error` if it is a failure/no records found or else an array of string ids
     public remote function search(ReadableRecordType targetType, public string? filter = (),
                                   public string? customRecordPath = (), public int limit = 1000,
                                   public int offset = 0) returns @tainted string[]|Error {
@@ -137,14 +137,14 @@ public type Client client object {
     # + subRecordType - The typedesc of targeted record type
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
-    # + return - The `netSuite:Error` if it is a failure or else the nested record
+    # + return - The `netsuite:Error` if it is a failure or else the nested record
     public remote function getSubRecord(ReadableRecord parent, SubRecordType subRecordType,
                                         public string? customRecordPath = ()) returns @tainted SubRecord|Error {
         string parentRecordName = check resolveRecordName(customRecordPath, typeof parent);
         string subRecordName = check getRecordName(subRecordType);
         string recordId = parent.id;
         if (recordId == "") {
-            return getErrorFromMessage("invalid internal id: '" + parentRecordName + "' id field cannot be empty");
+            return getErrorFromMessage("invalid internal id: field cannot be empty");
         }
 
         string resourcePath = REST_RESOURCE + parentRecordName + "/" + recordId + "/" + subRecordName + EXPAND_SUB_RESOURCES;
@@ -156,21 +156,32 @@ public type Client client object {
         if (result is WritableRecord|ReadableRecord) {
             panic getErrorFromMessage("subrecord retrieval failed: illegal state error");
         }
-        return getError("'" + subRecordName + "' subrecord mapping failed", <error> result);
+        return getError("subrecord mapping failed", <error> result);
     }
 
-    # Common action to execute all queries including custom records in a generic manner. This action can be use as an
-    # alternative for unsupported entities and actions. The metadata can be accessed via API docs
+    # Common action to execute all queries in a generic manner. This action can be use as an alternative for
+    # unsupported operations. The metadata can be accessed via API docs
     # [https://system.netsuite.com/help/helpcenter/en_US/APIs/REST_API_Browser/record/v1/2020.1/index.html].
     #
     # + httpMethod - The respective HTTP method
-    # + path - The resource path including path and query params(eg:"/customer/{id}/transform/vendor")
-    # + requestBody - The JSON request body
-    # + return - The `netSuite:Error` if it is a failure or else the response body. If the response status code is a
+    # + path - The resource path including path and query params eg: "/customer/{id}/!transform/vendor"
+    # + requestBody - The union of custom record, JSON or `()` to be set as request body
+    # + return - The `netsuite:Error` if it is a failure or else the response body. If the response status code is a
     #            204, headers will be returned as a JSON
-    public remote function execute(HttpMethod httpMethod, string path, public json? requestBody = ()) returns
-                                   @tainted json|Error {
-        http:Response|error result = self.netsuiteClient->execute(httpMethod, REST_RESOURCE + path, requestBody);
+    public remote function execute(HttpMethod httpMethod, string path, public CustomRecord|json? requestBody = ())
+                                   returns @tainted json|Error {
+        json? jsonPayload;
+        if (requestBody is CustomRecord) {
+            json|error payload = json.constructFrom(requestBody);
+            if (payload is error) {
+                return getError("Error while constructing request payload for execute operation", payload);
+            }
+            jsonPayload = <json> payload;
+        } else {
+            jsonPayload = requestBody;
+        }
+
+        http:Response|error result = self.netsuiteClient->execute(httpMethod, REST_RESOURCE + path, jsonPayload);
         if (result is error) {
         	 return getError("execution failed", result);
         }
@@ -188,7 +199,7 @@ public type Client client object {
 };
 
 function createRecord(http:Client nsClient, @tainted WritableRecord recordValue, string? customRecordPath)
-                      returns @tainted Error? {
+                      returns @tainted string|Error {
     string recordName = check resolveRecordName(customRecordPath, typeof recordValue);
 
     json|error payload = json.constructFrom(recordValue);
@@ -199,18 +210,17 @@ function createRecord(http:Client nsClient, @tainted WritableRecord recordValue,
     json jsonValue = <json> payload;
     http:Response|error result = nsClient->post(REST_RESOURCE + recordName, jsonValue);
     if (result is error) {
-         return getError("'" + recordName + "' record creation request failed", result);
+         return getError("record creation request failed", result);
     }
 
     http:Response response = <http:Response> result;
     if (response.statusCode == 204 && response.hasHeader(LOCATION_HEADER)) {
-        check updatePassedInRecord(nsClient, extractInternalId(response), recordValue, recordName);
-        return ();
+        return extractInternalId(response);
     }
 
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
-        return getError("'" + recordName + "' record creation failed", responsePayload);
+        return getError("record creation failed", responsePayload);
     }
     return getErrorFromPayload(<map<json>> responsePayload);
 }
@@ -219,7 +229,7 @@ function getRecord(http:Client nsClient, string id, ReadableRecordType targetTyp
                    string? customRecordPath) returns @tainted ReadableRecord|Error {
     string targetRecordName = check resolveRecordName(customRecordPath, targetType);
     if (id == "") {
-        return getErrorFromMessage("invalid internal id: '" + targetRecordName + "' id field cannot be empty");
+        return getErrorFromMessage("invalid internal id: field cannot be empty");
     }
 
     string recordId = "/" + (idType is INTERNAL ? id : EID + id);
@@ -233,18 +243,18 @@ function getRecord(http:Client nsClient, string id, ReadableRecordType targetTyp
     if (result is ReadableRecord) {
         return result;
     } else if (result is error) {
-        return getError("'" + targetRecordName + "' record mapping failed", result);
+        return getError("record mapping failed", result);
     } else {
         panic getErrorFromMessage("get operation failed: illegal state error");
     }
 }
 
 function updateRecord(http:Client nsClient, @tainted WritableRecord existingValue, WritableRecord|json newValue,
-                      string? customRecordPath) returns @tainted Error? {
+                      string? customRecordPath) returns @tainted string|Error {
     string recordName = check resolveRecordName(customRecordPath, typeof existingValue);
     string recordId = existingValue.id;
     if (recordId == "") {
-        return getErrorFromMessage("invalid internal id: '" + recordName + "' id field cannot be empty");
+        return getErrorFromMessage("invalid internal id: field cannot be empty");
     }
 
     json payload;
@@ -260,18 +270,17 @@ function updateRecord(http:Client nsClient, @tainted WritableRecord existingValu
 
     http:Response|error result = nsClient->patch(REST_RESOURCE + recordName + "/" + recordId, payload);
     if (result is error) {
-         return getError("'" + recordName + "' record update request failed", result);
+         return getError("record update request failed", result);
     }
 
     http:Response response = <http:Response> result;
     if (response.statusCode == 204 && response.hasHeader(LOCATION_HEADER)) {
-        check updatePassedInRecord(nsClient, recordId, existingValue, recordName);
-        return;
+        return extractInternalId(response);
     }
 
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
-        return getError("'" + recordName + "' record update failed", responsePayload);
+        return getError("record update failed", responsePayload);
     }
     return getErrorFromPayload(<map<json>> responsePayload);
 }
@@ -280,12 +289,12 @@ function deleteRecord(http:Client nsClient, WritableRecord value, string? custom
     string recordName = check resolveRecordName(customRecordPath, typeof value);
     string id = value.id;
     if (id == "") {
-        return getErrorFromMessage("invalid internal id: '" + recordName + "' id field cannot be empty");
+        return getErrorFromMessage("invalid internal id: field cannot be empty");
     }
 
     http:Response|error result = nsClient->delete(REST_RESOURCE + recordName + "/" + id);
     if (result is error) {
-        return getError("'" + recordName + "' record deletion request failed", result);
+        return getError("record deletion request failed", result);
     }
 
     http:Response response = <http:Response> result;
@@ -295,13 +304,13 @@ function deleteRecord(http:Client nsClient, WritableRecord value, string? custom
 
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
-        return getError("'" + recordName + "' record deletion failed", responsePayload);
+        return getError("record deletion failed", responsePayload);
     }
     return getErrorFromPayload(<map<json>> responsePayload);
 }
 
 function upsertRecord(http:Client nsClient, WritableRecordType targetType, string recordId,
-                      WritableRecord|json newValue, string? customRecordPath) returns @tainted Error? {
+                      WritableRecord|json newValue, string? customRecordPath) returns @tainted string|Error {
 
     string recordName = check resolveRecordName(customRecordPath, targetType);
     json payload;
@@ -317,20 +326,17 @@ function upsertRecord(http:Client nsClient, WritableRecordType targetType, strin
 
     http:Response|error result = nsClient->put(REST_RESOURCE + recordName + "/" + EID + recordId, payload);
     if (result is error) {
-        return getError("'" + recordName + "' record upsertion request failed", result);
+        return getError("record upsertion request failed", result);
     }
 
     http:Response response = <http:Response> result;
     if (response.statusCode == 204 && response.hasHeader(LOCATION_HEADER)) {
-        if newValue is WritableRecord {
-            check updatePassedInRecord(nsClient, extractInternalId(response), newValue, recordName);
-        }
-        return;
+        return extractInternalId(response);
     }
 
     json|error responsePayload = response.getJsonPayload();
     if responsePayload is error {
-        return getError("'" + recordName + "' record upsertion failed", responsePayload);
+        return getError("record upsertion failed", responsePayload);
     }
     return getErrorFromPayload(<map<json>> responsePayload);
 }
@@ -348,20 +354,20 @@ function searchRecord(http:Client nsClient, ReadableRecordType targetType, strin
 
     http:Response|error result = nsClient->get(REST_RESOURCE + recordName + queryStr);
     if (result is error) {
-        return getError("'" + recordName + "' record search() request failed", result);
+        return getError("record search() request failed", result);
     }
     http:Response response = <http:Response> result;
     if (response.statusCode != 200) {
         json|error responsePayload = response.getJsonPayload();
         if (responsePayload is error) {
-            return getError("'" + recordName + "' record search failed", responsePayload);
+            return getError("record search failed", responsePayload);
         }
         return getErrorFromPayload(<map<json>> responsePayload);
     }
 
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
-        return getError("'" + recordName + "' record search failed", responsePayload);
+        return getError("record search failed", responsePayload);
     }
 
     var convetResult = Collection.constructFrom(<map<json>> responsePayload);

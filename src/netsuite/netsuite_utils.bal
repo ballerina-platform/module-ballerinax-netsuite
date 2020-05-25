@@ -21,39 +21,38 @@ import ballerina/stringutils;
 function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc)
                        returns string|Error {
     if (recordTypedesc is typedesc<Customer>) {
-        return RECORD_NAME_CUSTOMER;
+        return RECORD_PATH_CUSTOMER;
     } else if (recordTypedesc is typedesc<SalesOrder>) {
-        return RECORD_NAME_SALES_ORDER;
+        return RECORD_PATH_SALES_ORDER;
     } else if (recordTypedesc is typedesc<Subsidiary>) {
-        return RECORD_NAME_SUBSIDIARY;
+        return RECORD_PATH_SUBSIDIARY;
     } else if (recordTypedesc is typedesc<AddressBook>) {
-        return RECORD_NAME_ADDRESSBOOK;
+        return RECORD_PATH_ADDRESSBOOK;
     } else if (recordTypedesc is typedesc<Currency>) {
-        return RECORD_NAME_CURRENCY;
+        return RECORD_PATH_CURRENCY;
     } else if (recordTypedesc is typedesc<NonInventoryItem>) {
-        return RECORD_NAME_NON_INVENTORY_ITEM;
+        return RECORD_PATH_NON_INVENTORY_ITEM;
     } else if (recordTypedesc is typedesc<ItemCollection>) {
-        return RECORD_NAME_ITEM_COLLECTION;
+        return RECORD_PATH_ITEM_COLLECTION;
     } else if (recordTypedesc is typedesc<Invoice>) {
-        return RECORD_NAME_INVOICE;
+        return RECORD_PATH_INVOICE;
     } else if (recordTypedesc is typedesc<AccountingPeriod>) {
-        return RECORD_NAME_ACCOUNTING_PERIOD;
+        return RECORD_PATH_ACCOUNTING_PERIOD;
     } else if (recordTypedesc is typedesc<CustomerPayment>) {
-        return RECORD_NAME_CUSTOMER_PAYMENT;
+        return RECORD_PATH_CUSTOMER_PAYMENT;
     } else if (recordTypedesc is typedesc<Account>) {
-        return RECORD_NAME_ACCOUNT;
+        return RECORD_PATH_ACCOUNT;
     } else if (recordTypedesc is typedesc<Opportunity>) {
-        return RECORD_NAME_OPPORTUNITY;
+        return RECORD_PATH_OPPORTUNITY;
     } else if (recordTypedesc is typedesc<Partner>) {
-        return RECORD_NAME_PARTNER;
+        return RECORD_PATH_PARTNER;
     } else if (recordTypedesc is typedesc<Classification>) {
-        return RECORD_NAME_CLASSIFICATION;
+        return RECORD_PATH_CLASSIFICATION;
     } else {
         return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString() +
                                    ", try implementing as a custom record");
     }
 }
-
 
 function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc, json payload)
                          returns ReadableRecord|WritableRecord|SubRecord|error {
@@ -93,63 +92,6 @@ function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType rec
     }
 }
 
-function updatePassedInRecord(http:Client nsclient, string internalId, @tainted WritableRecord passedInValue, string
-                              recordName) returns @tainted Error? {
-    ReadableRecord|Error nsRecordValue = getRecord(nsclient, internalId, typeof passedInValue, INTERNAL, recordName);
-    if (nsRecordValue is Error) {
-        return getError("NetSuite record updated successful. But local record population failed", nsRecordValue);
-    } else if (nsRecordValue is Customer) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is SalesOrder) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is Currency) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is NonInventoryItem) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is Invoice) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is AccountingPeriod) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is CustomerPayment) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is Opportunity) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is Partner) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is Classification) {
-        foreach var [key, val] in nsRecordValue.entries() {
-            passedInValue[key] = val;
-        }
-    } else if (nsRecordValue is Account) {
-        foreach var [key, val] in nsRecordValue.entries() {
-          passedInValue[key] = val;
-        }
-    } else {
-        CustomRecord value = <CustomRecord> nsRecordValue;
-        foreach var [key, val] in value.entries() {
-            passedInValue[key] = val;
-        }
-    }
-}
-
 function getJsonPayload(http:Client nsclient, string resourcePath, string recordName) returns @tainted json|Error {
     http:Response|error result = nsclient->get(resourcePath);
     if (result is error) {
@@ -172,11 +114,11 @@ function processJson(http:Response response, string? recordName = ()) returns @t
 }
 
 function isErrorResponse(http:Response response) returns boolean {
-    if (!response.hasHeader("Content-Type")) {
+    if (!response.hasHeader(CONTENT_TYPE_HEADER)) {
         return false;
     }
 
-    string contentType = response.getHeader("Content-Type");
+    string contentType = response.getHeader(CONTENT_TYPE_HEADER);
     log:printDebug(function () returns string {
             return "Error response content type: " + contentType;
         });
@@ -200,7 +142,7 @@ function resolveRecordName(string? customRecordPath, ReadableRecordType targetTy
 }
 
 function extractInternalId(http:Response response) returns string {
-    string locationHeader = response.getHeader("Location");
+    string locationHeader = response.getHeader(LOCATION_HEADER);
     return spitAndGetLastElement(locationHeader, "/");
 }
 

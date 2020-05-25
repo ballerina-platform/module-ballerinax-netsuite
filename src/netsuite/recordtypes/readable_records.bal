@@ -14,12 +14,12 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Represents the `Subsidiary` NetSuite readable record.
+# Represents the readable `Subsidiary` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + name - The name of the `Subsidiary`

@@ -17,45 +17,66 @@
 import ballerina/log;
 import ballerina/test;
 
-function createOrSearchIfExist(@tainted WritableRecord recordValue, string? filter = (), string? customPath = ()) {
+function createOrSearchIfExist(@tainted WritableRecord recordValue, string? filter = (), string? customPath = ())
+                               returns @tainted string {
     log:printInfo("Creating...");
     var created = nsClient->create(<@untained> recordValue, customPath);
     if (created is Error) {
         log:printInfo("Search...");
-        searchForRecord(recordValue, filter, customPath);
+        return searchForRecord(recordValue, filter, customPath);
     } else {
-        test:assertTrue(recordValue.id != "", msg = "record creation failed");
+        test:assertTrue(created != "", msg = "record creation failed");
+        return created;
     }
 }
 
-function searchForRecord(@tainted WritableRecord recordValue, string? filter = (), string? customPath = ()) {
+function searchForRecord(@tainted WritableRecord recordValue, string? filter = (), string? customPath = ()) returns
+                         @tainted string {
     var searched = nsClient->search(<@untainted>typeof recordValue, filter, customPath);
     if (searched is Error) {
         test:assertFail(msg = "search operation failed: " + searched.toString());
+        return "";
     } else {
-        recordValue.id = searched[0];
-        test:assertTrue(recordValue.id != "", msg = "record search failed");
+        test:assertTrue(searched[0] != "", msg = "record search failed");
+        return searched[0];
     }
 }
 
 function updateAPartOfARecord(@tainted WritableRecord recordValue, json input, string key, string value,
                               string? customPath = ()) {
     log:printInfo("Updating a part of the record...");
-    Error? updated = nsClient->update(<@untainted> recordValue, input, customPath);
+    var updated = nsClient->update(<@untainted> recordValue, input, customPath);
     if (updated is Error) {
-        test:assertFail(msg = " update operation failed: " + updated.toString());
+        test:assertFail(msg = "JSON part update operation failed: " + updated.toString());
     }
-    test:assertTrue(recordValue[key].toString() == value, msg = "update failed");
+    var updatedRecord = readRecord(<@untained string> updated, typeof recordValue, customPath);
+    if (updatedRecord is ()) {
+        test:assertFail(msg = "retrieval after update operation failed: " + updatedRecord.toString());
+    } else {
+        test:assertEquals(updatedRecord[key].toString(), value, msg = "JSON part update failed");
+    }
+}
+
+function readRecord(string id, ReadableRecordType recordType, string? customPath = ()) returns @tainted ReadableRecord? {
+    var retrieved = nsClient->get(id, recordType, customRecordPath = customPath);
+    if (retrieved is Error) {
+        test:assertFail(msg = " read operation failed: " + retrieved.toString());
+    } else {
+        test:assertTrue(retrieved.id != "", msg = "read failed");
+        return retrieved;
+    }
 }
 
 function updateCompleteRecord(@tainted WritableRecord recordValue, WritableRecord newValue, string key,
                               string value, string? customPath = ()) {
     log:printInfo("Updating a complete record...");
-    Error? updateCustom = nsClient->update(<@untainted> recordValue, <@untained> newValue, customPath);
-    if (updateCustom is Error) {
-        test:assertFail(msg = "update operation failed: " + updateCustom.toString());
+    var updated = nsClient->update(<@untainted> recordValue, <@untained> newValue, customPath);
+    if (updated is Error) {
+        test:assertFail(msg = "complete record update operation failed: " + updated.toString());
     }
-    test:assertTrue(recordValue[key].toString() == value, msg = "update failed");
+
+    var updatedRecord = readRecord(<@untained string> updated, typeof recordValue, customPath);
+    test:assertEquals(updatedRecord[key].toString(), value, msg = "complete record update failed");
 }
 
 function deleteRecordTest(@tainted WritableRecord recordValue, string? customPath = ()) {
@@ -67,38 +88,43 @@ function deleteRecordTest(@tainted WritableRecord recordValue, string? customPat
 
     var res = nsClient->get(recordValue.id, typeof recordValue, customRecordPath = customPath);
     if (res is Error) {
-        test:assertTrue(res.detail()["errorCode"].toString() == "NONEXISTENT_ID", msg = "record deletion failed");
+        test:assertEquals(res.detail()["errorCode"].toString(), "NONEXISTENT_ID", msg = "record deletion failed");
     } else {
         test:assertFail(msg = "delete operation failed: " + res.toString());
     }
 }
 
-function upsertCompleteRecord(WritableRecord newValue, string exId, string? customPath = ()) {
+function upsertCompleteRecord(WritableRecord newValue, string exId, string? customPath = ()) returns @tainted ReadableRecord? {
     log:printInfo("Upserting a complete record...");
-    Error? upserted = nsClient->upsert(exId, typeof newValue, <@untained> newValue, customPath);
+    var upserted = nsClient->upsert(exId, typeof newValue, <@untained> newValue, customPath);
     if (upserted is Error) {
         test:assertFail(msg = "upsert record operation failed: " + upserted.toString());
     }
 
-    test:assertTrue(newValue.id != "", msg = "upsertion failed");
-    test:assertTrue(newValue["externalId"] == exId, msg = "upsertion failed");
+    var updatedRecord = readRecord(<string> upserted, typeof newValue, customPath);
+    if (updatedRecord is ()) {
+        test:assertFail(msg = "retrieval after upsert operation failed: " + updatedRecord.toString());
+    } else {
+        test:assertTrue(updatedRecord.id != "", msg = "upsertion failed");
+        test:assertEquals(updatedRecord["externalId"], exId, msg = "upsertion failed");
+        return updatedRecord;
+    }
 }
 
 function upsertAPartOfARecord(@tainted WritableRecord recordValue, json input, string exId, string key, string value,
-                              string? customPath = ()) {
+                              string? customPath = ()) returns @tainted ReadableRecord? {
     log:printInfo("Upsert a part of the record...");
-    Error? upserted = nsClient->upsert(exId, typeof recordValue, input, customPath);
+    var upserted = nsClient->upsert(exId, typeof recordValue, input, customPath);
     if (upserted is Error) {
         test:assertFail(msg = "upsert json operation failed: " + upserted.toString());
     }
 
-    // The upsertion with a JSON does not update any local records as it does not take a record as a param. So user
-    // should do a get specifically to verify the change
-    ReadableRecord|Error res = nsClient->get(exId, typeof recordValue, EXTERNAL, customPath);
-    if (res is Error) {
-        test:assertFail(msg = "access operation failed: " + res.toString());
+    var updatedRecord = readRecord(<@untained string> upserted, typeof recordValue, customPath);
+    if (updatedRecord is ()) {
+        test:assertFail(msg = "retrieval after upsert operation failed: " + updatedRecord.toString());
     } else {
-        test:assertTrue(res[key].toString() == value, msg = "upsertion failed");
+        test:assertEquals(updatedRecord[key].toString(), value, msg = "upsertion failed");
+        return updatedRecord;
     }
 }
 
@@ -108,7 +134,7 @@ function subRecordTest(@tainted ReadableRecord recordValue, SubRecordType subRec
     if (subRecord is Error) {
         test:assertFail(msg = "getSubRecord operation failed: " + subRecord.toString());
     } else {
-        test:assertTrue(subRecord[key].toString() == value,  msg = "getSubRecord operation failed");
+        test:assertEquals(subRecord[key].toString(), value,  msg = "getSubRecord operation failed");
     }
 }
 
@@ -123,11 +149,11 @@ function readExistingRecord(ReadableRecordType recordType, string? customPath = 
     }
 
     string[] ids = <string[]> lists;
-    ReadableRecord|Error getResult = nsClient->get(<@untained> ids[0], recordType, customRecordPath = customPath);
-    if (getResult is Error) {
-        test:assertFail(msg = "read operation failed: "+ getResult.toString());
+    var updatedRecord = readRecord(<@untained> ids[0], recordType, customPath);
+    if (updatedRecord is ()) {
+        test:assertFail(msg = "retrieval failed: " + updatedRecord.toString());
     } else {
-        test:assertTrue(getResult.id != "", msg = "Record retrieval failed");
+        test:assertTrue(updatedRecord.id != "", msg = "Record retrieval failed");
     }
 }
 
@@ -178,9 +204,15 @@ function getDummyCustomer() returns @tainted Customer? {
             test:assertFail(msg = "test cannot be proceeded without prerequisite 'customer':" + created.toString());
         } else {
             customer.id = searched[0];
-            return customer;
+            return <Customer> readRecord(<@untained> searched[0], Customer);
+            //return searchedRecord;
         }
     }
-    test:assertTrue(customer.id != "", msg = "Test customer creation failed");
-    return customer;
+    var createdCustomer = readRecord(<string> created, Customer);
+    if (createdCustomer is ()) {
+        test:assertFail(msg = "retrieval failed: " + createdCustomer.toString());
+    } else {
+        test:assertTrue(createdCustomer.id != "", msg = "Test customer creation failed");
+        return <Customer> createdCustomer;
+    }
 }

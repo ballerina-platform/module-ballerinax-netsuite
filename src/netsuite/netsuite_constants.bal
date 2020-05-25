@@ -19,6 +19,7 @@ const string REST_RESOURCE = "/services/rest/record/v1";
 const string EID = "eid:";
 const string EXPAND_SUB_RESOURCES = "?expandSubResources=true";
 const string LOCATION_HEADER = "Location";
+const string CONTENT_TYPE_HEADER = "Content-Type";
 
 # Internal record id is referred when retrieving records.
 public const INTERNAL = "INTERNAL";
@@ -28,10 +29,10 @@ public const EXTERNAL = "EXTERNAL";
 
 # Supported HTTP methods.
 public const GET = "GET";
+public const PUT = "PUT";
 public const POST = "POST";
 public const PATCH = "PATCH";
 public const DELETE = "DELETE";
-public const PUT = "PUT";
 
 # available filter query operators
 # unary operator `EMPTY` do not accept any values. For example: companyName EMPTY
@@ -89,18 +90,18 @@ public const ON_OR_AFTER_NOT = "ON_OR_AFTER_NOT";
 public const ON_OR_BEFORE = "ON_OR_BEFORE";
 public const ON_OR_BEFORE_NOT = "ON_OR_BEFORE_NOT";
 
-# Holds the value for NetSuite record names.
-const string RECORD_NAME_CUSTOMER = "/customer";
-const string RECORD_NAME_SALES_ORDER = "/salesOrder";
-const string RECORD_NAME_SUBSIDIARY = "/subsidiary";
-const string RECORD_NAME_ADDRESSBOOK = "/addressBook";
-const string RECORD_NAME_CURRENCY = "/currency";
-const string RECORD_NAME_NON_INVENTORY_ITEM = "/nonInventoryItem";
-const string RECORD_NAME_ITEM_COLLECTION = "/item";
-const string RECORD_NAME_INVOICE = "/invoice";
-const string RECORD_NAME_ACCOUNTING_PERIOD = "/accountingPeriod";
-const string RECORD_NAME_CUSTOMER_PAYMENT = "/customerPayment";
-const string RECORD_NAME_ACCOUNT = "/account";
-const string RECORD_NAME_OPPORTUNITY = "/opportunity";
-const string RECORD_NAME_PARTNER = "/partner";
-const string RECORD_NAME_CLASSIFICATION = "/classification";
+# Holds the value for NetSuite record paths.
+const string RECORD_PATH_CUSTOMER = "/customer";
+const string RECORD_PATH_SALES_ORDER = "/salesOrder";
+const string RECORD_PATH_SUBSIDIARY = "/subsidiary";
+const string RECORD_PATH_ADDRESSBOOK = "/addressBook";
+const string RECORD_PATH_CURRENCY = "/currency";
+const string RECORD_PATH_NON_INVENTORY_ITEM = "/nonInventoryItem";
+const string RECORD_PATH_ITEM_COLLECTION = "/item";
+const string RECORD_PATH_INVOICE = "/invoice";
+const string RECORD_PATH_ACCOUNTING_PERIOD = "/accountingPeriod";
+const string RECORD_PATH_CUSTOMER_PAYMENT = "/customerPayment";
+const string RECORD_PATH_ACCOUNT = "/account";
+const string RECORD_PATH_OPPORTUNITY = "/opportunity";
+const string RECORD_PATH_PARTNER = "/partner";
+const string RECORD_PATH_CLASSIFICATION = "/classification";

@@ -14,12 +14,12 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Represents the `Customer` NetSuite writable record.
+# Represents the writable `Customer` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + entityId - The unique name of the customer, which is a mandatory attribute
@@ -34,12 +34,12 @@ public type Customer record {
     boolean isPerson?;
 };
 
-# Represents the `SalesOrder` NetSuite writable record.
+# Represents the writable `SalesOrder` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + entity - The entity such as customer, partner, ..etc that the sales order belongs to, which is a mandatory attribute
@@ -66,12 +66,12 @@ public type SalesOrder record {
     string billAddress?;
 };
 
-# Represents the `Currency` NetSuite writable record.
+# Represents the writable `Currency` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + name - The currency name, which is a mandatory attribute
@@ -92,12 +92,12 @@ public type Currency record {
     boolean isBaseCurrency?;
 };
 
-# Represents the `Invoice` NetSuite writable record.
+# Represents the writable `Invoice` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + entity - The entity such as customer, partner, ..etc that the invoice belongs to, which is a mandatory attribute
@@ -118,12 +118,12 @@ public type Invoice record { //stage 1 - mandatory fields are identified
     string memo?;
 };
 
-# Represents the `Classification` NetSuite writable record.
+# Represents the writable `Classification` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + name - The classification name, which is a mandatory attribute
@@ -140,7 +140,7 @@ public type Classification record { //complete, all fields added
     Subsidiary subsidiary?;
 };
 
-# Represents the `AccountingPeriod` NetSuite writable record.
+# Represents the writable `AccountingPeriod` NetSuite record.
 #
 # + id - The internal id of the record
 # + periodName - The name of the period, which is a mandatory attribute
@@ -157,12 +157,12 @@ public type AccountingPeriod record {
     string refName?;
 };
 
-# Represents the `CustomerPayment` NetSuite writable record.
+# Represents the writable `CustomerPayment` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + customer - The assiciated `Customer` record, which is a mandatory attribute
@@ -193,12 +193,12 @@ public type CustomerPayment record {
     Subsidiary subsidiary?;
 };
 
-# Represents the `Account` NetSuite writable record.
+# Represents the writable `Account` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + acctname - The account name, which is a mandatory attribute
@@ -215,12 +215,12 @@ public type Account record {
     Subsidiary subsidiary?;
 };
 
-# Represents the `Opportunity` NetSuite writable record.
+# Represents the writable `Opportunity` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + entity - The entity such as customer, partner,..etc that the opportunity belongs to, which is a mandatory attribute
@@ -253,12 +253,12 @@ public type Opportunity record {
     Subsidiary subsidiary?;
 };
 
-# Represents the `Partner` NetSuite writable record.
+# Represents the writable `Partner` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
-# | id - The internal id of the record         |
-# | externalId - The external id of the record |
-# | links - The HATEOAS record links           |
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
 # + entityId - The unique name of the partner
@@ -279,7 +279,7 @@ public type Partner record {
     ItemCollection category?;
 };
 
-# Represents the `NonInventoryItem` NetSuite writable record.
+# Represents the writable `NonInventoryItem` NetSuite record.
 #
 # + id - The internal id of the record
 # + subtype - The sub type of item
