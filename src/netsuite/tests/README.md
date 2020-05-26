@@ -8,7 +8,7 @@
 
 1. Visit [NetSuite](https://www.netsuite.com) and create an Account.
 2. Enable SuiteTalk Webservice features of the account (Setup->Company->Enable Features).
-3. Obtain SuiteTalk Base URL which contains the account id under company URLs (Setup->Company->Company Information).
+3. Obtain SuiteTalk Base URL which contains the account ID under company URLs (Setup->Company->Company Information).
     Eg: https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
 4. Create an integration application (Setup->Integration->New), enable OAuth 2.0 code grant and scope and obtain the 
 following credentials: 
@@ -44,13 +44,12 @@ BASE_URL="https://<ACCOUNT_ID>.suitetalk.api.netsuite.com"
 ACCESS_TOKEN="enter your access token here"
 REFRESH_URL="https://<ACCOUNT_ID>.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token"
 REFRESH_TOKEN="enter your refresh token here"
-CLIENT_ID="enter your client id here"
+CLIENT_ID="enter your client ID here"
 CLIENT_SECRET="enter your client secret here"
 ```
 
 Assign the values for the accessToken, clientId, clientSecret and refreshToken inside constructed endpoint in 
-main_test.bal
-in either way following,
+main_test.bal in either way following,
 
 ```ballerina
 Configuration nsConfig = {

@@ -37,8 +37,9 @@ function searchForRecord(@tainted WritableRecord recordValue, string? filter = (
         test:assertFail(msg = "search operation failed: " + searched.toString());
         return "";
     } else {
-        test:assertTrue(searched[0] != "", msg = "record search failed");
-        return searched[0];
+        var [id, hasMore] = searched;
+        test:assertTrue(id[0] != "", msg = "record search failed");
+        return id[0];
     }
 }
 
@@ -140,15 +141,16 @@ function subRecordTest(@tainted ReadableRecord recordValue, SubRecordType subRec
 
 function readExistingRecord(ReadableRecordType recordType, string? customPath = ()) {
     log:printInfo("Reading...");
-    string[]|Error lists = nsClient->search(recordType, customRecordPath = customPath);
+    var lists = nsClient->search(recordType, customRecordPath = customPath);
     if (lists is Error) {
-        if (lists is NoResultError) {
-            return;
-        }
         test:assertFail(msg = "search operation failed: " + lists.toString());
     }
 
-    string[] ids = <string[]> lists;
+    var [ids, hasMore] = <[string[], boolean]> lists;
+    if (ids.length() == 0) {
+        return;
+    }
+
     var updatedRecord = readRecord(<@untained> ids[0], recordType, customPath);
     if (updatedRecord is ()) {
         test:assertFail(msg = "retrieval failed: " + updatedRecord.toString());
@@ -160,12 +162,12 @@ function readExistingRecord(ReadableRecordType recordType, string? customPath = 
 function getARandomPrerequisiteRecord(ReadableRecordType recordType, public string? filter = ()) returns
                                       ReadableRecord? {
     string recordName = getRecordNameFromTypeDescForTests(recordType);
-    string[]|Error lists = nsClient->search(recordType, filter);
+    var lists = nsClient->search(recordType, filter);
     if (lists is Error) {
         test:assertFail(msg = "test cannot be proceeded without prerequisite '" + recordName + "':" + lists.toString());
     }
 
-    string[] ids = <string[]> lists;
+    var [ids, hasMore] = <[string[], boolean]> lists;
     ReadableRecord|Error getResult = nsClient->get(<@untained> ids[0], recordType);
     if (getResult is Error) {
         test:assertFail(msg = "test cannot be proceeded without prerequisite '" + recordName + "':"
@@ -203,9 +205,8 @@ function getDummyCustomer() returns @tainted Customer? {
         if (searched is Error) {
             test:assertFail(msg = "test cannot be proceeded without prerequisite 'customer':" + created.toString());
         } else {
-            customer.id = searched[0];
-            return <Customer> readRecord(<@untained> searched[0], Customer);
-            //return searchedRecord;
+            var [ids, hasMore] = <[string[], boolean]> searched;
+            return <Customer> readRecord(<@untained> ids[0], Customer);
         }
     }
     var createdCustomer = readRecord(<string> created, Customer);

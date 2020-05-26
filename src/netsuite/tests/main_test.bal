@@ -118,7 +118,7 @@ function testExecuteAction() {
     }
 }
 
-//@test:Config {}
+@test:Config {}
 function testSearchOperationWithMultipleResultPages() {
     var res = nsClient->search(Customer, limit = 100, offset = 0);
     if (res is error) {
@@ -128,7 +128,7 @@ function testSearchOperationWithMultipleResultPages() {
     }
 }
 
-//@test:Config {}
+@test:Config {}
 function testCustomer() {
     log:printInfo("Testing Customer :");
 
@@ -167,7 +167,7 @@ function testCustomer() {
     deleteRecordTest(<@untainted> newCustomer);
 }
 
-//@test:Config {}
+@test:Config {}
 function testCurrency() {
     log:printInfo("Testing Currency :");
 
@@ -197,7 +197,7 @@ function testCurrency() {
 
 
 
-//@test:Config {}
+@test:Config {}
 function testSalesOrder() {
     log:printInfo("Testing SalesOrder :");
 
@@ -248,7 +248,7 @@ function testSalesOrder() {
     deleteRecordTest(<@untainted> newSalesOrder);
 }
 
-//@test:Config {}
+@test:Config {}
 function testInvoice() {
     log:printInfo("Testing Invoice :");
 
@@ -300,7 +300,7 @@ function testInvoice() {
     deleteRecordTest(<@untainted> newInvoice);
 }
 
-//@test:Config {}
+@test:Config {}
 function testClassification() {
     log:printInfo("Testing Classification :");
 
@@ -313,7 +313,7 @@ function testClassification() {
     deleteRecordTest(<@untainted> class);
 }
 
-//@test:Config {}
+@test:Config {}
 function testAccountingPeriod() {
     log:printInfo("Testing AccountingPeriod :");
 
@@ -327,7 +327,7 @@ function testAccountingPeriod() {
     string searchedId = searchForRecord(accountingPeriod, "isinactive IS false");
 }
 
-//@test:Config { enable:false}
+@test:Config { enable:false}
 // Record read operation fails due to NetSuite issue
 function testCustomerPayment() {
     log:printInfo("Testing CustomerPayment :");
@@ -347,7 +347,7 @@ function testCustomerPayment() {
     deleteRecordTest(<@untainted> customerPayment);
 }
 
-//@test:Config {}
+@test:Config {}
 function testAccount() {
     log:printInfo("Testing Account :");
 
@@ -370,7 +370,7 @@ function testAccount() {
                                     "updated Ballerina test account");
 }
 
-//@test:Config {}
+@test:Config {}
 function testPartner() {
     log:printInfo("Testing Partner :");
 
@@ -393,7 +393,7 @@ function testPartner() {
     deleteRecordTest(<@untainted> partner);
 }
 
-//@test:Config {}
+@test:Config {}
 function testOpportunity() {
     log:printInfo("Testing Opportunity :");
 

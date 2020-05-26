@@ -23,7 +23,7 @@ Token.
 
 1. Visit [NetSuite](https://www.netsuite.com) and create an Account.
 2. Enable SuiteTalk Webservice features of the account (Setup->Company->Enable Features).
-3. Obtain SuiteTalk Base URL which contains the account id under company URLs (Setup->Company->Company Information).
+3. Obtain SuiteTalk Base URL which contains the account ID under company URLs (Setup->Company->Company Information).
     Eg: https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
 4. Create an integration application (Setup->Integration->New), enable OAuth 2.0 code grant and scope and obtain the 
 following credentials: 
@@ -66,13 +66,13 @@ public function main() {
         exchangeRate: 1.0
     };
 
-    // Create the Currency record in NetSuite and populate passed-in record with id and defaults.
+    // Create the Currency record in NetSuite and populate passed-in record with ID and defaults.
     string|netsuite:Error created = nsClient->create(<@untainted> currency);
     if created is netsuite:Error {
         io:println("Error: " + created.detail()?.message.toString());
     }
     string id = <string> created;
-    io:println("Currency id = " + id);
+    io:println("Currency ID = " + id);
 
     // Confirm the creation
     netsuite:ReadableRecord|netsuite:Error retrieved = nsClient->get(<@untainted> id, netsuite:Currency);
@@ -110,7 +110,7 @@ public function main() {
         io:println("Error: " + upserted.detail()?.message.toString());
     }
     string exId = <string> upserted;
-    io:println("External currency id = " + exId);
+    io:println("External currency ID = " + exId);
 
     // Confirm the upsertion
     netsuite:ReadableRecord|netsuite:Error getUpserted = nsClient->get(<@untainted> exId, netsuite:Currency);
@@ -121,11 +121,12 @@ public function main() {
     io:println("Verify the upserted name = " + externalCurrency["name"].toString());
 
     // Search for some other popular Currency in the account using a filter
-    string[]|netsuite:Error resultId = nsClient->search(netsuite:Currency, "symbol IS LKR");
-    if resultId is netsuite:Error {
-        io:println("Error: " + resultId.detail()?.message.toString());
+    [string[], boolean]|netsuite:Error result = nsClient->search(netsuite:Currency, "symbol IS LKR");
+    if result is netsuite:Error {
+        io:println("Error: " + result.detail()?.message.toString());
     } else {
-        io:println("LKR currency id = " + resultId[0]);
+        var [idArr, hasMore] = result;
+        io:println("LKR currency ID = " + idArr[0]);
     }
 
     //Delete inserted records

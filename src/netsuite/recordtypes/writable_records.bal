@@ -142,7 +142,7 @@ public type Classification record { //complete, all fields added
 
 # Represents the writable `AccountingPeriod` NetSuite record.
 #
-# + id - The internal id of the record
+# + id - The internal ID of the record
 # + periodName - The name of the period, which is a mandatory attribute
 # + startDate - The start date of the period, which is a mandatory attribute
 # + endDate - The end date of the period, which is a mandatory attribute
@@ -226,7 +226,7 @@ public type Account record {
 # + entity - The entity such as customer, partner,..etc that the opportunity belongs to, which is a mandatory attribute
 # + titile - The title of the opportunity
 # + item - The collection of items available in the opportunity
-# + tranId - The auto generated transction id
+# + tranId - The auto generated transction ID
 # + partner - The associated partner
 # + salesRep - The associated sales representative
 # + probability -  The probability of the opportunity will be won
@@ -281,11 +281,11 @@ public type Partner record {
 
 # Represents the writable `NonInventoryItem` NetSuite record.
 #
-# + id - The internal id of the record
+# + id - The internal ID of the record
 # + subtype - The sub type of item
 # + itemId - The unique item id
 public type NonInventoryItem record {
     string id = "";
-    string subtype = "";
+    string subtype;
     string itemId?;
 };

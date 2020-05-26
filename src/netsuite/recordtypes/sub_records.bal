@@ -16,7 +16,7 @@
 
 # Represents the `AddressBook` NetSuite sub record.
 #
-# + id - The internal id of the record
+# + id - The internal ID of the record
 # + addressBookType - The type of address book
 public type AddressBook record {
     string id = "";
@@ -42,7 +42,7 @@ public type ItemCollection record {
 
 # Represents the `Items` NetSuite sub record.
 #
-# + id - The internal id of the record
+# + id - The internal ID of the record
 # + amount - The amount of the item
 # + item - The attributes of the item
 # + itemSubType - The sub type of item

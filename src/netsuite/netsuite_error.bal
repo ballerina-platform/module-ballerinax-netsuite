@@ -14,7 +14,13 @@
 // specific language governing permissions and limitations
 // under the License.
 
-type Detail record {
+# Record type to hold the details of an error.
+#
+# + message - The specific error message of the error
+# + cause - Any other error, which causes this error
+# + statusCode - The HTTP status code
+# + errorCode - The standard NetSuite error code
+public type Detail record {
     string message;
     error cause?;
     int statusCode?;
@@ -26,13 +32,8 @@ public const GENERAL_ERROR = "(ballerinax/netsuite)GeneralError";
 # Represents the NetSuite error type with details.
 public type GeneralError error<GENERAL_ERROR, Detail>;
 
-# Represents the no results found error reason.
-public const NO_RESULT_ERROR = "(ballerinax/netsuite)NoResultError";
-# Represents the NetSuite error type with details.
-public type NoResultError error<NO_RESULT_ERROR, Detail>;
-
 # Defines the possible NetSuite error types
-public type Error GeneralError|NoResultError;
+public type Error GeneralError;
 
 function getError(string errMsg, error errorResponse) returns Error {
     return GeneralError(message = errMsg, cause = errorResponse);

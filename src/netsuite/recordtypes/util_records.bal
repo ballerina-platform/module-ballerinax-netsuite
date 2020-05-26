@@ -16,9 +16,9 @@
 
 # Represents a set of commonly used attributes across NetSuite records.
 #
-# + id - The internal id of the record
-# + externalId - The external id of the record
-# + links - The HATEOAS record links
+# + id - The internal ID of the record
+# + externalId - The external ID of the record
+# + links - The HATEOAS links
 # + refName - The reference name
 public type NsResource record {
     string id = "";
@@ -29,8 +29,8 @@ public type NsResource record {
 
 # Represents the common values of entities such as Customer, Partner, etc.
 #
-# + id - The internal id of the record
-# + links - The HATEOAS record links
+# + id - The internal ID of the record
+# + links - The HATEOAS links
 # + refName - The reference name
 public type Entity record {
     string id = "";

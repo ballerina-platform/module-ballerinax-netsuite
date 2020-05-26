@@ -35,7 +35,7 @@ public type Configuration record {|
 
 # The type of the user-defined custom record.
 #
-# + id - The internal id of the record
+# + id - The internal ID of the record
 type CustomRecord record {|
     string id;
     anydata...;

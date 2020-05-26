@@ -21,10 +21,10 @@ const string EXPAND_SUB_RESOURCES = "?expandSubResources=true";
 const string LOCATION_HEADER = "Location";
 const string CONTENT_TYPE_HEADER = "Content-Type";
 
-# Internal record id is referred when retrieving records.
+# Internal record ID is referred when retrieving records.
 public const INTERNAL = "INTERNAL";
 
-# External record id is referred when retrieving records.
+# External record ID is referred when retrieving records.
 public const EXTERNAL = "EXTERNAL";
 
 # Supported HTTP methods.
