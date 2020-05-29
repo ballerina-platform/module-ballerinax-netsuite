@@ -48,9 +48,30 @@ public type ItemCollection record {
 # + itemSubType - The sub type of the item
 # + itemType - The type of the item
 public type ItemElement record {
-    string id = "";
+    //string id = "";
     float amount;
     NsResource item;
     string itemSubType?;
     string itemType?;
+};
+
+# Represents the commont fields of service, inventory item NetSuite records.
+#
+# + id - The internal ID of the record
+# + amount - The amount of the item
+# + item - The attributes of the item
+# + itemSubType - The sub type of item
+# + itemType - The type of item
+type Item record {
+    *NsResource;
+    string itemId?;
+    NsResource taxSchedule?;
+    string itemType?;
+    Subsidiary subsidiary?;
+    NsResource sitecategory?;
+    string displayName?;
+    string createdDate?;
+    string lastModifiedDate?;
+    Account incomeAccount?;
+    boolean isInactive?;
 };

@@ -26,12 +26,14 @@
 # + companyName - The legal name of the customer, which is a mandatory attribute
 # + subsidiary - The associated `Subsidiary`, which is a mandatory attribute
 # + isPerson - The type of the customer whether its a company or an individual
+# + currency - The base currency used by the sales order
 public type Customer record {
     *NsResource;
     string entityId;
     string companyName;
     Subsidiary subsidiary;
     boolean isPerson?;
+    Currency currency?;
 };
 
 # Represents the writable `SalesOrder` NetSuite record.
@@ -107,7 +109,7 @@ public type Currency record {
 # + postingperiod - The accounting period
 # + trandate - The transaciton date
 # + memo - The memo to describe the invoice
-public type Invoice record { //stage 1 - mandatory fields are identified
+public type Invoice record {
     *NsResource;
     Entity entity;
     ItemCollection item;
@@ -262,8 +264,8 @@ public type Opportunity record {
 # | refName - The reference name               |
 #
 # + entityId - The unique name of the partner
-# + companyName - The legal name of the partner's company
-# + subsidiary - The associated `Subsidiary`
+# + companyName - The legal name of the partner's company, which is a mandatory attribute
+# + subsidiary - The associated `Subsidiary`, which is a mandatory attribute
 # + partnerCode - The unique code to identify the partner
 # + isPerson - The type of the partner whether its a company or individual
 # + url - The Partner's Web Site address or URL
@@ -271,12 +273,90 @@ public type Opportunity record {
 public type Partner record {
     *NsResource;
     string entityId?;
-    string companyName?;
-    Subsidiary subsidiary?;
+    string companyName;
+    Subsidiary subsidiary;
     string partnerCode?;
     boolean isPerson?;
     string url?;
     ItemCollection category?;
+};
+
+# Represents the writable `Vendor` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+#
+# + companyName - The
+# + subtype - The sub type of item
+# + itemId - The unique item id
+public type Vendor record {
+    *NsResource;
+    string companyName;
+    Subsidiary subsidiary?;
+    string entityId?;
+    AddressBook addressbook?;
+    float balance?;
+    Currency currency?;
+    boolean isinactive?;
+    boolean isPerson?;
+    string lastModifiedDate?;
+    NsResource workCalendar?;
+};
+
+# Represents the writable `VendorBill` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+#
+# + entity - The entity such as customer, partner, ..etc that the invoice belongs to, which is a mandatory attribute
+# + item - The collection of items available in the invoice, which is a mandatory attribute
+# + class - The classification of the invoice, which is a mandatory attribute
+# + tranId - The invoice number
+# + postingperiod - The accounting period
+# + trandate - The transaciton date
+# + memo - The memo to describe the invoice
+public type VendorBill record {
+    *NsResource;
+    Entity entity;
+    string tranId;
+    ItemCollection item;
+    float userTotal?;
+    Classification class?;
+    Currency currency?;
+    Subsidiary subsidiary?;
+    string trandate?;
+    AccountingPeriod postingperiod?;
+    string memo?;
+};
+
+# Represents the writable `ServiceItem` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+#
+# + entity - The entity such as customer, partner, ..etc that the invoice belongs to, which is a mandatory attribute
+# + item - The collection of items available in the invoice, which is a mandatory attribute
+# + class - The classification of the invoice, which is a mandatory attribute
+# + tranId - The invoice number
+# + postingperiod - The accounting period
+# + trandate - The transaciton date
+# + memo - The memo to describe the invoice
+public type ServiceItem record {
+    *Item;
+    string serviceItemType?;
+    string subtype?;
+    string VSOESopGroup?;
+    boolean VSOEDelivered?;
+    NsResource productfeed?;
 };
 
 # Represents the writable `NonInventoryItem` NetSuite record.
@@ -285,7 +365,128 @@ public type Partner record {
 # + subtype - The sub type of item
 # + itemId - The unique item ID
 public type NonInventoryItem record {
-    string id = "";
-    string subtype;
-    string itemId?;
+    *Item;
+    string subtype?; //
+    boolean isFulfillable?; //
+    string VSOESopGroup?;
+    boolean VSOEDelivered?;
+    string nonInventoryItemType?;
+    NsResource productfeed?;
+
 };
+
+# Represents the writable `InventoryItem` NetSuite record.
+#
+# + id - The internal ID of the record
+# + subtype - The sub type of item
+# + itemId - The unique item id
+public type InventoryItem record {
+    *Item;
+    string inventoryItemType?;
+    string VSOESopGroup?;
+    boolean VSOEDelivered?;
+    NsResource productfeed?;
+};
+
+# Represents the writable `InventoryItem` NetSuite record.
+#
+# + id - The internal ID of the record
+# + subtype - The sub type of item
+# + itemId - The unique item id
+public type OtherChargeItem record {
+    *Item;
+    string otherChargeItemType?;
+    string VSOESopGroup?;
+    boolean VSOEDelivered?;
+};
+
+# Represents the writable `InventoryItem` NetSuite record.
+#
+# + id - The internal ID of the record
+# + subtype - The sub type of item
+# + itemId - The unique item id
+public type ShipItem record {
+    *Item;
+    string shipItemType?;
+    string description?;
+    string edition?;
+    string shipItemCurrency?;
+    boolean omitPackaging?;
+};
+
+# Represents the writable `DiscountItem` NetSuite record.
+#
+# + id - The internal ID of the record
+# + subtype - The sub type of item
+# + itemId - The unique item id
+public type DiscountItem record {
+    *Item;
+    string discountItemType?;
+    Account account?;
+    float rate?;
+    string description?;
+    string edition?;
+    string shipItemCurrency?;
+    boolean omitPackaging?;
+};
+
+# Represents the writable `DiscountItem` NetSuite record.
+#
+# + id - The internal ID of the record
+# + subtype - The sub type of item
+# + itemId - The unique item id
+public type PaymentItem record {
+    *Item;
+    Account account?;
+    Classification class?;
+    Department department?;
+    PaymentMethod paymentMethod?;
+};
+
+# Represents the writable `PaymentMethod` NetSuite record.
+#
+# + id - The internal ID of the record
+# + subtype - The sub type of item
+# + itemId - The unique item id
+public type PaymentMethod record {
+    *NsResource;
+    string paymentMethodType?;
+    Account account?;
+    boolean creditCard?;
+    boolean isDebitCard?;
+    boolean isOnline?;
+    boolean isinactive?;
+    ItemCollection merchantAccounts?;
+    string name?;
+    ItemCollection visuals?;
+};
+
+# Represents the writable `Department` NetSuite record.
+#
+# + id - The internal ID of the record
+# + subtype - The sub type of item
+# + itemId - The unique item id
+public type Department record {
+    *NsResource;
+    string departmentType?;
+    boolean includechildren?;
+    boolean isinactive?;
+    string name?;
+    ItemCollection subsidiary?;
+};
+
+# Represents the writable `Location` NetSuite record.
+#
+# + id - The internal ID of the record
+# + subtype - The sub type of item
+# + itemId - The unique item id
+public type Location record {
+    *NsResource;
+    string locationType?;
+    boolean isinactive?;
+    string name?;
+    ItemCollection subsidiary?;
+    string timeZone?;
+    float latitude?;
+};
+

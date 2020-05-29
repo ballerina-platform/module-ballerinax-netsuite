@@ -47,7 +47,15 @@ public type Link record {
     string href = "";
 };
 
-type Collection record {
+# Represents a collection of NetSuite records.
+#
+# + links - The HATEOAS record links
+# + items - The collection of items
+# + totalResults - The total of available items
+# + count - The amount of items stated in the collection out of all
+# + hasMore - The state of item availability
+# + offset - The starting point of the items
+public type Collection record {
     Link[] links;
     NsResource[] items;
     int totalResults;

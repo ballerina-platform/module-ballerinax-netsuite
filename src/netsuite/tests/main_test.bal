@@ -79,7 +79,7 @@ type TestMessage record {
     string subject;
 };
 
-@test:Config {}
+//@test:Config {}
 function testExecuteAction() {
     log:printInfo("Testing Execute action :");
 
@@ -118,7 +118,7 @@ function testExecuteAction() {
     }
 }
 
-@test:Config {}
+//@test:Config {}
 function testSearchOperationWithMultipleResultPages() {
     var res = nsClient->search(Customer, limit = 100, offset = 0);
     if (res is error) {
@@ -128,7 +128,7 @@ function testSearchOperationWithMultipleResultPages() {
     }
 }
 
-@test:Config {}
+//@test:Config {}
 function testCustomer() {
     log:printInfo("Testing Customer :");
 
@@ -167,7 +167,7 @@ function testCustomer() {
     deleteRecordTest(<@untainted> newCustomer);
 }
 
-@test:Config {}
+//@test:Config {}
 function testCurrency() {
     log:printInfo("Testing Currency :");
 
@@ -195,9 +195,8 @@ function testCurrency() {
     deleteRecordTest(<@untainted> newCurrency);
 }
 
-
-
 @test:Config {}
+// Customer and NonInventoryItem are prerequisites
 function testSalesOrder() {
     log:printInfo("Testing SalesOrder :");
 
@@ -207,27 +206,26 @@ function testSalesOrder() {
         customer = recordCustomer;
     }
 
-    Currency? currency = ();
-    var recordCurrency = getARandomPrerequisiteRecord(Currency, "symbol IS USD");
-    if recordCurrency is Currency {
-        currency = recordCurrency;
+    Customer retrievedCustomer = <Customer> customer;
+    Currency currency = <Currency> retrievedCustomer["currency"];
+
+    NonInventoryItem? nonInventoryItem = ();
+    var recordNonInventoryItem = getARandomPrerequisiteRecord(NonInventoryItem);
+    if recordNonInventoryItem is NonInventoryItem {
+        nonInventoryItem = recordNonInventoryItem;
     }
 
     ItemElement serviceItem = {
         amount: 39000.0,
-        item: {
-            "id": "21",
-            "refName": "Development Services"
-        },
-        "itemSubType": "Sale",
-        "itemType": "Service"
+        item: <NonInventoryItem> nonInventoryItem,
+        itemSubType: "Sale",
+        itemType: "NonInvtPart"
     };
-
 
     SalesOrder salesOrder = {
         billAddress: "ballerina",
-        entity: <Customer> customer,
-        currency: <Currency> currency,
+        entity: retrievedCustomer,
+        currency: currency,
         item: {
             items: [serviceItem],
             totalResults: 1
@@ -248,7 +246,7 @@ function testSalesOrder() {
     deleteRecordTest(<@untainted> newSalesOrder);
 }
 
-@test:Config {}
+//@test:Config {}
 function testInvoice() {
     log:printInfo("Testing Invoice :");
 
@@ -263,14 +261,17 @@ function testInvoice() {
         class = recordClassification;
     }
 
+    NonInventoryItem? nonInventoryItem = ();
+    var recordNonInventoryItem = getARandomPrerequisiteRecord(NonInventoryItem);
+    if recordNonInventoryItem is NonInventoryItem {
+        nonInventoryItem = recordNonInventoryItem;
+    }
+
     ItemElement serviceItem = {
         amount: 39000.0,
-        item: {
-            "id": "21",
-            "refName": "Development Services"
-        },
-        "itemSubType": "Sale",
-        "itemType": "Service"
+        item: <NonInventoryItem> nonInventoryItem,
+        itemSubType: "Sale",
+        itemType: "NonInvtPart"
     };
 
     Invoice invoice = {
@@ -300,7 +301,7 @@ function testInvoice() {
     deleteRecordTest(<@untainted> newInvoice);
 }
 
-@test:Config {}
+//@test:Config {}
 function testClassification() {
     log:printInfo("Testing Classification :");
 
@@ -313,7 +314,7 @@ function testClassification() {
     deleteRecordTest(<@untainted> class);
 }
 
-@test:Config {}
+//@test:Config {}
 function testAccountingPeriod() {
     log:printInfo("Testing AccountingPeriod :");
 
@@ -347,7 +348,7 @@ function testCustomerPayment() {
     deleteRecordTest(<@untainted> customerPayment);
 }
 
-@test:Config {}
+//@test:Config {}
 function testAccount() {
     log:printInfo("Testing Account :");
 
@@ -370,7 +371,7 @@ function testAccount() {
                                     "updated Ballerina test account");
 }
 
-@test:Config {}
+//@test:Config {}
 function testPartner() {
     log:printInfo("Testing Partner :");
 
@@ -386,14 +387,13 @@ function testPartner() {
         entityId: "Ballerina test partner",
         companyName: "ballerinalang",
         subsidiary: <Subsidiary> subsidiary
-
     };
     string createdId = createOrSearchIfExist(partner, "companyName IS ballerinalang");
     partner = <Partner> readRecord(<@untained> createdId, Partner);
     deleteRecordTest(<@untainted> partner);
 }
 
-@test:Config {}
+//@test:Config {}
 function testOpportunity() {
     log:printInfo("Testing Opportunity :");
 
@@ -425,4 +425,75 @@ function testOpportunity() {
     string createdId = createOrSearchIfExist(opportunity, "titile IS Ballerina test opportunity");
     opportunity = <Opportunity> readRecord(<@untained> createdId, Opportunity);
     deleteRecordTest(<@untainted> opportunity);
+}
+
+//@test:Config {}
+function testVendor() {
+    log:printInfo("Testing Vendor :");
+
+    readExistingRecord(Vendor);
+
+    Subsidiary? subsidiary = ();
+    var recordSubsidiary = getARandomPrerequisiteRecord(Subsidiary);
+    if recordSubsidiary is Subsidiary {
+        subsidiary = recordSubsidiary;
+    }
+
+    Vendor vendor = {
+        entityId: "Ballerina test vendor",
+        companyName: "ballerinalang",
+        subsidiary: <Subsidiary> subsidiary
+    };
+
+    string createdId = createOrSearchIfExist(vendor, "companyName IS ballerinalang");
+    vendor = <Vendor> readRecord(<@untained> createdId, Vendor);
+    updateAPartOfARecord(vendor, { "entityId": "updated ballerina vendor" }, "entityId", "updated ballerina vendor");
+    deleteRecordTest(<@untainted> vendor);
+}
+
+//@test:Config {}
+function testVendorBill() {
+    log:printInfo("Testing Vendor Bill :");
+
+    readExistingRecord(VendorBill);
+
+    Vendor? vendor = ();
+    var recordVendor = getARandomPrerequisiteRecord(Vendor);
+    if recordVendor is Vendor {
+        vendor = recordVendor;
+    }
+
+    Classification? class = ();
+    var recordClassification = getARandomPrerequisiteRecord(Classification);
+    if recordClassification is Classification {
+        class = recordClassification;
+    }
+
+    NonInventoryItem? nonInventoryItem = ();
+    var recordNonInventoryItem = getARandomPrerequisiteRecord(NonInventoryItem);
+    if recordNonInventoryItem is NonInventoryItem {
+        nonInventoryItem = recordNonInventoryItem;
+    }
+
+    ItemElement serviceItem = {
+        amount: 39000.0,
+        item: <NonInventoryItem> nonInventoryItem,
+        itemSubType: "Sale",
+        itemType: "NonInvtPart"
+    };
+
+    VendorBill vendorBill = {
+        entity: <Vendor> vendor,
+        tranId: "100102894",
+        item: {
+            items: [serviceItem],
+            totalResults: 1
+        },
+        class: <Classification> class,
+        memo: "ballerina test"
+    };
+
+    string createdId = createOrSearchIfExist(vendorBill, "memo IS \"ballerina test\"");
+    vendorBill = <VendorBill> readRecord(<@untained> createdId, VendorBill);
+    deleteRecordTest(<@untainted> vendorBill);
 }

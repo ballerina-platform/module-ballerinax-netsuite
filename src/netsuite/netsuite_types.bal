@@ -23,12 +23,14 @@ import ballerina/oauth2;
 # Company Information on the Company URLs sub tab)
 # + oauth2Config - The OAuth2 client configuration
 # + secureSocketConfig - The secure connection configuration
+# + proxy - The Proxy server related options
 # + timeoutInMillis - The maximum time to wait (in milliseconds) for a response before closing the connection
 # + retryConfig - The configurations associated with retrying
 public type Configuration record {|
     string baseUrl;
     oauth2:DirectTokenConfig oauth2Config;
     http:ClientSecureSocket secureSocketConfig?;
+    http:ProxyConfig proxy?;
     int timeoutInMillis = 60000;
     http:RetryConfig retryConfig?;
 |};
@@ -43,7 +45,9 @@ type CustomRecord record {|
 
 # The types of records that support the writable NetSuite operations such as create, update, and delete.
 public type WritableRecord Customer|SalesOrder|Currency|NonInventoryItem|Invoice|AccountingPeriod|CustomerPayment|
-                           Account|Opportunity|Partner|Classification|CustomRecord;
+                           Account|Opportunity|Partner|Classification|CustomRecord|Vendor|VendorBill|ServiceItem|
+                           InventoryItem|OtherChargeItem|ShipItem|DiscountItem|PaymentItem|PaymentMethod|Department|
+                           Location;
 # The types of records that support the readable NetSuite operations such as read and search.
 public type ReadableRecord Subsidiary|WritableRecord;
 # The types of nested records that reside inside a parent record.
@@ -61,4 +65,4 @@ public type IdType INTERNAL|EXTERNAL;
 # The types of the HTTP methods that NetSuite API supports.
 public type HttpMethod GET|POST|PATCH|DELETE|PUT;
 # The types of the `ItemEntity` that are available and supported.
-public type ItemEntity NonInventoryItem;
+public type ItemEntity ServiceItem|NonInventoryItem|InventoryItem|OtherChargeItem|ShipItem|DiscountItem|PaymentItem;

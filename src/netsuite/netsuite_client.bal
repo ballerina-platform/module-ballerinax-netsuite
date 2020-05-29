@@ -38,7 +38,8 @@ public type Client client object {
             timeoutInMillis: netsuiteConfig.timeoutInMillis,
             retryConfig: netsuiteConfig?.retryConfig,
             http1Settings: {
-                keepAlive: http:KEEPALIVE_NEVER
+                keepAlive: http:KEEPALIVE_NEVER,
+                proxy: netsuiteConfig?.proxy
             }
         };
 
