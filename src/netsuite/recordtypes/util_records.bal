@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Represents a set of commonly used attributes across NetSuite records.
+# Represents a set of commonly-used attributes across NetSuite records.
 #
 # + id - The internal ID of the record
 # + externalId - The external ID of the record
@@ -27,7 +27,7 @@ public type NsResource record {
     string refName?;
 };
 
-# Represents the common values of entities such as Customer, Partner, etc.
+# Represents the common values of the entities such as Customer, Partner, etc.
 #
 # + id - The internal ID of the record
 # + links - The HATEOAS links
@@ -38,7 +38,7 @@ public type Entity record {
     string refName?;
 };
 
-# Represents the `Link` nested record with HATEOAS links.
+# Represents the `Link` nested record with the HATEOAS links.
 #
 # + rel - The relative identifier
 # + href - The hyperlink reference

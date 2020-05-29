@@ -20,7 +20,7 @@ import ballerina/oauth2;
 # The configuration used to create a NetSuite `Client`.
 #
 # + baseUrl - The account specific service URL for SuiteTalk REST web services(Setup > Company > Setup Tasks >
-# Company Information, on the Company URLs subtab)
+# Company Information on the Company URLs sub tab)
 # + oauth2Config - The OAuth2 client configuration
 # + secureSocketConfig - The secure connection configuration
 # + timeoutInMillis - The maximum time to wait (in milliseconds) for a response before closing the connection
@@ -41,24 +41,24 @@ type CustomRecord record {|
     anydata...;
 |};
 
-# The types of records that support write NetSuite operations such as create, update and delete.
+# The types of records that support the writable NetSuite operations such as create, update, and delete.
 public type WritableRecord Customer|SalesOrder|Currency|NonInventoryItem|Invoice|AccountingPeriod|CustomerPayment|
                            Account|Opportunity|Partner|Classification|CustomRecord;
-# The types of records that support read NetSuite operations such as read and search.
+# The types of records that support the readable NetSuite operations such as read and search.
 public type ReadableRecord Subsidiary|WritableRecord;
 # The types of nested records that reside inside a parent record.
 public type SubRecord AddressBook|Currency|ItemCollection|AccountingPeriod|CustomRecord;
 
-# The type description of records that support write NetSuite operations.
+# The type description of records that support the writable NetSuite operations.
 public type WritableRecordType typedesc<WritableRecord>;
-# The type description of records that support read NetSuite operations.
+# The type description of records that support the readable NetSuite operations.
 public type ReadableRecordType typedesc<ReadableRecord>;
-# The type description of nested records.
+# The type description of the nested records.
 public type SubRecordType typedesc<SubRecord>;
 
-# The types of record identifiers.
+# The types of the record identifiers.
 public type IdType INTERNAL|EXTERNAL;
-# The types of HTTP methods that NetSuite API supports.
+# The types of the HTTP methods that NetSuite API supports.
 public type HttpMethod GET|POST|PATCH|DELETE|PUT;
-# The types of ItemEntity available and supported.
+# The types of the `ItemEntity` that are available and supported.
 public type ItemEntity NonInventoryItem;

@@ -26,10 +26,10 @@
 # + currency - The base currency used by the `Subsidiary`, which is a mandatory attribute
 # + country - The located country
 # + email - The return email address
-# + isElimination - The elimination state, which to be used only for journal entries and transactions
+# + isElimination - The elimination state to be used only for journal entries and transactions
 # + isInactive - The state of subsidiary record whether its no longer active or used in the account
-# + legalName - The legal name of the `Subsidiary` as it should appear on tax forms
-# + url - The subsidiary's Web Site address, or URL
+# + legalName - The legal name of the `Subsidiary` as it should appear on the tax forms
+# + url - The subsidiary's Web Site address or URL
 public type Subsidiary record {
     *NsResource;
     string name?;

@@ -17,7 +17,7 @@
 # Represents the `AddressBook` NetSuite sub record.
 #
 # + id - The internal ID of the record
-# + addressBookType - The type of address book
+# + addressBookType - The type of the address book
 public type AddressBook record {
     string id = "";
     string addressBookType?;
@@ -27,7 +27,7 @@ public type AddressBook record {
 #
 # + links - The HATEOAS record links
 # + items - The collection of items
-# + totalResults - The total of available items
+# + totalResults - The total of the available items
 # + count - The amount of items stated in the collection out of all
 # + hasMore - The state of item availability
 # + offset - The starting point of the items
@@ -45,8 +45,8 @@ public type ItemCollection record {
 # + id - The internal ID of the record
 # + amount - The amount of the item
 # + item - The attributes of the item
-# + itemSubType - The sub type of item
-# + itemType - The type of item
+# + itemSubType - The sub type of the item
+# + itemType - The type of the item
 public type ItemElement record {
     string id = "";
     float amount;

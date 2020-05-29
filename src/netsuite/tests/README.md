@@ -7,33 +7,35 @@
 ### Prerequisites
 
 1. Visit [NetSuite](https://www.netsuite.com) and create an Account.
-2. Enable SuiteTalk Webservice features of the account (Setup->Company->Enable Features).
-3. Obtain SuiteTalk Base URL which contains the account ID under company URLs (Setup->Company->Company Information).
-    Eg: https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
-4. Create an integration application (Setup->Integration->New), enable OAuth 2.0 code grant and scope and obtain the 
+2. Enable the SuiteTalk Webservice features of the account (Setup->Company->Enable Features).
+3. Obtain the SuiteTalk Base URL which contains the account ID under the company URLs (Setup->Company->Company Information).
+    E.g., https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
+4. Create an integration application (Setup->Integration->New), enable OAuth 2.0 code grant and scope, and obtain the 
 following credentials: 
     * Client ID
     * Client Secret
-5. Obtain below credentials by following Authorization code Grant Flow in NetSuite documentation. 
+5. Obtain the below credentials by following the Authorization code Grant Flow in the [NetSuite documentation](https://system.na0.netsuite.com/app/help/helpcenter.nl?fid=book_1559132836.html&vid=_BLm3ruuApc_9HXr&chrole=17&ck=9Ie2K7uuApI_9PHO&cktime=175797&promocode=&promocodeaction=overwrite&sj=7bfNB5rzdVQdIKGhDJFE6knJf%3B1590725099%3B165665000). 
     * Access Token
     * Refresh Token
     * Refresh Token URL
     
-### Working with NetSuite Connector.
+### Working with the NetSuite Connector
 
-In order to use the NetSuite connector, first you need to create a NetSuite endpoint by passing above mentioned parameters.
+In order to use the NetSuite connector, first you need to create a NetSuite endpoint by passing the above-mentioned 
+parameters.
 
-Visit `main_test.bal` file to find the way of creating NetSuite endpoint.
+Navigate to the `main_test.bal` file to find the way of creating a NetSuite endpoint.
 
 ### Running NetSuite tests
-In order to run the tests, the user will need to have a NetSuite sandbox account ideally and create a configuration 
+- In order to run the tests, you will need to have a NetSuite sandbox account and create a configuration 
 file named `ballerina.conf` in the project's root directory with the obtained tokens and other parameters.
-NetSuite records access management is hierarchical. Hence certain test cases require higher permission role when 
+- NetSuite records access management is hierarchical. Hence, certain test cases require higher a permission role when 
 modifying records.
-Certain test cases may require prerequisite records already created in the NetSuite Account. So makesure the records 
-are created beforehand. Otherwise some operations may fail due to unavailability of particular record in the NetSuite 
-Account. NetSuite records can have organization specific mandatory fields. Unavailability of such fields may occur 
-failure when record creation/upsertion.
+- Certain test cases may require prerequisite records to be already created in the NetSuite Account. Therefore 
+make sure the records  are created beforehand. Otherwise, some operations may fail due to unavailability of 
+particular records in the NetSuite Account. 
+- NetSuite records can have organization-specific mandatory fields. Unavailability of such fields may occur 
+failure during the record creation/upsertion.
 
 
 #### ballerina.conf
@@ -48,8 +50,8 @@ CLIENT_ID="enter your client ID here"
 CLIENT_SECRET="enter your client secret here"
 ```
 
-Assign the values for the accessToken, clientId, clientSecret and refreshToken inside constructed endpoint in 
-main_test.bal in either way following,
+Assign the values for the `accessToken`, `clientId`, `clientSecret`, and `refreshToken` inside the constructed endpoint 
+in main_test.bal using either of the way following ways.
 
 ```ballerina
 Configuration nsConfig = {

@@ -25,7 +25,7 @@
 # + entityId - The unique name of the customer, which is a mandatory attribute
 # + companyName - The legal name of the customer, which is a mandatory attribute
 # + subsidiary - The associated `Subsidiary`, which is a mandatory attribute
-# + isPerson - The type of the customer whether its a company or individual
+# + isPerson - The type of the customer whether its a company or an individual
 public type Customer record {
     *NsResource;
     string entityId;
@@ -42,13 +42,13 @@ public type Customer record {
 # | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
-# + entity - The entity such as customer, partner, ..etc that the sales order belongs to, which is a mandatory attribute
+# + entity - The entity such as customer, partner, etc. that the sales order belongs to, which is a mandatory attribute
 # + currency - The base currency used by the sales order, which is a mandatory attribute
 # + item - The collection of items available in the sales order, which is a mandatory attribute
 # + orderStatus - The status of the sales order
 # + tranId - The order number
 # + trandate - The transaciton date
-# + startDate - The date for the first invoice to be created
+# + startDate - The date on when the first invoice is to be created
 # + endDate - The order ending date
 # + memo - The memo to describe the sales order
 # + billAddress - The default billing address
@@ -79,7 +79,7 @@ public type SalesOrder record {
 # + exchangeRate - The currency exchange rate
 # + displaySymbol - The unique display symbol
 # + currencyPrecision - The precision values of the currency
-# + isInactive - The state of currency record whether its no longer active or used in the account
+# + isInactive - The state of the currency record whether its no longer active or used in the account
 # + isBaseCurrency - The base currency state
 public type Currency record {
     *NsResource;
@@ -100,8 +100,8 @@ public type Currency record {
 # | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
-# + entity - The entity such as customer, partner, ..etc that the invoice belongs to, which is a mandatory attribute
-# + item - The collection of items available in the invoice, which is a mandatory attribute
+# + entity - The entity such as customer, partner, etc. that the invoice belongs to, which is a mandatory attribute
+# + item - The collection of the items available in the invoice, which is a mandatory attribute
 # + class - The classification of the invoice, which is a mandatory attribute
 # + tranId - The invoice number
 # + postingperiod - The accounting period
@@ -127,8 +127,8 @@ public type Invoice record { //stage 1 - mandatory fields are identified
 # | refName - The reference name               |
 #
 # + name - The classification name, which is a mandatory attribute
-# + isinactive - The state of classification record whether its no longer active or used in the account
-# + includechildren - The classification includes sub classes or not
+# + isinactive - The state of the classification record whether its no longer active or used in the account
+# + includechildren - Whether the classification includes sub classes or not
 # + parent - The parent classification
 # + subsidiary - The associated `Subsidiary`
 public type Classification record { //complete, all fields added
@@ -168,8 +168,8 @@ public type AccountingPeriod record {
 # + customer - The assiciated `Customer` record, which is a mandatory attribute
 # + payment - The amount of the payment, which is a mandatory attribute
 # + currency - The base currency used for the customer payment
-# + araccount - The accounts receivable account that will be affected by the transaction
-# + tranId - The auto generated payment number
+# + araccount - The accounts receivable account, which will be affected by the transaction
+# + tranId - The auto-generated payment number
 # + exchangeRate - The currency's exchange rate
 # + trandate - The transaction date
 # + postingperiod - The accounting period
@@ -223,14 +223,14 @@ public type Account record {
 # | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
-# + entity - The entity such as customer, partner,..etc that the opportunity belongs to, which is a mandatory attribute
+# + entity - The entity such as customer, partner, etc. that the opportunity belongs to, which is a mandatory attribute
 # + titile - The title of the opportunity
 # + item - The collection of items available in the opportunity
-# + tranId - The auto generated transction ID
+# + tranId - The auto-generated transaction ID
 # + partner - The associated partner
 # + salesRep - The associated sales representative
-# + probability -  The probability of the opportunity will be won
-# + expectedCloseDate - The date that the opportunity will close
+# + probability -  The probability of winning the opportunity
+# + expectedCloseDate - The date on which the opportunity will close
 # + winLossReason - The reason for winning or losing the deal
 # + memo - The memo to describe the opportunity
 # + projectedtotal - The projected value of the opportunity
@@ -266,8 +266,8 @@ public type Opportunity record {
 # + subsidiary - The associated `Subsidiary`
 # + partnerCode - The unique code to identify the partner
 # + isPerson - The type of the partner whether its a company or individual
-# + url - The Partner's Web Site address, or URL
-# + category - The role category that applies to the partner
+# + url - The Partner's Web Site address or URL
+# + category - The role category, which applies to the partner
 public type Partner record {
     *NsResource;
     string entityId?;
@@ -283,7 +283,7 @@ public type Partner record {
 #
 # + id - The internal ID of the record
 # + subtype - The sub type of item
-# + itemId - The unique item id
+# + itemId - The unique item ID
 public type NonInventoryItem record {
     string id = "";
     string subtype;

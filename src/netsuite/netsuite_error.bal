@@ -32,7 +32,7 @@ public const GENERAL_ERROR = "(ballerinax/netsuite)GeneralError";
 # Represents the NetSuite error type with details.
 public type GeneralError error<GENERAL_ERROR, Detail>;
 
-# Defines the possible NetSuite error types
+# Defines the possible NetSuite error types.
 public type Error GeneralError;
 
 function getError(string errMsg, error errorResponse) returns Error {
