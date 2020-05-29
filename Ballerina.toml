@@ -1,0 +1,9 @@
+[project]
+org-name= "ballerinax"
+version= "0.1.0"
+authors = ["Ballerina"]
+repository = "https://github.com/ballerina-platform/module-ballerinax-netsuite"
+keywords = ["NetSuite", "Finance", "Integration"]
+license = ["Apache-2.0"]
+
+[dependencies]

@@ -1,65 +1,39 @@
-[![Build Status](https://travis-ci.org/ballerina-platform/module-ballerinax-netsuite.svg?branch=master)](https://travis-ci.org/ballerina-platform/module-ballerinax-netsuite)
-# Ballerina NetSuite Connector
+Connects to NetSuite from Ballerina.
 
-This module allows you to access the NetSuite's SuiteTalk REST Web services API though Ballerina. NetSuite is used for 
-Enterprise Resource Planning (ERP) and to manage inventory, track their financials, host e-commerce stores, and maintain 
-Customer Relationship Management (CRM) systems. The NetSuite connector can execute CRUD (create, read, update, delete) 
-and search operations to perform business processing on NetSuite records and to navigate dynamically between records.
+## Module Overview
 
-The following sections provide you details on how to use the NetSuite connector.
-
-- [Compatibility](#compatibility)
-- [Feature Overview](#feature-overview)
-- [Getting Started](#getting-started)
-- [Samples](#samples)
+Ballerina NetSuite Connector provides the capability to create, read, update, delete, upsert, and search NetSuite 
+records to perform business processing and to navigate dynamically between records through the SuiteTalk REST Web 
+services API.
 
 ## Compatibility
+|                     |    Version     |
+|:-------------------:|:--------------:|
+| Ballerina Language  | 1.2.x          |
+| NetSuite REST API   | Beta           |
 
-|                             |           Version           |
-|:---------------------------:|:---------------------------:|
-| Ballerina Language          |            1.2.x            |
-| NetSuite REST API           |            Beta             |
+## Configurations
 
-## Feature Overview
-- A single client is used across all network operations which supports the OAuth 2.0 authentication mechanism.
-- The NetSuite module has modelled the existing standard NetSuite entities/records in to Ballerina record types with
- widely used set of fields.
-- The customized/company-specific records also can be managed by setting the `customRecordPath` optional parameter in
- each client operation.
+Instantiate the connector by giving authentication details in the NetSuite client config, which has built-in support 
+for OAuth 2.0. NetSuite uses OAuth 2.0 to authenticate and authorize requests. The NetSuite connector can be 
+instantiated minimally in the NetSuite client config using the Access Token or by using the Client ID, Client Secret, 
+and Refresh Token.
 
-## Getting Started
-
-### Prerequisites
-Download and install [Ballerina](https://ballerinalang.org/downloads/).
-
-### Pull the Module
-Execute the below command to pull the NetSuite module from Ballerina Central:
-```ballerina
-$ ballerina pull ballerinax/netsuite
-```
-## Sample
-
-Instantiate the connector by giving authentication details in the HTTP client config, which has built-in support for 
-OAuth 2.0. NetSuite uses OAuth 2.0 to authenticate and authorize requests. The NetSuite connector can be instantiated 
-in the HTTP client config using the access token or using the client ID, client secret, and refresh token.
-
-**Obtaining Tokens**
+**Obtaining Tokens to Run the Sample**
 
 1. Visit [NetSuite](https://www.netsuite.com) and create an Account.
 2. Enable the SuiteTalk Webservice features of the account (Setup->Company->Enable Features).
-3. Obtain the SuiteTalk Base URL, which contains the account ID under the company URLs (Setup->Company->Company
- Information).
+3. Obtain the SuiteTalk Base URL, which contains the account ID under the company URLs (Setup->Company->Company 
+Information).
     E.g., https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
 4. Create an integration application (Setup->Integration->New), enable OAuth 2.0 code grant and scope, and obtain the 
 following credentials: 
     * Client ID
     * Client Secret
-5. Obtain the below credentials by following the Authorization code Grant Flow in the [NetSuite documentation](https://system.na0.netsuite.com/app/help/helpcenter.nl?fid=book_1559132836.html&vid=_BLm3ruuApc_9HXr&chrole=17&ck=9Ie2K7uuApI_9PHO&cktime=175797&promocode=&promocodeaction=overwrite&sj=7bfNB5rzdVQdIKGhDJFE6knJf%3B1590725099%3B165665000). 
+5. Obtain the below credentials by following the Authorization code Grant Flow in the [NetSuite documentation](https://system.na0.netsuite.com/app/help/helpcenter.nl?fid=book_1559132836.html&vid=_BLm3ruuApc_9HXr&chrole=17&ck=9Ie2K7uuApI_9PHO&cktime=175797&promocode=&promocodeaction=overwrite&sj=7bfNB5rzdVQdIKGhDJFE6knJf%3B1590725099%3B165665000).
     * Access Token
     * Refresh Token
     * Refresh Token URL
-
-**Create the NetSuite client**
 
 ```ballerina
 // Create a NetSuite client configuration by reading from the config file.
@@ -79,9 +53,7 @@ netsuite:Configuration nsConfig = {
 netsuite:Client nsClient = new(nsConfig);
 ```
 
-**Perform NetSuite operations**
-
-The following sample shows how NetSuite `Currency` entity can be manipulated.
+## Sample
 
 ```ballerina
 import ballerina/io;
@@ -126,7 +98,7 @@ public function main() {
     currency = <netsuite:Currency> getUpdated;
     io:println("Verify the displaySymbol = " + currency["displaySymbol"].toString());
 
-    // Upsert (update if exists or otherwise create) a different currency, which is used in a third party system.
+    // Upsert (update if exists or otherwise create) a different currency, which is used in a third party system
     netsuite:Currency externalCurrency = {
         name: "British pound",
         symbol: "GBP",
