@@ -16,17 +16,25 @@
 
 import ballerina/config;
 import ballerina/log;
+import ballerina/system;
 import ballerina/test;
 
+string baseUrl = system:getEnv("NS_BASE_URL");
+string accessToken = system:getEnv("NS_ACCESS_TOKEN");
+string refreshUrl = system:getEnv("NS_REFRESH_URL");
+string refreshToken = system:getEnv("NS_REFRESH_TOKEN");
+string clientId = system:getEnv("NS_CLIENT_ID");
+string clientSecret = system:getEnv("NS_CLIENT_SECRET");
+
 Configuration nsConfig = {
-    baseUrl: config:getAsString("BASE_URL"),
+    baseUrl: baseUrl == "" ? config:getAsString("BASE_URL") : baseUrl,
     oauth2Config: {
-        accessToken: config:getAsString("ACCESS_TOKEN"),
+        accessToken: accessToken == "" ? config:getAsString("ACCESS_TOKEN") : accessToken,
         refreshConfig: {
-            refreshUrl: config:getAsString("REFRESH_URL"),
-            refreshToken: config:getAsString("REFRESH_TOKEN"),
-            clientId: config:getAsString("CLIENT_ID"),
-            clientSecret: config:getAsString("CLIENT_SECRET")
+            refreshUrl: refreshUrl == "" ? config:getAsString("REFRESH_URL") : refreshUrl,
+            refreshToken: refreshToken == "" ? config:getAsString("REFRESH_TOKEN") : refreshToken,
+            clientId: clientId == "" ? config:getAsString("CLIENT_ID") : clientId,
+            clientSecret: clientSecret == "" ? config:getAsString("CLIENT_SECRET") : clientSecret
         }
     }
 };
@@ -79,7 +87,7 @@ type TestMessage record {
     string subject;
 };
 
-//@test:Config {}
+@test:Config {}
 function testExecuteAction() {
     log:printInfo("Testing Execute action :");
 
@@ -118,21 +126,11 @@ function testExecuteAction() {
     }
 }
 
-//@test:Config {}
-function testSearchOperationWithMultipleResultPages() {
-    var res = nsClient->search(Customer, limit = 100, offset = 0);
-    if (res is error) {
-        test:assertFail(msg = "multiple result page search failed: " + res.toString());
-    } else {
-        test:assertTrue(res.length() != 0, msg = "search failed");
-    }
-}
-
-//@test:Config {}
+@test:Config {}
+// Subsidiary is a prerequisite record for the following test case
 function testCustomer() {
     log:printInfo("Testing Customer :");
 
-    // Search for mandatory field - Subsidiary
     Subsidiary? subsidiary = ();
     var recordSubsidiary = getARandomPrerequisiteRecord(Subsidiary);
     if (recordSubsidiary is Subsidiary) {
@@ -167,7 +165,7 @@ function testCustomer() {
     deleteRecordTest(<@untainted> newCustomer);
 }
 
-//@test:Config {}
+@test:Config {}
 function testCurrency() {
     log:printInfo("Testing Currency :");
 
@@ -196,7 +194,7 @@ function testCurrency() {
 }
 
 @test:Config {}
-// Customer and NonInventoryItem are prerequisites
+// Subsidiary, Customer and ServiceItem are prerequisite records for the following test case
 function testSalesOrder() {
     log:printInfo("Testing SalesOrder :");
 
@@ -246,7 +244,8 @@ function testSalesOrder() {
     deleteRecordTest(<@untainted> newSalesOrder);
 }
 
-//@test:Config {}
+@test:Config {}
+// Customer, Classification and ServiceItem are prerequisite records for the following test case
 function testInvoice() {
     log:printInfo("Testing Invoice :");
 
@@ -301,7 +300,7 @@ function testInvoice() {
     deleteRecordTest(<@untainted> newInvoice);
 }
 
-//@test:Config {}
+@test:Config {}
 function testClassification() {
     log:printInfo("Testing Classification :");
 
@@ -314,7 +313,7 @@ function testClassification() {
     deleteRecordTest(<@untainted> class);
 }
 
-//@test:Config {}
+@test:Config {}
 function testAccountingPeriod() {
     log:printInfo("Testing AccountingPeriod :");
 
@@ -329,7 +328,7 @@ function testAccountingPeriod() {
 }
 
 @test:Config { enable:false}
-// Record read operation fails due to NetSuite issue
+// Record read operation fails due to NetSuite API issue
 function testCustomerPayment() {
     log:printInfo("Testing CustomerPayment :");
 
@@ -348,7 +347,7 @@ function testCustomerPayment() {
     deleteRecordTest(<@untainted> customerPayment);
 }
 
-//@test:Config {}
+@test:Config {}
 function testAccount() {
     log:printInfo("Testing Account :");
 
@@ -371,7 +370,7 @@ function testAccount() {
                                     "updated Ballerina test account");
 }
 
-//@test:Config {}
+@test:Config {}
 function testPartner() {
     log:printInfo("Testing Partner :");
 
@@ -393,7 +392,7 @@ function testPartner() {
     deleteRecordTest(<@untainted> partner);
 }
 
-//@test:Config {}
+@test:Config {}
 function testOpportunity() {
     log:printInfo("Testing Opportunity :");
 
