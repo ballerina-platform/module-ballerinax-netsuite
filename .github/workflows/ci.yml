@@ -14,5 +14,3 @@ jobs:
               with:
                   args:
                       build -a -c --skip-tests
-              env:
-                  JAVA_OPTS: -DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true
