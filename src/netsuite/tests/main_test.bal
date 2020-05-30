@@ -16,17 +16,25 @@
 
 import ballerina/config;
 import ballerina/log;
+import ballerina/system;
 import ballerina/test;
 
+string baseUrl = system:getEnv("NS_BASE_URL");
+string accessToken = system:getEnv("NS_ACCESS_TOKEN");
+string refreshUrl = system:getEnv("NS_REFRESH_URL");
+string refreshToken = system:getEnv("NS_REFRESH_TOKEN");
+string clientId = system:getEnv("NS_CLIENT_ID");
+string clientSecret = system:getEnv("NS_CLIENT_SECRET");
+
 Configuration nsConfig = {
-    baseUrl: config:getAsString("BASE_URL"),
+    baseUrl: baseUrl == "" ? config:getAsString("BASE_URL") : baseUrl,
     oauth2Config: {
-        accessToken: config:getAsString("ACCESS_TOKEN"),
+        accessToken: accessToken == "" ? config:getAsString("ACCESS_TOKEN") : accessToken,
         refreshConfig: {
-            refreshUrl: config:getAsString("REFRESH_URL"),
-            refreshToken: config:getAsString("REFRESH_TOKEN"),
-            clientId: config:getAsString("CLIENT_ID"),
-            clientSecret: config:getAsString("CLIENT_SECRET")
+            refreshUrl: refreshUrl == "" ? config:getAsString("REFRESH_URL") : refreshUrl,
+            refreshToken: refreshToken == "" ? config:getAsString("REFRESH_TOKEN") : refreshToken,
+            clientId: clientId == "" ? config:getAsString("CLIENT_ID") : clientId,
+            clientSecret: clientSecret == "" ? config:getAsString("CLIENT_SECRET") : clientSecret
         }
     }
 };
@@ -119,20 +127,10 @@ function testExecuteAction() {
 }
 
 @test:Config {}
-function testSearchOperationWithMultipleResultPages() {
-    var res = nsClient->search(Customer, limit = 100, offset = 0);
-    if (res is error) {
-        test:assertFail(msg = "multiple result page search failed: " + res.toString());
-    } else {
-        test:assertTrue(res.length() != 0, msg = "search failed");
-    }
-}
-
-@test:Config {}
+// Subsidiary is a prerequisite record for the following test case
 function testCustomer() {
     log:printInfo("Testing Customer :");
 
-    // Search for mandatory field - Subsidiary
     Subsidiary? subsidiary = ();
     var recordSubsidiary = getARandomPrerequisiteRecord(Subsidiary);
     if (recordSubsidiary is Subsidiary) {
@@ -195,9 +193,8 @@ function testCurrency() {
     deleteRecordTest(<@untainted> newCurrency);
 }
 
-
-
 @test:Config {}
+// Subsidiary, Customer and ServiceItem are prerequisite records for the following test case
 function testSalesOrder() {
     log:printInfo("Testing SalesOrder :");
 
@@ -207,11 +204,8 @@ function testSalesOrder() {
         customer = recordCustomer;
     }
 
-    Currency? currency = ();
-    var recordCurrency = getARandomPrerequisiteRecord(Currency, "symbol IS USD");
-    if recordCurrency is Currency {
-        currency = recordCurrency;
-    }
+    Customer retrievedCustomer = <Customer> customer;
+    Currency currency = <Currency> retrievedCustomer["currency"];
 
     ItemElement serviceItem = {
         amount: 39000.0,
@@ -223,11 +217,10 @@ function testSalesOrder() {
         "itemType": "Service"
     };
 
-
     SalesOrder salesOrder = {
         billAddress: "ballerina",
-        entity: <Customer> customer,
-        currency: <Currency> currency,
+        entity: retrievedCustomer,
+        currency: currency,
         item: {
             items: [serviceItem],
             totalResults: 1
@@ -249,6 +242,7 @@ function testSalesOrder() {
 }
 
 @test:Config {}
+// Customer, Classification and ServiceItem are prerequisite records for the following test case
 function testInvoice() {
     log:printInfo("Testing Invoice :");
 
@@ -328,7 +322,7 @@ function testAccountingPeriod() {
 }
 
 @test:Config { enable:false}
-// Record read operation fails due to NetSuite issue
+// Record read operation fails due to NetSuite API issue
 function testCustomerPayment() {
     log:printInfo("Testing CustomerPayment :");
 

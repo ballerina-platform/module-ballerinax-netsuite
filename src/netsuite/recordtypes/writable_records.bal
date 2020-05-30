@@ -26,12 +26,14 @@
 # + companyName - The legal name of the customer, which is a mandatory attribute
 # + subsidiary - The associated `Subsidiary`, which is a mandatory attribute
 # + isPerson - The type of the customer whether its a company or an individual
+# + currency - The base currency used for the customer
 public type Customer record {
     *NsResource;
     string entityId;
     string companyName;
     Subsidiary subsidiary;
     boolean isPerson?;
+    Currency currency?;
 };
 
 # Represents the writable `SalesOrder` NetSuite record.
