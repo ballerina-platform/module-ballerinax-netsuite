@@ -27,6 +27,8 @@
 # + subsidiary - The associated `Subsidiary`, which is a mandatory attribute
 # + isPerson - The type of the customer whether its a company or an individual
 # + currency - The base currency used for the customer
+# + addressbook - The collection of addresses associated to the customer
+# + currencylist - The list of currecncies used by the customer
 public type Customer record {
     *NsResource;
     string entityId;
@@ -34,6 +36,8 @@ public type Customer record {
     Subsidiary subsidiary;
     boolean isPerson?;
     Currency currency?;
+    AddressbookCollection addressbook?;
+    CurrencylistCollection currencylist?;
 };
 
 # Represents the writable `SalesOrder` NetSuite record.
@@ -133,7 +137,7 @@ public type Invoice record {
 # + includechildren - Whether the classification includes sub classes or not
 # + parent - The parent classification
 # + subsidiary - The associated `Subsidiary`
-public type Classification record { //complete, all fields added
+public type Classification record {
     *NsResource;
     string name?;
     boolean isinactive?;
@@ -273,8 +277,8 @@ public type Opportunity record {
 public type Partner record {
     *NsResource;
     string entityId?;
-    string companyName;
-    Subsidiary subsidiary;
+    string companyName?;
+    Subsidiary subsidiary?;
     string partnerCode?;
     boolean isPerson?;
     string url?;
@@ -289,17 +293,26 @@ public type Partner record {
 # | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
-# + companyName - The
-# + subtype - The sub type of item
-# + itemId - The unique item id
+# + companyName - The legal name of the vendor's company, which is a mandatory attribute
+# + subsidiary - The associated `Subsidiary`
+# + entityId - The unique name of the vendor
+# + addressbook - The collection of addresses associated to the vendor
+# + balance - The balance of the vendor account
+# + currency - The base currency used by the vendor
+# + currencylist - The list of currecncies used by the vendor
+# + isinactive - Whether the record is no longer active or used in the account
+# + isPerson - The type of the vendor whether its a company or individual
+# + lastModifiedDate - The last modified date of the record
+# + workCalendar - The work schedule of the week
 public type Vendor record {
     *NsResource;
-    string companyName;
+    string companyName?;
     Subsidiary subsidiary?;
     string entityId?;
-    AddressBook addressbook?;
+    AddressbookCollection addressbook?;
     float balance?;
     Currency currency?;
+    CurrencylistCollection currencylist?;
     boolean isinactive?;
     boolean isPerson?;
     string lastModifiedDate?;
@@ -314,13 +327,16 @@ public type Vendor record {
 # | links - The HATEOAS links                  |
 # | refName - The reference name               |
 #
-# + entity - The entity such as customer, partner, ..etc that the invoice belongs to, which is a mandatory attribute
-# + item - The collection of items available in the invoice, which is a mandatory attribute
-# + class - The classification of the invoice, which is a mandatory attribute
-# + tranId - The invoice number
-# + postingperiod - The accounting period
+# + entity - The entity such as customer, partner, ..etc that the vendor bill belongs to, which is a mandatory attribute
+# + tranId - The vendor bill number, which is a mandatory attribute
+# + item - The collection of items available in the vendor bill, which is a mandatory attribute
+# + userTotal - The total amount of the vendor bill
+# + class - The classification of the vendor bill
+# + currency - The base currency used by the vendor bill
+# + subsidiary - The associated `Subsidiary`
 # + trandate - The transaciton date
-# + memo - The memo to describe the invoice
+# + postingperiod - The accounting period
+# + memo - The memo to describe the vendor bill
 public type VendorBill record {
     *NsResource;
     Entity entity;
@@ -342,44 +358,85 @@ public type VendorBill record {
 # | externalId - The external ID of the record |
 # | links - The HATEOAS links                  |
 # | refName - The reference name               |
+# | itemId - The unique item ID                |
+# | itemType - The type of item                |
+# | taxSchedule - The item tax schedule        |
+# | subsidiary - The associated `Subsidiary`   |
+# | sitecategory - The category of the item to be listed on the website |
+# | displayName - The public name to be appeared in sales forms |
+# | createdDate - The item created date in the account  |
+# | lastModifiedDate - The last modified date of the record |
+# | incomeAccount - The income account associate with the item  |
+# | isInactive - Whether the record is no longer active or used in the account  |
 #
-# + entity - The entity such as customer, partner, ..etc that the invoice belongs to, which is a mandatory attribute
-# + item - The collection of items available in the invoice, which is a mandatory attribute
-# + class - The classification of the invoice, which is a mandatory attribute
-# + tranId - The invoice number
-# + postingperiod - The accounting period
-# + trandate - The transaciton date
-# + memo - The memo to describe the invoice
+# + serviceItemType - The description of the item
+# + subtype - The sub type of the service item
+# + VSOESopGroup - The allocation type [Exclude, Normal, Software]
+# + VSOEDelivered - Whether the default as delivered
 public type ServiceItem record {
     *Item;
     string serviceItemType?;
     string subtype?;
     string VSOESopGroup?;
     boolean VSOEDelivered?;
-    NsResource productfeed?;
 };
 
 # Represents the writable `NonInventoryItem` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+# | itemId - The unique item ID                |
+# | itemType - The type of item                |
+# | taxSchedule - The item tax schedule        |
+# | subsidiary - The associated `Subsidiary`   |
+# | sitecategory - The category of the item to be listed on the website |
+# | displayName - The public name to be appeared in sales forms |
+# | createdDate - The item created date in the account  |
+# | lastModifiedDate - The last modified date of the record |
+# | incomeAccount - The income account associate with the item  |
+# | isInactive - Whether the record is no longer active or used in the account  |
 #
-# + id - The internal ID of the record
 # + subtype - The sub type of item
-# + itemId - The unique item ID
+# + isFulfillable - Whether the item can be fulfilled
+# + VSOESopGroup - The allocation type [Exclude, Normal, Software]
+# + VSOEDelivered - Whether the default as delivered
+# + nonInventoryItemType - The description of the item
+# + productfeed - The feed related to product item
 public type NonInventoryItem record {
     *Item;
-    string subtype?; //
-    boolean isFulfillable?; //
+    string subtype?;
+    boolean isFulfillable?;
     string VSOESopGroup?;
     boolean VSOEDelivered?;
     string nonInventoryItemType?;
     NsResource productfeed?;
-
 };
 
 # Represents the writable `InventoryItem` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+# | itemId - The unique item ID                |
+# | itemType - The type of item                |
+# | taxSchedule - The item tax schedule        |
+# | subsidiary - The associated `Subsidiary`   |
+# | sitecategory - The category of the item to be listed on the website |
+# | displayName - The public name to be appeared in sales forms |
+# | createdDate - The item created date in the account  |
+# | lastModifiedDate - The last modified date of the record |
+# | incomeAccount - The income account associate with the item  |
+# | isInactive - Whether the record is no longer active or used in the account  |
 #
-# + id - The internal ID of the record
-# + subtype - The sub type of item
-# + itemId - The unique item id
+# + inventoryItemType - The description of the item
+# + VSOESopGroup - The allocation type [Exclude, Normal, Software]
+# + VSOEDelivered - Whether the default as delivered
+# + productfeed - The feed related to product item
 public type InventoryItem record {
     *Item;
     string inventoryItemType?;
@@ -389,10 +446,26 @@ public type InventoryItem record {
 };
 
 # Represents the writable `InventoryItem` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+# | itemId - The unique item ID                |
+# | itemType - The type of item                |
+# | taxSchedule - The item tax schedule        |
+# | subsidiary - The associated `Subsidiary`   |
+# | sitecategory - The category of the item to be listed on the website |
+# | displayName - The public name to be appeared in sales forms |
+# | createdDate - The item created date in the account  |
+# | lastModifiedDate - The last modified date of the record |
+# | incomeAccount - The income account associate with the item  |
+# | isInactive - Whether the record is no longer active or used in the account  |
 #
-# + id - The internal ID of the record
-# + subtype - The sub type of item
-# + itemId - The unique item id
+# + otherChargeItemType - The description of the item
+# + VSOESopGroup - The allocation type [Exclude, Normal, Software]
+# + VSOEDelivered - Whether the default as delivered
 public type OtherChargeItem record {
     *Item;
     string otherChargeItemType?;
@@ -401,10 +474,28 @@ public type OtherChargeItem record {
 };
 
 # Represents the writable `InventoryItem` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+# | itemId - The unique item ID                |
+# | itemType - The type of item                |
+# | taxSchedule - The item tax schedule        |
+# | subsidiary - The associated `Subsidiary`   |
+# | sitecategory - The category of the item to be listed on the website |
+# | displayName - The public name to be appeared in sales forms |
+# | createdDate - The item created date in the account  |
+# | lastModifiedDate - The last modified date of the record |
+# | incomeAccount - The income account associate with the item  |
+# | isInactive - Whether the record is no longer active or used in the account  |
 #
-# + id - The internal ID of the record
-# + subtype - The sub type of item
-# + itemId - The unique item id
+# + shipItemType - The description of the item type
+# + description - The description of the item
+# + edition - The edition
+# + shipItemCurrency - The associated currency name
+# + omitPackaging - Whether to omit the packaging
 public type ShipItem record {
     *Item;
     string shipItemType?;
@@ -415,26 +506,55 @@ public type ShipItem record {
 };
 
 # Represents the writable `DiscountItem` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+# | itemId - The unique item ID                |
+# | itemType - The type of item                |
+# | taxSchedule - The item tax schedule        |
+# | subsidiary - The associated `Subsidiary`   |
+# | sitecategory - The category of the item to be listed on the website |
+# | displayName - The public name to be appeared in sales forms |
+# | createdDate - The item created date in the account  |
+# | lastModifiedDate - The last modified date of the record |
+# | incomeAccount - The income account associate with the item  |
+# | isInactive - Whether the record is no longer active or used in the account  |
 #
-# + id - The internal ID of the record
-# + subtype - The sub type of item
-# + itemId - The unique item id
+# + discountItemType - The description of the item type
+# + account - The associated `Account`
+# + rate - The discount rate
 public type DiscountItem record {
     *Item;
     string discountItemType?;
     Account account?;
     float rate?;
-    string description?;
-    string edition?;
-    string shipItemCurrency?;
-    boolean omitPackaging?;
 };
 
 # Represents the writable `DiscountItem` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+# | itemId - The unique item ID                |
+# | itemType - The type of item                |
+# | taxSchedule - The item tax schedule        |
+# | subsidiary - The associated `Subsidiary`   |
+# | sitecategory - The category of the item to be listed on the website |
+# | displayName - The public name to be appeared in sales forms |
+# | createdDate - The item created date in the account  |
+# | lastModifiedDate - The last modified date of the record |
+# | incomeAccount - The income account associate with the item  |
+# | isInactive - Whether the record is no longer active or used in the account  |
 #
-# + id - The internal ID of the record
-# + subtype - The sub type of item
-# + itemId - The unique item id
+# + account - The associated `Account`
+# + class - The classification of the `PaymentItem`
+# + department - The associated `Department`
+# + paymentMethod - The associated `PaymentMethod`
 public type PaymentItem record {
     *Item;
     Account account?;
@@ -444,10 +564,22 @@ public type PaymentItem record {
 };
 
 # Represents the writable `PaymentMethod` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
 #
-# + id - The internal ID of the record
-# + subtype - The sub type of item
-# + itemId - The unique item id
+# + paymentMethodType - The type of the payment method type
+# + account - The associated `Account`
+# + creditCard - Whether the method is credit card
+# + isDebitCard - Whether the method is debit card
+# + isOnline - Whether the payment to be displayed in Web Site
+# + isinactive - Whether the record is no longer active or used in the account
+# + merchantAccounts - The collection of merchant accounts
+# + name - The unique method name
+# + visuals - The collection of visuals
 public type PaymentMethod record {
     *NsResource;
     string paymentMethodType?;
@@ -456,37 +588,185 @@ public type PaymentMethod record {
     boolean isDebitCard?;
     boolean isOnline?;
     boolean isinactive?;
-    ItemCollection merchantAccounts?;
+    Collection merchantAccounts?;
     string name?;
-    ItemCollection visuals?;
+    VisualsCollection visuals?;
 };
 
 # Represents the writable `Department` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
 #
-# + id - The internal ID of the record
-# + subtype - The sub type of item
-# + itemId - The unique item id
+# + departmentType - The description of the department type
+# + includechildren - Whether to include children
+# + isinactive - Whether the record is no longer active or used in the account
+# + name - The unique department name
+# + subsidiary - The associated `Subsidiary` collection
 public type Department record {
     *NsResource;
     string departmentType?;
     boolean includechildren?;
     boolean isinactive?;
     string name?;
-    ItemCollection subsidiary?;
+    Collection subsidiary?;
 };
 
 # Represents the writable `Location` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
 #
-# + id - The internal ID of the record
-# + subtype - The sub type of item
-# + itemId - The unique item id
+# + locationType - The description of the location type
+# + isinactive - Whether the record is no longer active or used in the account
+# + name - The location name
+# + subsidiary - The associated `Subsidiary` collection
+# + timeZone - The related timezone
+# + latitude - The latitude of the location
 public type Location record {
     *NsResource;
     string locationType?;
     boolean isinactive?;
     string name?;
-    ItemCollection subsidiary?;
+    Collection subsidiary?;
     string timeZone?;
     float latitude?;
 };
 
+# Represents the writable `Contact` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+#
+# + entityId - The unique name of the Contact
+# + subsidiary - The associated `Subsidiary`
+# + addressbook - The collction of addressbook
+# + company - The associated `Entity` [customer, partner, vendor, entity, employee, contact]
+# + category - The collction of category
+# + owner - The owner id
+# + isinactive - Whether the record is no longer active or used in the account
+# + defaultAddress - The default address
+# + dateCreated - The item created date in the account
+# + lastModifiedDate - The last modified date of the record
+public type Contact record {
+    *NsResource;
+    string entityId?;
+    Subsidiary subsidiary?;
+    AddressbookCollection addressbook?;
+    Entity company?;
+    Collection category?;
+    int owner?;
+    boolean isinactive?;
+    string defaultAddress?;
+    string dateCreated?;
+    string lastModifiedDate?;
+};
+
+# Represents the writable `Employee` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+#
+# + entityId - The unique name of the `Employee`, which is a mandatory attribute
+# + subsidiary - The associated `Subsidiary`, which is a mandatory attribute
+# + currency - The associated `Currency`, which is a mandatory attribute
+# + title - The title of the `Employee`
+# + currencylist - The collction of currency list
+# + addressbook - The collction of addressbook
+# + firstName - The collction of addressbook
+# + lastName - The collction of addressbook
+# + isinactive - Whether the record is no longer active or used in the account
+# + dateCreated - The record created date in the account
+# + lastModifiedDate - The last modified date of the record
+# + email - The employee email
+# + workCalendar - The work schedule of the week
+# + defaultexpensereportcurrency - The default expense report currency
+# + class - The classification of the `PaymentItem`
+# + department - The associated `Department`
+# + location - The associated `Location`
+public type Employee record {
+    *NsResource;
+    string entityId?;
+    Subsidiary subsidiary?;
+    Currency currency?;
+    string title?;
+    CurrencylistCollection currencylist?;
+    AddressbookCollection addressbook?;
+    string firstName?;
+    string lastName?;
+    boolean isinactive?;
+    string dateCreated?;
+    string lastModifiedDate?;
+    string email?;
+    NsResource workCalendar?;
+    NsResource defaultexpensereportcurrency?;
+    Classification class?;
+    Department department?;
+    Location location?;
+};
+
+# Represents the writable `PurchaseOrder` NetSuite record.
+# |                                            |
+# |:-------------------------------------------|
+# | id - The internal ID of the record         |
+# | externalId - The external ID of the record |
+# | links - The HATEOAS links                  |
+# | refName - The reference name               |
+#
+# + entity - The associated `Entity` [customer, partner, vendor, entity, employee, contact], which is a mandatory attribute
+# + item - The collection of items available in the `PurchaseOrder`
+# + currency - The associated `Currency`
+# + currencyName - The associated `Currency` name
+# + currencysymbol - The associated `Currency` symbol
+# + employee - The associated `Employee`
+# + entityNexus - The associated entity nexus
+# + dateCreated - The record created date in the account
+# + lastModifiedDate - The last modified date of the record
+# + subsidiary - The associated `Subsidiary`
+# + shipAddress - The ship address
+# + tranId - The order number
+# + trandate - The transaciton date
+# + total - The order total
+# + class - The classification of the `PaymentItem`
+# + department - The associated `Department`
+# + location - The associated `Location`
+# + shipTo - The related `Customer`, which the order be ship to
+# + memo - The memo to describe the sales order
+# + billingaddress - The billing address
+# + shippingAddress - The shipping address
+public type PurchaseOrder record {
+    *NsResource;
+    Entity entity;
+    ItemCollection item;
+    Currency currency?;
+    string currencyName?;
+    string currencysymbol?;
+    Employee employee?;
+    NsResource entityNexus?;
+    string dateCreated?;
+    string lastModifiedDate?;
+    Subsidiary subsidiary?;
+    string shipAddress?;
+    string tranId?;
+    string trandate?;
+    float total?;
+    Classification class?;
+    Department department?;
+    Location location?;
+    Customer shipTo?;
+    string memo?;
+    BillingAddress billingaddress?;
+    ShippingAddress shippingAddress?;
+};

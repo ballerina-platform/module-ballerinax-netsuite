@@ -26,8 +26,14 @@ function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recor
         return RECORD_PATH_SALES_ORDER;
     } else if (recordTypedesc is typedesc<Subsidiary>) {
         return RECORD_PATH_SUBSIDIARY;
-    } else if (recordTypedesc is typedesc<AddressBook>) {
+    } else if (recordTypedesc is typedesc<AddressbookCollection>) {
         return RECORD_PATH_ADDRESSBOOK;
+    } else if (recordTypedesc is typedesc<AddressbookAddress>) {
+        return RECORD_PATH_ADDRESSBOOK_ADDRESS;
+    } else if (recordTypedesc is typedesc<ShippingAddress>) {
+        return RECORD_PATH_SHIPPING_ADDRESS;
+    } else if (recordTypedesc is typedesc<BillingAddress>) {
+        return RECORD_PATH_BILLING_ADDRESS;
     } else if (recordTypedesc is typedesc<Currency>) {
         return RECORD_PATH_CURRENCY;
     } else if (recordTypedesc is typedesc<NonInventoryItem>) {
@@ -70,6 +76,16 @@ function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recor
         return RECORD_PATH_DEPARTMENT;
     } else if (recordTypedesc is typedesc<Location>) {
         return RECORD_PATH_LOCATION;
+    } else if (recordTypedesc is typedesc<Contact>) {
+        return RECORD_PATH_CONTACT;
+    } else if (recordTypedesc is typedesc<VisualsCollection>) {
+        return RECORD_PATH_VISUALS;
+    } else if (recordTypedesc is typedesc<Employee>) {
+        return RECORD_PATH_EMPLOYEE;
+    } else if (recordTypedesc is typedesc<CurrencylistCollection>) {
+        return RECORD_PATH_CURRENCY_LIST;
+    } else if (recordTypedesc is typedesc<PurchaseOrder>) {
+        return RECORD_PATH_PURCHASE_ORDER;
     } else {
         return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString() +
                                    ", try defining it a custom record");
@@ -84,8 +100,14 @@ function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType rec
         return SalesOrder.constructFrom(payload);
     } else if (recordTypedesc is typedesc<Subsidiary>) {
         return Subsidiary.constructFrom(payload);
-    } else if (recordTypedesc is typedesc<AddressBook>) {
-        return AddressBook.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<AddressbookCollection>) {
+        return AddressbookCollection.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<AddressbookAddress>) {
+        return AddressbookAddress.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<ShippingAddress>) {
+        return ShippingAddress.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<BillingAddress>) {
+        return BillingAddress.constructFrom(payload);
     } else if (recordTypedesc is typedesc<Currency>) {
         return Currency.constructFrom(payload);
     } else if (recordTypedesc is typedesc<NonInventoryItem>) {
@@ -128,6 +150,16 @@ function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType rec
         return Department.constructFrom(payload);
     } else if (recordTypedesc is typedesc<Location>) {
         return Location.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<Contact>) {
+        return Contact.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<VisualsCollection>) {
+        return VisualsCollection.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<Employee>) {
+        return Employee.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<CurrencylistCollection>) {
+        return CurrencylistCollection.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<PurchaseOrder>) {
+        return PurchaseOrder.constructFrom(payload);
     } else if (recordTypedesc is typedesc<CustomRecord>) {
         return <CustomRecord> recordTypedesc.constructFrom(payload);
     } else {

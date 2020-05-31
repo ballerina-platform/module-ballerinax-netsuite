@@ -47,11 +47,12 @@ type CustomRecord record {|
 public type WritableRecord Customer|SalesOrder|Currency|NonInventoryItem|Invoice|AccountingPeriod|CustomerPayment|
                            Account|Opportunity|Partner|Classification|CustomRecord|Vendor|VendorBill|ServiceItem|
                            InventoryItem|OtherChargeItem|ShipItem|DiscountItem|PaymentItem|PaymentMethod|Department|
-                           Location;
+                           Location|Contact|Employee|PurchaseOrder;
 # The types of records that support the readable NetSuite operations such as read and search.
 public type ReadableRecord Subsidiary|WritableRecord;
 # The types of nested records that reside inside a parent record.
-public type SubRecord AddressBook|Currency|ItemCollection|AccountingPeriod|CustomRecord;
+public type SubRecord AddressbookCollection|AddressbookAddress|Currency|ItemCollection|AccountingPeriod|CustomRecord|
+                      VisualsCollection|CurrencylistCollection|ShippingAddress|BillingAddress;
 
 # The type description of records that support the writable NetSuite operations.
 public type WritableRecordType typedesc<WritableRecord>;
@@ -65,4 +66,5 @@ public type IdType INTERNAL|EXTERNAL;
 # The types of the HTTP methods that NetSuite API supports.
 public type HttpMethod GET|POST|PATCH|DELETE|PUT;
 # The types of the `ItemEntity` that are available and supported.
-public type ItemEntity ServiceItem|NonInventoryItem|InventoryItem|OtherChargeItem|ShipItem|DiscountItem|PaymentItem;
+public type ItemEntity ServiceItem|NonInventoryItem|InventoryItem|OtherChargeItem|ShipItem|DiscountItem|PaymentItem|
+                       NsResource;

@@ -94,7 +94,8 @@ function deleteRecordTest(@tainted WritableRecord recordValue, string? customPat
 
     var res = nsClient->get(recordValue.id, typeof recordValue, customRecordPath = customPath);
     if (res is Error) {
-        test:assertEquals(res.detail()["errorCode"].toString(), "NONEXISTENT_ID", msg = "record deletion failed");
+        test:assertEquals(res.detail()["errorCode"].toString(), "NONEXISTENT_ID", msg = "record deletion failed"
+                            + res.toString());
     } else {
         test:assertFail(msg = "delete operation failed: " + res.toString());
     }
