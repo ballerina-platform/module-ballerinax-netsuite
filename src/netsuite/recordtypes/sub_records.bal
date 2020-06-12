@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Represents the `Item` NetSuite sub record.
+# Represents the NetSuite sub record `Item`.
 #
 # + links - The HATEOAS record links
 # + items - The collection of items
@@ -31,7 +31,7 @@ public type ItemCollection record {
     int offset?;
 };
 
-# Represents the `Items` NetSuite sub record.
+# Represents the NetSuite sub record `Items`.
 #
 # + amount - The amount of the item
 # + item - The attributes of the item
@@ -65,11 +65,11 @@ public type AddressbookCollection record {
 #
 # + links - The HATEOAS record links
 # + addressbookaddress - The attributes of the item
-# + addressId - The string id of the address element
-# + defaultBilling - Whether the default billing address
-# + defaultShipping - Whether the default shipping address
-# + id - The id of the address element
-# + internalId - The internal id of the address element
+# + addressId - The string ID of the address element
+# + defaultBilling - Whether the value is the default billing address or not
+# + defaultShipping - Whether the value is the default shipping address or not
+# + id - The ID of the address element
+# + internalId - The internal ID of the address element
 # + label - The address label
 public type AddressElement record {
     Link[] links?;
@@ -87,20 +87,20 @@ public type AddressElement record {
 # |:------------------------------------------------------------------------------------|
 # | links - The HATEOAS record links                                                    |
 # | id - The location number                                                            |
-# | addr1 - A part of the address                                                       |
-# | addr2 - A part of the address                                                       |
-# | addr3 - A part of the address                                                       |
+# | addr1 - The first part of the address                                               |
+# | addr2 - The second part of the address                                              |
+# | addr3 - The third part of the address                                               |
 # | addrText - The complete address                                                     |
-# | addressee - The name of the entity that should appeared.                            |
+# | addressee - The name of the entity, which should appear                             |
 # | addressformat - The format of the address                                           |
 # | attention - The name of the addressed person                                        |
 # | city - The city to be used in the address                                           |
-# | state - The company's state or the province                                         |
+# | state - The company's state or province                                             |
 # | zip - The postal code                                                               |
 # | country - The country to be used in the address                                     |
-# | override - The free-form address text field is overriden by other address if true   |
+# | override - The free-form address text field is overridden by the other address if `true`   |
 #
-# + addressbookAddressType - the description of `AddressbookAddress` Type
+# + addressbookAddressType - the description of the `AddressbookAddress` type
 public type AddressbookAddress record {
     *Address;
     string addressbookAddressType?;
@@ -111,20 +111,20 @@ public type AddressbookAddress record {
 # |:------------------------------------------------------------------------------------|
 # | links - The HATEOAS record links                                                    |
 # | id - The location number                                                            |
-# | addr1 - A part of the address                                                       |
-# | addr2 - A part of the address                                                       |
-# | addr3 - A part of the address                                                       |
+# | addr1 - The first part of the address                                               |
+# | addr2 - The second part of the address                                              |
+# | addr3 - The third part of the address                                               |
 # | addrText - The complete address                                                     |
-# | addressee - The name of the entity that should appeared.                            |
+# | addressee - The name of the entity, which should appear                             |
 # | addressformat - The format of the address                                           |
 # | attention - The name of the addressed person                                        |
 # | city - The city to be used in the address                                           |
-# | state - The company's state or the province                                         |
+# | state - The company's state or province                                             |
 # | zip - The postal code                                                               |
 # | country - The country to be used in the address                                     |
-# | override - The free-form address text field is overriden by other address if true   |
+# | override - The free-form address text field is overridden by the other address if `true`   |
 #
-# + shippingAddressType - the description of `ShippingAddress` Type
+# + shippingAddressType - the description of the `ShippingAddress` type
 public type ShippingAddress record {
     *Address;
     string shippingAddressType?;
@@ -135,20 +135,20 @@ public type ShippingAddress record {
 # |:------------------------------------------------------------------------------------|
 # | links - The HATEOAS record links                                                    |
 # | id - The location number                                                            |
-# | addr1 - A part of the address                                                       |
-# | addr2 - A part of the address                                                       |
-# | addr3 - A part of the address                                                       |
+# | addr1 - The first part of the address                                               |
+# | addr2 - The second part of the address                                              |
+# | addr3 - The third part of the address                                               |
 # | addrText - The complete address                                                     |
-# | addressee - The name of the entity that should appeared.                            |
+# | addressee - The name of the entity, which should appear                             |
 # | addressformat - The format of the address                                           |
 # | attention - The name of the addressed person                                        |
 # | city - The city to be used in the address                                           |
-# | state - The company's state or the province                                         |
+# | state - The company's state or province                                             |
 # | zip - The postal code                                                               |
 # | country - The country to be used in the address                                     |
-# | override - The free-form address text field is overriden by other address if true   |
+# | override - The free-form address text field is overridden by the other address if `true`   |
 #
-# + billingaddressType - the description of `BillingAddress` Type
+# + billingaddressType - the description of the `BillingAddress` type
 public type BillingAddress record {
     *Address;
     string billingaddressType?;
@@ -157,9 +157,9 @@ public type BillingAddress record {
 # Represents the `Visuals` NetSuite sub record.
 #
 # + links - The HATEOAS record links
-# + items - The collection of VisualsElements
+# + items - The collection of `VisualsElements`
 # + totalResults - The total of the available items
-# + count - The amount of items stated in the collection out of all
+# + count - The amount of items stated in the collection out of all the items
 # + hasMore - The state of item availability
 # + offset - The starting point of the items
 public type VisualsCollection record {
@@ -187,9 +187,9 @@ public type VisualsElement record {
 # Represents the `Currencylist` NetSuite sub record.
 #
 # + links - The HATEOAS record links
-# + items - The collection of currencylist
+# + items - The collection of `Currencylist`
 # + totalResults - The total of the available items
-# + count - The amount of items stated in the collection out of all
+# + count - The amount of items stated in the collection out of all the items
 # + hasMore - The state of item availability
 # + offset - The starting point of the items
 public type CurrencylistCollection record {

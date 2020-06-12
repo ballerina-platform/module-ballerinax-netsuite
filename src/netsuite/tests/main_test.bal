@@ -451,7 +451,7 @@ function testVendor() {
 }
 
 //@test:Config {enable:false}
-//Error while accessing resource: You have entered an Invalid Field Value 159 for the following field: item
+//Error while accessing the resource: You have entered an invalid field value 159 for the following field: item
 function testVendorBill() {
     log:printInfo("Testing Vendor Bill :");
 
@@ -553,7 +553,7 @@ function testDepartment() {
 }
 
 @test:Config {enable:false}
-// Record delete operation fails due to NetSuite API issue
+// Record delete operation fails due to a NetSuite API issue.
 function testPaymentMethod() {
     log:printInfo("Testing PaymentMethod :");
 
@@ -593,7 +593,7 @@ function testEmployee() {
 }
 
 @test:Config {enable:false}
-//Error while accessing resource: You have entered an Invalid Field Value 159 for the following field: item
+//Error while accessing the resource: You have entered an invalid field value 159 for the following field: item
 function testPurchaseOrder() {
     log:printInfo("Testing PurchaseOrder :");
 

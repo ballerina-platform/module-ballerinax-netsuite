@@ -47,7 +47,7 @@ public type Link record {
     string href = "";
 };
 
-# Represents the commont fields of service, inventory item NetSuite records.
+# Represents the common fields of the `service` and `inventory item` NetSuite records.
 # |                                            |
 # |:-------------------------------------------|
 # | id - The internal ID of the record         |
@@ -56,14 +56,14 @@ public type Link record {
 # | refName - The reference name               |
 #
 # + itemId - The unique item ID
-# + itemType - The type of item
-# + taxSchedule - The item tax schedule
+# + itemType - The type of the item
+# + taxSchedule - The tax schedule of the item
 # + subsidiary - The associated `Subsidiary`
 # + sitecategory - The category of the item to be listed on the website
-# + displayName - The public name to be appeared in sales forms
-# + createdDate - The item created date in the account
+# + displayName - The public name to be appeared in the sales forms
+# + createdDate - The date on when the item was created in the account
 # + lastModifiedDate - The last modified date of the record
-# + incomeAccount - The income account associate with the item
+# + incomeAccount - The income account associated with the item
 # + isInactive - Whether the record is no longer active or used in the account
 type Item record {
     *NsResource;
@@ -83,8 +83,8 @@ type Item record {
 #
 # + links - The HATEOAS record links
 # + items - The collection of items
-# + totalResults - The total of available items
-# + count - The amount of items stated in the collection out of all
+# + totalResults - The total of the available items
+# + count - The amount of items stated in the collection out of all the items
 # + hasMore - The state of item availability
 # + offset - The starting point of the items
 public type Collection record {
@@ -100,18 +100,18 @@ public type Collection record {
 #
 # + links - The HATEOAS record links
 # + id - The location number
-# + addr1 - A part of the address
-# + addr2 - A part of the address
-# + addr3 - A part of the address
+# + addr1 - The first part of the address
+# + addr2 - The second part of the address
+# + addr3 - The third part of the address
 # + addrText - The complete address
-# + addressee - The name of the entity that should appeared.
+# + addressee - The name of the entity, which should appear
 # + addressformat - The format of the address
 # + attention - The name of the addressed person
 # + city - The city to be used in the address
-# + state - The company's state or the province
+# + state - The company's state or province
 # + zip - The postal code
 # + country - The country to be used in the address
-# + override - The free-form address text field is overriden by other address if true
+# + override - The free-form address text field is overridden by the other address if `true`
 type Address record {
     Link[] links?;
     int id?;

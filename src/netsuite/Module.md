@@ -102,7 +102,7 @@ public function main() {
     io:println("Verify the displaySymbol = " + currency["displaySymbol"].toString());
 
 
-    // Upsert (update if exists or otherwise create) a different currency, which is used in a third party system
+    // Upsert (update if exists or otherwise create) a different currency, which is used in a third party system.
     netsuite:Currency externalCurrency = {
         name: "British pound",
         symbol: "GBP",
