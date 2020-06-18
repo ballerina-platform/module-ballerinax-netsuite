@@ -38,7 +38,8 @@ public type Client client object {
             timeoutInMillis: netsuiteConfig.timeoutInMillis,
             retryConfig: netsuiteConfig?.retryConfig,
             http1Settings: {
-                keepAlive: http:KEEPALIVE_NEVER
+                keepAlive: http:KEEPALIVE_NEVER,
+                proxy: netsuiteConfig?.proxy
             }
         };
 
@@ -373,13 +374,13 @@ function searchRecord(http:Client nsClient, ReadableRecordType targetType, strin
     }
 
     Collection listOfItem = <Collection> convetResult;
-    if (listOfItem.totalResults == 0) {
+    if (<int> listOfItem["totalResults"] == 0) {
         return [collection, false];
     }
 
-    NsResource[] items = listOfItem.items;
-    foreach NsResource item in listOfItem.items {
+    NsResource[] items = <NsResource[]> listOfItem["items"];
+    foreach NsResource item in items {
         collection.push(item.id);
     }
-    return [collection, listOfItem.hasMore];
+    return [collection, <boolean> listOfItem["hasMore"]];
 }

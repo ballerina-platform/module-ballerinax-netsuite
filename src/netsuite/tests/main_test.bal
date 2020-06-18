@@ -159,7 +159,7 @@ function testCustomer() {
     newCustomer = <Customer> upsertAPartOfARecord(<@untained> newCustomer, { "creditLimit": 13521.0 }, "16835EID",
                                                     "creditLimit", "13521.0");
 
-    subRecordTest(<@untainted> customer, AddressBook, "totalResults", "0");
+    subRecordTest(<@untainted> customer, AddressbookCollection, "totalResults", "0");
 
     deleteRecordTest(<@untainted> customer);
     deleteRecordTest(<@untainted> newCustomer);
@@ -207,14 +207,17 @@ function testSalesOrder() {
     Customer retrievedCustomer = <Customer> customer;
     Currency currency = <Currency> retrievedCustomer["currency"];
 
+    NonInventoryItem? nonInventoryItem = ();
+    var recordNonInventoryItem = getARandomPrerequisiteRecord(NonInventoryItem);
+    if recordNonInventoryItem is NonInventoryItem {
+        nonInventoryItem = recordNonInventoryItem;
+    }
+
     ItemElement serviceItem = {
         amount: 39000.0,
-        item: {
-            "id": "21",
-            "refName": "Development Services"
-        },
-        "itemSubType": "Sale",
-        "itemType": "Service"
+        item: <NonInventoryItem> nonInventoryItem,
+        itemSubType: "Sale",
+        itemType: "NonInvtPart"
     };
 
     SalesOrder salesOrder = {
@@ -257,14 +260,17 @@ function testInvoice() {
         class = recordClassification;
     }
 
+    NonInventoryItem? nonInventoryItem = ();
+    var recordNonInventoryItem = getARandomPrerequisiteRecord(NonInventoryItem);
+    if recordNonInventoryItem is NonInventoryItem {
+        nonInventoryItem = recordNonInventoryItem;
+    }
+
     ItemElement serviceItem = {
         amount: 39000.0,
-        item: {
-            "id": "21",
-            "refName": "Development Services"
-        },
-        "itemSubType": "Sale",
-        "itemType": "Service"
+        item: <NonInventoryItem> nonInventoryItem,
+        itemSubType: "Sale",
+        itemType: "NonInvtPart"
     };
 
     Invoice invoice = {
@@ -380,7 +386,6 @@ function testPartner() {
         entityId: "Ballerina test partner",
         companyName: "ballerinalang",
         subsidiary: <Subsidiary> subsidiary
-
     };
     string createdId = createOrSearchIfExist(partner, "companyName IS ballerinalang");
     partner = <Partner> readRecord(<@untained> createdId, Partner);
@@ -419,4 +424,218 @@ function testOpportunity() {
     string createdId = createOrSearchIfExist(opportunity, "titile IS Ballerina test opportunity");
     opportunity = <Opportunity> readRecord(<@untained> createdId, Opportunity);
     deleteRecordTest(<@untainted> opportunity);
+}
+
+@test:Config {}
+function testVendor() {
+    log:printInfo("Testing Vendor :");
+
+    readExistingRecord(Vendor);
+
+    Subsidiary? subsidiary = ();
+    var recordSubsidiary = getARandomPrerequisiteRecord(Subsidiary);
+    if recordSubsidiary is Subsidiary {
+        subsidiary = recordSubsidiary;
+    }
+
+    Vendor vendor = {
+        entityId: "Ballerina test vendor",
+        companyName: "ballerinalang",
+        subsidiary: <Subsidiary> subsidiary
+    };
+
+    string createdId = createOrSearchIfExist(vendor, "companyName IS ballerinalang");
+    vendor = <Vendor> readRecord(<@untained> createdId, Vendor);
+    updateAPartOfARecord(vendor, { "entityId": "updated ballerina vendor" }, "entityId", "updated ballerina vendor");
+    deleteRecordTest(<@untainted> vendor);
+}
+
+//@test:Config {enable:false}
+//Error while accessing the resource: You have entered an invalid field value 159 for the following field: item
+function testVendorBill() {
+    log:printInfo("Testing Vendor Bill :");
+
+    readExistingRecord(VendorBill);
+
+    Vendor? vendor = ();
+    var recordVendor = getARandomPrerequisiteRecord(Vendor);
+    if recordVendor is Vendor {
+        vendor = recordVendor;
+    }
+
+    Classification? class = ();
+    var recordClassification = getARandomPrerequisiteRecord(Classification);
+    if recordClassification is Classification {
+        class = recordClassification;
+    }
+
+    NonInventoryItem? nonInventoryItem = ();
+    var recordNonInventoryItem = getARandomPrerequisiteRecord(NonInventoryItem);
+    if recordNonInventoryItem is NonInventoryItem {
+        nonInventoryItem = recordNonInventoryItem;
+    }
+
+    ItemElement serviceItem = {
+        amount: 39000.0,
+        item: <NonInventoryItem> nonInventoryItem,
+        itemSubType: "Sale",
+        itemType: "NonInvtPart"
+    };
+
+    VendorBill vendorBill = {
+        entity: <Vendor> vendor,
+        tranId: "100102894",
+        item: {
+            items: [serviceItem],
+            totalResults: 1
+        },
+        class: <Classification> class,
+        memo: "ballerina test"
+    };
+
+    string createdId = createOrSearchIfExist(vendorBill, "memo IS \"ballerina test\"");
+    vendorBill = <VendorBill> readRecord(<@untained> createdId, VendorBill);
+    deleteRecordTest(<@untainted> vendorBill);
+}
+
+@test:Config {}
+function testVendorBillRead() {
+    log:printInfo("Testing Vendor Bill read :");
+
+    readExistingRecord(VendorBill);
+}
+
+@test:Config {}
+function testContact() {
+    log:printInfo("Testing Contact :");
+
+    readExistingRecord(Contact);
+
+    Subsidiary? subsidiary = ();
+    var recordSubsidiary = getARandomPrerequisiteRecord(Subsidiary);
+    if recordSubsidiary is Subsidiary {
+        subsidiary = recordSubsidiary;
+    }
+
+    Contact contact = {
+        entityId: "Ballerina test contact",
+        subsidiary: <Subsidiary> subsidiary
+    };
+    string createdId = createOrSearchIfExist(contact, "entityId IS \"Ballerina test contact\"");
+    contact = <Contact> readRecord(<@untained> createdId, Contact);
+    deleteRecordTest(<@untainted> contact);
+}
+
+@test:Config {}
+function testLocation() {
+    log:printInfo("Testing Location :");
+
+    readExistingRecord(Location);
+    Location location = {
+        name: "Ballerina test location"
+    };
+    string createdId = createOrSearchIfExist(location, "name IS \"Ballerina test location\"");
+    location = <Location> readRecord(<@untained> createdId, Location);
+    deleteRecordTest(<@untainted> location);
+}
+
+@test:Config {}
+function testDepartment() {
+    log:printInfo("Testing Department :");
+
+    readExistingRecord(Department);
+    Department department = {
+        name: "Ballerina test department"
+    };
+    string createdId = createOrSearchIfExist(department, "name IS \"Ballerina test department\"");
+    department = <Department> readRecord(<@untained> createdId, Department);
+    deleteRecordTest(<@untainted> department);
+}
+
+@test:Config {enable:false}
+// Record delete operation fails due to a NetSuite API issue.
+function testPaymentMethod() {
+    log:printInfo("Testing PaymentMethod :");
+
+    readExistingRecord(PaymentMethod);
+    PaymentMethod paymentMethod = {
+        name: "Ballerina test paymentMethod"
+    };
+    string createdId = createOrSearchIfExist(paymentMethod, "name IS \"Ballerina test paymentMethod\"");
+    paymentMethod = <PaymentMethod> readRecord(<@untained> createdId, PaymentMethod);
+    deleteRecordTest(<@untainted> paymentMethod);
+}
+
+@test:Config {}
+function testEmployee() {
+    log:printInfo("Testing Employee :");
+
+    readExistingRecord(Employee);
+
+    Subsidiary? subsidiary = ();
+    var recordSubsidiary = getARandomPrerequisiteRecord(Subsidiary);
+    if recordSubsidiary is Subsidiary {
+        subsidiary = recordSubsidiary;
+    }
+
+    Subsidiary retrievedSubsidiary = <Subsidiary> subsidiary;
+    Currency currency = <Currency> retrievedSubsidiary["currency"];
+
+
+    Employee employee = {
+        entityId: "Ballerina test employee",
+        subsidiary: retrievedSubsidiary,
+        currency: currency
+    };
+    string createdId = createOrSearchIfExist(employee, "entityId IS \"Ballerina test employee\"");
+    employee = <Employee> readRecord(<@untained> createdId, Employee);
+    deleteRecordTest(<@untainted> employee);
+}
+
+@test:Config {enable:false}
+//Error while accessing the resource: You have entered an invalid field value 159 for the following field: item
+function testPurchaseOrder() {
+    log:printInfo("Testing PurchaseOrder :");
+
+    readExistingRecord(PurchaseOrder);
+
+    Customer? customer = ();
+    var recordCustomer = getARandomPrerequisiteRecord(Customer);
+    if recordCustomer is Customer {
+        customer = recordCustomer;
+    }
+
+    Customer retrievedCustomer = <Customer> customer;
+
+    NonInventoryItem? nonInventoryItem = ();
+    var recordNonInventoryItem = getARandomPrerequisiteRecord(NonInventoryItem);
+    if recordNonInventoryItem is NonInventoryItem {
+        nonInventoryItem = recordNonInventoryItem;
+    }
+
+    ItemElement serviceElement = {
+        amount: 39000.0,
+        item: <NonInventoryItem> nonInventoryItem,
+        itemSubType: "Sale",
+        itemType: "NonInvtPart"
+    };
+
+    PurchaseOrder purchaseOrder = {
+        entity: retrievedCustomer,
+        item: {
+            items: [serviceElement]
+        },
+        memo: "Ballerina test purchaseOrder"
+    };
+
+    string createdId = createOrSearchIfExist(purchaseOrder, "memo IS \"Ballerina test location\"");
+    purchaseOrder = <PurchaseOrder> readRecord(<@untained> createdId, PurchaseOrder);
+    deleteRecordTest(<@untainted> purchaseOrder);
+}
+
+@test:Config {}
+function testPurchaseOrderRead() {
+    log:printInfo("Testing PurchaseOrder read:");
+
+    readExistingRecord(PurchaseOrder);
 }

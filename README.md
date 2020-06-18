@@ -103,6 +103,7 @@ public function main() {
     string id = <string> created;
     io:println("Currency ID = " + id);
 
+
     // Confirm the record creation.
     netsuite:ReadableRecord|netsuite:Error retrieved = nsClient->get(<@untainted> id, netsuite:Currency);
     if (retrieved is netsuite:Error) {
@@ -111,12 +112,14 @@ public function main() {
     currency = <netsuite:Currency> retrieved;
     io:println("Verify the name = " + currency["name"].toString());
 
+
     // Update the currency record with the `displaySymbol`.
     json symbol = { displaySymbol: "$" };
     string|netsuite:Error updated = nsClient->update(<@untainted> currency, symbol);
     if updated is netsuite:Error {
         io:println("Error: " + updated.detail()?.message.toString());
     }
+
 
     // Check the NetSuite currency record and confirm the update.
     netsuite:ReadableRecord|netsuite:Error getUpdated = nsClient->get(<@untainted> currency.id, netsuite:Currency);
@@ -125,6 +128,7 @@ public function main() {
     }
     currency = <netsuite:Currency> getUpdated;
     io:println("Verify the displaySymbol = " + currency["displaySymbol"].toString());
+
 
     // Upsert (update if exists or otherwise create) a different currency, which is used in a third party system.
     netsuite:Currency externalCurrency = {
@@ -141,6 +145,7 @@ public function main() {
     string exId = <string> upserted;
     io:println("External currency ID = " + exId);
 
+
     // Confirm the upsertion.
     netsuite:ReadableRecord|netsuite:Error getUpserted = nsClient->get(<@untainted> exId, netsuite:Currency);
     if (getUpserted is netsuite:Error) {
@@ -148,6 +153,7 @@ public function main() {
     }
     externalCurrency = <netsuite:Currency> getUpserted;
     io:println("Verify the upserted name = " + externalCurrency["name"].toString());
+
 
     // Search for some other popular currency in the account using a filter.
     [string[], boolean]|netsuite:Error result = nsClient->search(netsuite:Currency, "symbol IS LKR");
@@ -161,6 +167,7 @@ public function main() {
             io:println("LKR currency ID = " + idArr[0]);
         }
     }
+
 
     // Delete the inserted records.
     netsuite:Error? deletedCurrency = nsClient->delete(<@untainted> currency);

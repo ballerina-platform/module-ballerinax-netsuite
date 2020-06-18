@@ -26,14 +26,22 @@ function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recor
         return RECORD_PATH_SALES_ORDER;
     } else if (recordTypedesc is typedesc<Subsidiary>) {
         return RECORD_PATH_SUBSIDIARY;
-    } else if (recordTypedesc is typedesc<AddressBook>) {
+    } else if (recordTypedesc is typedesc<AddressbookCollection>) {
         return RECORD_PATH_ADDRESSBOOK;
+    } else if (recordTypedesc is typedesc<AddressbookAddress>) {
+        return RECORD_PATH_ADDRESSBOOK_ADDRESS;
+    } else if (recordTypedesc is typedesc<ShippingAddress>) {
+        return RECORD_PATH_SHIPPING_ADDRESS;
+    } else if (recordTypedesc is typedesc<BillingAddress>) {
+        return RECORD_PATH_BILLING_ADDRESS;
     } else if (recordTypedesc is typedesc<Currency>) {
         return RECORD_PATH_CURRENCY;
     } else if (recordTypedesc is typedesc<NonInventoryItem>) {
         return RECORD_PATH_NON_INVENTORY_ITEM;
     } else if (recordTypedesc is typedesc<ItemCollection>) {
         return RECORD_PATH_ITEM_COLLECTION;
+    } else if (recordTypedesc is typedesc<VendorBill>) { // VendorBill should come before Invoice
+        return RECORD_PATH_VENDOR_BILL;
     } else if (recordTypedesc is typedesc<Invoice>) {
         return RECORD_PATH_INVOICE;
     } else if (recordTypedesc is typedesc<AccountingPeriod>) {
@@ -48,9 +56,39 @@ function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recor
         return RECORD_PATH_PARTNER;
     } else if (recordTypedesc is typedesc<Classification>) {
         return RECORD_PATH_CLASSIFICATION;
+    } else if (recordTypedesc is typedesc<Vendor>) {
+        return RECORD_PATH_VENDOR;
+    } else if (recordTypedesc is typedesc<ServiceItem>) {
+        return RECORD_PATH_SERVICE_ITEM;
+    } else if (recordTypedesc is typedesc<InventoryItem>) {
+        return RECORD_PATH_INVENTORY_ITEM;
+    } else if (recordTypedesc is typedesc<OtherChargeItem>) {
+        return RECORD_PATH_OTHER_CHARGE_ITEM;
+    } else if (recordTypedesc is typedesc<ShipItem>) {
+        return RECORD_PATH_SHIP_ITEM;
+    } else if (recordTypedesc is typedesc<DiscountItem>) {
+        return RECORD_PATH_DISCOUNT_ITEM;
+    } else if (recordTypedesc is typedesc<PaymentItem>) {
+        return RECORD_PATH_PAYMENT_ITEM;
+    } else if (recordTypedesc is typedesc<PaymentMethod>) {
+        return RECORD_PATH_PAYMENT_METHOD;
+    } else if (recordTypedesc is typedesc<Department>) {
+        return RECORD_PATH_DEPARTMENT;
+    } else if (recordTypedesc is typedesc<Location>) {
+        return RECORD_PATH_LOCATION;
+    } else if (recordTypedesc is typedesc<Contact>) {
+        return RECORD_PATH_CONTACT;
+    } else if (recordTypedesc is typedesc<VisualsCollection>) {
+        return RECORD_PATH_VISUALS;
+    } else if (recordTypedesc is typedesc<Employee>) {
+        return RECORD_PATH_EMPLOYEE;
+    } else if (recordTypedesc is typedesc<CurrencylistCollection>) {
+        return RECORD_PATH_CURRENCY_LIST;
+    } else if (recordTypedesc is typedesc<PurchaseOrder>) {
+        return RECORD_PATH_PURCHASE_ORDER;
     } else {
         return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString() +
-                                   ", try implementing as a custom record");
+                                   ", try defining it a custom record");
     }
 }
 
@@ -62,14 +100,22 @@ function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType rec
         return SalesOrder.constructFrom(payload);
     } else if (recordTypedesc is typedesc<Subsidiary>) {
         return Subsidiary.constructFrom(payload);
-    } else if (recordTypedesc is typedesc<AddressBook>) {
-        return AddressBook.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<AddressbookCollection>) {
+        return AddressbookCollection.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<AddressbookAddress>) {
+        return AddressbookAddress.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<ShippingAddress>) {
+        return ShippingAddress.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<BillingAddress>) {
+        return BillingAddress.constructFrom(payload);
     } else if (recordTypedesc is typedesc<Currency>) {
         return Currency.constructFrom(payload);
     } else if (recordTypedesc is typedesc<NonInventoryItem>) {
         return NonInventoryItem.constructFrom(payload);
     } else if (recordTypedesc is typedesc<ItemCollection>) {
         return ItemCollection.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<VendorBill>) { // VendorBill should come before Invoice
+        return VendorBill.constructFrom(payload);
     } else if (recordTypedesc is typedesc<Invoice>) {
         return Invoice.constructFrom(payload);
     } else if (recordTypedesc is typedesc<AccountingPeriod>) {
@@ -84,11 +130,41 @@ function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType rec
         return Partner.constructFrom(payload);
     } else if (recordTypedesc is typedesc<Classification>) {
         return Classification.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<Vendor>) {
+        return Vendor.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<ServiceItem>) {
+        return ServiceItem.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<InventoryItem>) {
+        return InventoryItem.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<OtherChargeItem>) {
+        return OtherChargeItem.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<ShipItem>) {
+        return ShipItem.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<DiscountItem>) {
+        return DiscountItem.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<PaymentItem>) {
+        return PaymentItem.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<PaymentMethod>) {
+        return PaymentMethod.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<Department>) {
+        return Department.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<Location>) {
+        return Location.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<Contact>) {
+        return Contact.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<VisualsCollection>) {
+        return VisualsCollection.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<Employee>) {
+        return Employee.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<CurrencylistCollection>) {
+        return CurrencylistCollection.constructFrom(payload);
+    } else if (recordTypedesc is typedesc<PurchaseOrder>) {
+        return PurchaseOrder.constructFrom(payload);
     } else if (recordTypedesc is typedesc<CustomRecord>) {
         return <CustomRecord> recordTypedesc.constructFrom(payload);
     } else {
         return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString() +
-                                   ", try implementing as a custom record");
+                                   ", try defining it as a custom record");
     }
 }
 

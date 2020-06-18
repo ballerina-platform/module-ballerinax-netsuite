@@ -22,6 +22,7 @@ function createOrSearchIfExist(@tainted WritableRecord recordValue, string? filt
     log:printInfo("Creating...");
     var created = nsClient->create(<@untained> recordValue, customPath);
     if (created is Error) {
+        log:printInfo(created.toString());
         log:printInfo("Search...");
         return searchForRecord(recordValue, filter, customPath);
     } else {
@@ -38,6 +39,10 @@ function searchForRecord(@tainted WritableRecord recordValue, string? filter = (
         return "";
     } else {
         var [id, hasMore] = searched;
+        if (id.length() == 0) {
+            test:assertFail(msg = "no results found");
+            return "";
+        }
         test:assertTrue(id[0] != "", msg = "record search failed");
         return id[0];
     }
@@ -89,7 +94,8 @@ function deleteRecordTest(@tainted WritableRecord recordValue, string? customPat
 
     var res = nsClient->get(recordValue.id, typeof recordValue, customRecordPath = customPath);
     if (res is Error) {
-        test:assertEquals(res.detail()["errorCode"].toString(), "NONEXISTENT_ID", msg = "record deletion failed");
+        test:assertEquals(res.detail()["errorCode"].toString(), "NONEXISTENT_ID", msg = "record deletion failed"
+                            + res.toString());
     } else {
         test:assertFail(msg = "delete operation failed: " + res.toString());
     }
@@ -168,6 +174,10 @@ function getARandomPrerequisiteRecord(ReadableRecordType recordType, public stri
     }
 
     var [ids, hasMore] = <[string[], boolean]> lists;
+    if (ids.length() == 0) {
+        test:assertFail(msg = "test cannot be proceeded without prerequisite '" + recordName + "': no results found");
+    }
+
     ReadableRecord|Error getResult = nsClient->get(<@untained> ids[0], recordType);
     if (getResult is Error) {
         test:assertFail(msg = "test cannot be proceeded without prerequisite '" + recordName + "':"
@@ -203,9 +213,12 @@ function getDummyCustomer() returns @tainted Customer? {
     if (created is Error) {
         var searched = nsClient->search(<@untainted>typeof customer, "entityId IS \"Ballerina Dummy Customer\"");
         if (searched is Error) {
-            test:assertFail(msg = "test cannot be proceeded without prerequisite 'customer':" + created.toString());
+            test:assertFail(msg = "test cannot be proceeded without prerequisite 'customer': " + created.toString());
         } else {
             var [ids, hasMore] = <[string[], boolean]> searched;
+            if (ids.length() == 0) {
+                test:assertFail(msg = "test cannot be proceeded without prerequisite 'customer': no results found");
+            }
             return <Customer> readRecord(<@untained> ids[0], Customer);
         }
     }
