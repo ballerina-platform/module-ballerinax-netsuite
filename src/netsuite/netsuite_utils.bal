@@ -87,7 +87,7 @@ function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recor
     } else if (recordTypedesc is typedesc<PurchaseOrder>) {
         return RECORD_PATH_PURCHASE_ORDER;
     } else {
-        return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString() +
+        return Error("operation not implemented for " + recordTypedesc.toString() +
                                    ", try defining it a custom record");
     }
 }
@@ -95,75 +95,75 @@ function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recor
 function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc, json payload)
                          returns ReadableRecord|WritableRecord|SubRecord|error {
     if (recordTypedesc is typedesc<Customer>) {
-        return Customer.constructFrom(payload);
+        return payload.cloneWithType(Customer);
     } else if (recordTypedesc is typedesc<SalesOrder>) {
-        return SalesOrder.constructFrom(payload);
+        return payload.cloneWithType(SalesOrder);
     } else if (recordTypedesc is typedesc<Subsidiary>) {
-        return Subsidiary.constructFrom(payload);
+        return payload.cloneWithType(Subsidiary);
     } else if (recordTypedesc is typedesc<AddressbookCollection>) {
-        return AddressbookCollection.constructFrom(payload);
+        return payload.cloneWithType(AddressbookCollection);
     } else if (recordTypedesc is typedesc<AddressbookAddress>) {
-        return AddressbookAddress.constructFrom(payload);
+        return payload.cloneWithType(AddressbookAddress);
     } else if (recordTypedesc is typedesc<ShippingAddress>) {
-        return ShippingAddress.constructFrom(payload);
+        return payload.cloneWithType(ShippingAddress);
     } else if (recordTypedesc is typedesc<BillingAddress>) {
-        return BillingAddress.constructFrom(payload);
+        return payload.cloneWithType(BillingAddress);
     } else if (recordTypedesc is typedesc<Currency>) {
-        return Currency.constructFrom(payload);
+        return payload.cloneWithType(Currency);
     } else if (recordTypedesc is typedesc<NonInventoryItem>) {
-        return NonInventoryItem.constructFrom(payload);
+        return payload.cloneWithType(NonInventoryItem);
     } else if (recordTypedesc is typedesc<ItemCollection>) {
-        return ItemCollection.constructFrom(payload);
+        return payload.cloneWithType(ItemCollection);
     } else if (recordTypedesc is typedesc<VendorBill>) { // VendorBill should come before Invoice
-        return VendorBill.constructFrom(payload);
+        return payload.cloneWithType(VendorBill);
     } else if (recordTypedesc is typedesc<Invoice>) {
-        return Invoice.constructFrom(payload);
+        return payload.cloneWithType(Invoice);
     } else if (recordTypedesc is typedesc<AccountingPeriod>) {
-        return AccountingPeriod.constructFrom(payload);
+        return payload.cloneWithType(AccountingPeriod);
     } else if (recordTypedesc is typedesc<CustomerPayment>) {
-        return CustomerPayment.constructFrom(payload);
+        return payload.cloneWithType(CustomerPayment);
     } else if (recordTypedesc is typedesc<Account>) {
-        return Account.constructFrom(payload);
+        return payload.cloneWithType(Account);
     } else if (recordTypedesc is typedesc<Opportunity>) {
-        return Opportunity.constructFrom(payload);
+        return payload.cloneWithType(Opportunity);
     } else if (recordTypedesc is typedesc<Partner>) {
-        return Partner.constructFrom(payload);
+        return payload.cloneWithType(Partner);
     } else if (recordTypedesc is typedesc<Classification>) {
-        return Classification.constructFrom(payload);
+        return payload.cloneWithType(Classification);
     } else if (recordTypedesc is typedesc<Vendor>) {
-        return Vendor.constructFrom(payload);
+        return payload.cloneWithType(Vendor);
     } else if (recordTypedesc is typedesc<ServiceItem>) {
-        return ServiceItem.constructFrom(payload);
+        return payload.cloneWithType(ServiceItem);
     } else if (recordTypedesc is typedesc<InventoryItem>) {
-        return InventoryItem.constructFrom(payload);
+        return payload.cloneWithType(InventoryItem);
     } else if (recordTypedesc is typedesc<OtherChargeItem>) {
-        return OtherChargeItem.constructFrom(payload);
+        return payload.cloneWithType(OtherChargeItem);
     } else if (recordTypedesc is typedesc<ShipItem>) {
-        return ShipItem.constructFrom(payload);
+        return payload.cloneWithType(ShipItem);
     } else if (recordTypedesc is typedesc<DiscountItem>) {
-        return DiscountItem.constructFrom(payload);
+        return payload.cloneWithType(DiscountItem);
     } else if (recordTypedesc is typedesc<PaymentItem>) {
-        return PaymentItem.constructFrom(payload);
+        return payload.cloneWithType(PaymentItem);
     } else if (recordTypedesc is typedesc<PaymentMethod>) {
-        return PaymentMethod.constructFrom(payload);
+        return payload.cloneWithType(PaymentMethod);
     } else if (recordTypedesc is typedesc<Department>) {
-        return Department.constructFrom(payload);
+        return payload.cloneWithType(Department);
     } else if (recordTypedesc is typedesc<Location>) {
-        return Location.constructFrom(payload);
+        return payload.cloneWithType(Location);
     } else if (recordTypedesc is typedesc<Contact>) {
-        return Contact.constructFrom(payload);
+        return payload.cloneWithType(Contact);
     } else if (recordTypedesc is typedesc<VisualsCollection>) {
-        return VisualsCollection.constructFrom(payload);
+        return payload.cloneWithType(VisualsCollection);
     } else if (recordTypedesc is typedesc<Employee>) {
-        return Employee.constructFrom(payload);
+        return payload.cloneWithType(Employee);
     } else if (recordTypedesc is typedesc<CurrencylistCollection>) {
-        return CurrencylistCollection.constructFrom(payload);
+        return payload.cloneWithType(CurrencylistCollection);
     } else if (recordTypedesc is typedesc<PurchaseOrder>) {
-        return PurchaseOrder.constructFrom(payload);
+        return payload.cloneWithType(PurchaseOrder);
     } else if (recordTypedesc is typedesc<CustomRecord>) {
-        return <CustomRecord> recordTypedesc.constructFrom(payload);
+        return <CustomRecord> payload.cloneWithType(recordTypedesc);
     } else {
-        return getErrorFromMessage("operation not implemented for " + recordTypedesc.toString() +
+        return Error("operation not implemented for " + recordTypedesc.toString() +
                                    ", try defining it as a custom record");
     }
 }
@@ -171,7 +171,7 @@ function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType rec
 function getJsonPayload(http:Client nsclient, string resourcePath, string recordName) returns @tainted json|Error {
     http:Response|error result = nsclient->get(resourcePath);
     if (result is error) {
-        return getError("'" + recordName + "' record retrival request failed", result);
+        return Error("'" + recordName + "' record retrival request failed", result);
     }
     return processJson(<http:Response> result, recordName);
 }
@@ -180,10 +180,10 @@ function processJson(http:Response response, string? recordName = ()) returns @t
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
         string identifier = recordName is () ? "JSON payload" : "'" + recordName + "' record";
-        return getError(identifier + " retrieval failed: Invalid payload", responsePayload);
+        return Error(identifier + " retrieval failed: Invalid payload", responsePayload);
     } else {
         if (isErrorResponse(response)) {
-            return getErrorFromPayload(<map<json>> responsePayload);
+            return createErrorFromPayload(<map<json>> responsePayload);
         }
         return responsePayload;
     }

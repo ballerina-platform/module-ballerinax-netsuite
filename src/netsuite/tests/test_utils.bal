@@ -20,7 +20,7 @@ import ballerina/test;
 function createOrSearchIfExist(@tainted WritableRecord recordValue, string? filter = (), string? customPath = ())
                                returns @tainted string {
     log:printInfo("Creating...");
-    var created = nsClient->create(<@untained> recordValue, customPath);
+    var created = nsClient->create(<@untainted> recordValue, customPath);
     if (created is Error) {
         log:printInfo(created.toString());
         log:printInfo("Search...");
@@ -55,7 +55,7 @@ function updateAPartOfARecord(@tainted WritableRecord recordValue, json input, s
     if (updated is Error) {
         test:assertFail(msg = "JSON part update operation failed: " + updated.toString());
     }
-    var updatedRecord = readRecord(<@untained string> updated, typeof recordValue, customPath);
+    var updatedRecord = readRecord(<@untainted string> updated, <@untainted> typeof recordValue, customPath);
     if (updatedRecord is ()) {
         test:assertFail(msg = "retrieval after update operation failed: " + updatedRecord.toString());
     } else {
@@ -76,12 +76,12 @@ function readRecord(string id, ReadableRecordType recordType, string? customPath
 function updateCompleteRecord(@tainted WritableRecord recordValue, WritableRecord newValue, string key,
                               string value, string? customPath = ()) {
     log:printInfo("Updating a complete record...");
-    var updated = nsClient->update(<@untainted> recordValue, <@untained> newValue, customPath);
+    var updated = nsClient->update(<@untainted> recordValue, <@untainted> newValue, customPath);
     if (updated is Error) {
         test:assertFail(msg = "complete record update operation failed: " + updated.toString());
     }
 
-    var updatedRecord = readRecord(<@untained string> updated, typeof recordValue, customPath);
+    var updatedRecord = readRecord(<@untainted string> updated, <@untainted> typeof recordValue, customPath);
     test:assertEquals(updatedRecord[key].toString(), value, msg = "complete record update failed");
 }
 
@@ -103,12 +103,12 @@ function deleteRecordTest(@tainted WritableRecord recordValue, string? customPat
 
 function upsertCompleteRecord(WritableRecord newValue, string exId, string? customPath = ()) returns @tainted ReadableRecord? {
     log:printInfo("Upserting a complete record...");
-    var upserted = nsClient->upsert(exId, typeof newValue, <@untained> newValue, customPath);
+    var upserted = nsClient->upsert(exId, typeof newValue, newValue, customPath);
     if (upserted is Error) {
         test:assertFail(msg = "upsert record operation failed: " + upserted.toString());
     }
 
-    var updatedRecord = readRecord(<string> upserted, typeof newValue, customPath);
+    var updatedRecord = readRecord(<@untainted string> upserted, typeof newValue, customPath);
     if (updatedRecord is ()) {
         test:assertFail(msg = "retrieval after upsert operation failed: " + updatedRecord.toString());
     } else {
@@ -126,7 +126,7 @@ function upsertAPartOfARecord(@tainted WritableRecord recordValue, json input, s
         test:assertFail(msg = "upsert json operation failed: " + upserted.toString());
     }
 
-    var updatedRecord = readRecord(<@untained string> upserted, typeof recordValue, customPath);
+    var updatedRecord = readRecord(<@untainted string> upserted, typeof recordValue, customPath);
     if (updatedRecord is ()) {
         test:assertFail(msg = "retrieval after upsert operation failed: " + updatedRecord.toString());
     } else {
@@ -157,7 +157,7 @@ function readExistingRecord(ReadableRecordType recordType, string? customPath = 
         return;
     }
 
-    var updatedRecord = readRecord(<@untained> ids[0], recordType, customPath);
+    var updatedRecord = readRecord(<@untainted> ids[0], recordType, customPath);
     if (updatedRecord is ()) {
         test:assertFail(msg = "retrieval failed: " + updatedRecord.toString());
     } else {
@@ -166,7 +166,7 @@ function readExistingRecord(ReadableRecordType recordType, string? customPath = 
 }
 
 function getARandomPrerequisiteRecord(ReadableRecordType recordType, public string? filter = ()) returns
-                                      ReadableRecord? {
+                                      @tainted ReadableRecord? {
     string recordName = getRecordNameFromTypeDescForTests(recordType);
     var lists = nsClient->search(recordType, filter);
     if (lists is Error) {
@@ -178,7 +178,7 @@ function getARandomPrerequisiteRecord(ReadableRecordType recordType, public stri
         test:assertFail(msg = "test cannot be proceeded without prerequisite '" + recordName + "': no results found");
     }
 
-    ReadableRecord|Error getResult = nsClient->get(<@untained> ids[0], recordType);
+    ReadableRecord|Error getResult = nsClient->get(<@untainted> ids[0], recordType);
     if (getResult is Error) {
         test:assertFail(msg = "test cannot be proceeded without prerequisite '" + recordName + "':"
                             + getResult.toString());
@@ -209,7 +209,7 @@ function getDummyCustomer() returns @tainted Customer? {
         subsidiary: <Subsidiary> subsidiary
     };
 
-    var created = nsClient->create(<@untained> customer);
+    var created = nsClient->create(<@untainted> customer);
     if (created is Error) {
         var searched = nsClient->search(<@untainted>typeof customer, "entityId IS \"Ballerina Dummy Customer\"");
         if (searched is Error) {
@@ -219,10 +219,10 @@ function getDummyCustomer() returns @tainted Customer? {
             if (ids.length() == 0) {
                 test:assertFail(msg = "test cannot be proceeded without prerequisite 'customer': no results found");
             }
-            return <Customer> readRecord(<@untained> ids[0], Customer);
+            return <Customer> readRecord(<@untainted> ids[0], Customer);
         }
     }
-    var createdCustomer = readRecord(<string> created, Customer);
+    var createdCustomer = readRecord(<@untainted string> created, Customer);
     if (createdCustomer is ()) {
         test:assertFail(msg = "retrieval failed: " + createdCustomer.toString());
     } else {

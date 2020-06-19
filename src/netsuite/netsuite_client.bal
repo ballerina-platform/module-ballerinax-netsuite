@@ -26,7 +26,7 @@ public type Client client object {
     # Gets invoked to initialize the `client`.
     #
     # + netsuiteConfig - The configurations to be used when initializing the `client`
-    public function __init(Configuration netsuiteConfig) {
+    public function init(Configuration netsuiteConfig) {
         oauth2:OutboundOAuth2Provider oauth2Provider = new (netsuiteConfig.oauth2Config);
         http:BearerAuthHandler bearerHandler = new (oauth2Provider);
 
@@ -118,14 +118,14 @@ public type Client client object {
     #            Eg:"id BETWEEN_NOT[1,42]", "dateCreated ON_OR_AFTER1/1/2019 AND dateCreated BEFORE 1/1/2020"
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
-    # + limit - The limit used to specify the number of results on a single request
+    # + maxLimit - The limit used to specify the number of results on a single request
     # + offset - The offset used for selecting a specific starting point of a set of results
     # + return - The `netsuite:Error` if it is a failure or else a tuple with an array of string IDs and boolean
     #            to indicate the availability of more search results
     public remote function search(ReadableRecordType targetType, public string? filter = (), public string?
-                                  customRecordPath = (), public int limit = 1000, public int offset = 0) returns
+                                  customRecordPath = (), public int maxLimit = 1000, public int offset = 0) returns
                                   @tainted [string[], boolean]|Error {
-        return searchRecord(self.netsuiteClient, targetType, filter, customRecordPath, limit, offset);
+        return searchRecord(self.netsuiteClient, targetType, filter, customRecordPath, maxLimit, offset);
     }
 
     # Retrieves the nested records of the NetSuite record.
@@ -141,7 +141,7 @@ public type Client client object {
         string subRecordName = check getRecordName(subRecordType);
         string recordId = parent.id;
         if (recordId == "") {
-            return getErrorFromMessage("invalid internal ID: field cannot be empty");
+            return Error("invalid internal ID: field cannot be empty");
         }
 
         string resourcePath = REST_RESOURCE + parentRecordName + "/" + recordId + "/" + subRecordName + EXPAND_SUB_RESOURCES;
@@ -151,9 +151,9 @@ public type Client client object {
             return result;
         }
         if (result is WritableRecord|ReadableRecord) {
-            panic getErrorFromMessage("subrecord retrieval failed: illegal state error");
+            panic Error("subrecord retrieval failed: illegal state error");
         }
-        return getError("subrecord mapping failed", <error> result);
+        return Error("subrecord mapping failed", <error> result);
     }
 
     # Common action to execute all queries in a generic manner. This action can be use as an alternative for
@@ -169,9 +169,9 @@ public type Client client object {
                                    returns @tainted json|Error {
         json jsonPayload;
         if (requestBody is CustomRecord) {
-            json|error payload = json.constructFrom(requestBody);
+            json|error payload = requestBody.cloneWithType(json);
             if (payload is error) {
-                return getError("Error while constructing request payload for execute operation", payload);
+                return Error("Error while constructing request payload for execute operation", payload);
             }
             jsonPayload = <json> payload;
         } else {
@@ -180,7 +180,7 @@ public type Client client object {
 
         http:Response|error result = self.netsuiteClient->execute(httpMethod, REST_RESOURCE + path, jsonPayload);
         if (result is error) {
-        	 return getError("execution failed", result);
+        	 return Error("execution failed", result);
         }
 
         http:Response response = <http:Response> result;
@@ -199,15 +199,15 @@ function createRecord(http:Client nsClient, @tainted WritableRecord recordValue,
                       returns @tainted string|Error {
     string recordName = check resolveRecordName(customRecordPath, typeof recordValue);
 
-    json|error payload = json.constructFrom(recordValue);
+    json|error payload = recordValue.cloneWithType(json);
     if (payload is error) {
-        return getError("Error while constructing request payload for create operation", payload);
+        return Error("Error while constructing request payload for create operation", payload);
     }
 
     json jsonValue = <json> payload;
     http:Response|error result = nsClient->post(REST_RESOURCE + recordName, jsonValue);
     if (result is error) {
-         return getError("record creation request failed", result);
+         return Error("record creation request failed", result);
     }
 
     http:Response response = <http:Response> result;
@@ -217,19 +217,19 @@ function createRecord(http:Client nsClient, @tainted WritableRecord recordValue,
 
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
-        return getError("record creation failed", responsePayload);
+        return Error("record creation failed", responsePayload);
     }
-    return getErrorFromPayload(<map<json>> responsePayload);
+    return createErrorFromPayload(<map<json>> responsePayload);
 }
 
 function getRecord(http:Client nsClient, string id, ReadableRecordType targetType, IdType idType,
                    string? customRecordPath) returns @tainted ReadableRecord|Error {
     string targetRecordName = check resolveRecordName(customRecordPath, targetType);
     if (id == "") {
-        return getErrorFromMessage("invalid internal ID: field cannot be empty");
+        return Error("invalid internal ID: field cannot be empty");
     }
 
-    string recordId = "/" + (idType is INTERNAL ? id : EID + id);
+    string recordId = "/" + (idType is INTERNAL ? id : <string> EID + id);
     string resourcePath = REST_RESOURCE + targetRecordName + recordId + EXPAND_SUB_RESOURCES;
     json payload = check getJsonPayload(nsClient, resourcePath, targetRecordName);
     log:printDebug(function () returns string {
@@ -240,9 +240,9 @@ function getRecord(http:Client nsClient, string id, ReadableRecordType targetTyp
     if (result is ReadableRecord) {
         return result;
     } else if (result is error) {
-        return getError("record mapping failed", result);
+        return Error("record mapping failed", result);
     } else {
-        panic getErrorFromMessage("get operation failed: illegal state error");
+        panic Error("get operation failed: illegal state error");
     }
 }
 
@@ -251,14 +251,14 @@ function updateRecord(http:Client nsClient, @tainted WritableRecord existingValu
     string recordName = check resolveRecordName(customRecordPath, typeof existingValue);
     string recordId = existingValue.id;
     if (recordId == "") {
-        return getErrorFromMessage("invalid internal ID: field cannot be empty");
+        return Error("invalid internal ID: field cannot be empty");
     }
 
     json payload;
     if (newValue is WritableRecord) {
-        json|error jsonValue = json.constructFrom(newValue);
+        json|error jsonValue = newValue.cloneWithType(json);
         if (jsonValue is error) {
-            return getError("Error while constructing request payload for update operation", jsonValue);
+            return Error("Error while constructing request payload for update operation", jsonValue);
         }
         payload = <json> jsonValue;
     } else {
@@ -267,7 +267,7 @@ function updateRecord(http:Client nsClient, @tainted WritableRecord existingValu
 
     http:Response|error result = nsClient->patch(REST_RESOURCE + recordName + "/" + recordId, payload);
     if (result is error) {
-         return getError("record update request failed", result);
+         return Error("record update request failed", result);
     }
 
     http:Response response = <http:Response> result;
@@ -277,21 +277,21 @@ function updateRecord(http:Client nsClient, @tainted WritableRecord existingValu
 
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
-        return getError("record update failed", responsePayload);
+        return Error("record update failed", responsePayload);
     }
-    return getErrorFromPayload(<map<json>> responsePayload);
+    return createErrorFromPayload(<map<json>> responsePayload);
 }
 
 function deleteRecord(http:Client nsClient, WritableRecord value, string? customRecordPath) returns @tainted Error? {
     string recordName = check resolveRecordName(customRecordPath, typeof value);
     string id = value.id;
     if (id == "") {
-        return getErrorFromMessage("invalid internal ID: field cannot be empty");
+        return Error("invalid internal ID: field cannot be empty");
     }
 
     http:Response|error result = nsClient->delete(REST_RESOURCE + recordName + "/" + id);
     if (result is error) {
-        return getError("record deletion request failed", result);
+        return Error("record deletion request failed", result);
     }
 
     http:Response response = <http:Response> result;
@@ -301,9 +301,9 @@ function deleteRecord(http:Client nsClient, WritableRecord value, string? custom
 
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
-        return getError("record deletion failed", responsePayload);
+        return Error("record deletion failed", responsePayload);
     }
-    return getErrorFromPayload(<map<json>> responsePayload);
+    return createErrorFromPayload(<map<json>> responsePayload);
 }
 
 function upsertRecord(http:Client nsClient, WritableRecordType targetType, string recordId,
@@ -312,9 +312,9 @@ function upsertRecord(http:Client nsClient, WritableRecordType targetType, strin
     string recordName = check resolveRecordName(customRecordPath, targetType);
     json payload;
     if newValue is WritableRecord {
-        json|error jsonValue = json.constructFrom(newValue);
+        json|error jsonValue = newValue.cloneWithType(json);
         if jsonValue is error {
-            return getError("Error while constructing request payload for upsert operation", jsonValue);
+            return Error("Error while constructing request payload for upsert operation", jsonValue);
         }
         payload = <json> jsonValue;
     } else {
@@ -323,7 +323,7 @@ function upsertRecord(http:Client nsClient, WritableRecordType targetType, strin
 
     http:Response|error result = nsClient->put(REST_RESOURCE + recordName + "/" + EID + recordId, payload);
     if (result is error) {
-        return getError("record upsertion request failed", result);
+        return Error("record upsertion request failed", result);
     }
 
     http:Response response = <http:Response> result;
@@ -333,16 +333,16 @@ function upsertRecord(http:Client nsClient, WritableRecordType targetType, strin
 
     json|error responsePayload = response.getJsonPayload();
     if responsePayload is error {
-        return getError("record upsertion failed", responsePayload);
+        return Error("record upsertion failed", responsePayload);
     }
-    return getErrorFromPayload(<map<json>> responsePayload);
+    return createErrorFromPayload(<map<json>> responsePayload);
 }
 
 function searchRecord(http:Client nsClient, ReadableRecordType targetType, string? filter, string? customRecordPath,
-                      int limit, int offset) returns @tainted [string[], boolean]|Error {
+                      int maxLimit, int offset) returns @tainted [string[], boolean]|Error {
 
     string recordName = check resolveRecordName(customRecordPath, targetType);
-    string range = "limit=" + limit.toString() + "&offset=" + offset.toString();
+    string range = "limit=" + maxLimit.toString() + "&offset=" + offset.toString();
     string queryStr = filter is () ? "?" + range : "?q=" + filter + "&" + range;
 
     log:printDebug(function () returns string {
@@ -351,26 +351,27 @@ function searchRecord(http:Client nsClient, ReadableRecordType targetType, strin
 
     http:Response|error result = nsClient->get(REST_RESOURCE + recordName + queryStr);
     if (result is error) {
-        return getError("record search() request failed", result);
+        return Error("record search() request failed", result);
     }
     http:Response response = <http:Response> result;
     if (response.statusCode != 200) {
         json|error responsePayload = response.getJsonPayload();
         if (responsePayload is error) {
-            return getError("record search failed", responsePayload);
+            return Error("record search failed", responsePayload);
         }
-        return getErrorFromPayload(<map<json>> responsePayload);
+        return createErrorFromPayload(<map<json>> responsePayload);
     }
 
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
-        return getError("record search failed", responsePayload);
+        return Error("record search failed", responsePayload);
     }
 
     string[] collection = [];
-    var convetResult = Collection.constructFrom(<map<json>> responsePayload);
+    map<json> jsonPayload = <map<json>> responsePayload;
+    var convetResult = jsonPayload.cloneWithType(Collection);
     if (convetResult is error) {
-        return getError("failed search operation: Invalid content", convetResult);
+        return Error("failed search operation: Invalid content", convetResult);
     }
 
     Collection listOfItem = <Collection> convetResult;
