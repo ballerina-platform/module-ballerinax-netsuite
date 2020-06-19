@@ -64,7 +64,7 @@ function testCustomizedCompanySpecificRecord() {
     };
 
     string createdId = createOrSearchIfExist(customRecord, "name IS ballerina testing", customPath);
-    customRecord = <BalTestCustomRecord> readRecord(<@untained> createdId, BalTestCustomRecord);
+    customRecord = <BalTestCustomRecord> readRecord(<@untainted> createdId, BalTestCustomRecord);
 
     updateAPartOfARecord(customRecord, { "custrecord_version": 3.13 }, "custrecord_version", "3.13", customPath);
 
@@ -98,7 +98,7 @@ function testExecuteAction() {
     log:printInfo("Creating...");
     json|Error createResult = nsClient->execute(POST, "/message", message);
     if createResult is Error {
-        test:assertFail(msg = "execute operation failed: " + createResult.toString());
+        test:assertFail(msg = "execute operation failed: " + createResult.message());
     }
 
     map<json> headers = <map<json>> createResult;
@@ -111,7 +111,8 @@ function testExecuteAction() {
         test:assertFail(msg = "execute operation failed: " + readResult.toString());
     }
 
-    var result = TestMessage.constructFrom(<json> readResult);
+    json jsonMessage = <json> readResult;
+    var result = jsonMessage.cloneWithType(TestMessage);
     if result is error {
         test:assertFail(msg = "record construct failed: " + result.toString());
     }
@@ -146,7 +147,7 @@ function testCustomer() {
 
     // Create customer record
     string createdId = createOrSearchIfExist(customer, "entityId IS ballerina");
-    customer = <Customer> readRecord(<@untained> createdId, Customer);
+    customer = <Customer> readRecord(<@untainted> createdId, Customer);
 
     updateAPartOfARecord(customer, { "creditLimit": 200003.1 }, "creditLimit", "200003.1");
     Customer replaceCustomer = { entityId: "ballerina", companyName: "ballerina.io",
@@ -155,8 +156,8 @@ function testCustomer() {
 
     Customer newCustomer = { entityId: "ballerinaUpsert", companyName: "ballerina", "creditLimit": 100000.0,
                                 subsidiary : subs };
-    newCustomer = <Customer> upsertCompleteRecord(newCustomer, "16835EID");
-    newCustomer = <Customer> upsertAPartOfARecord(<@untained> newCustomer, { "creditLimit": 13521.0 }, "16835EID",
+    newCustomer = <Customer> upsertCompleteRecord(<@untainted> newCustomer, "16835EID");
+    newCustomer = <Customer> upsertAPartOfARecord(<@untainted> newCustomer, { "creditLimit": 13521.0 }, "16835EID",
                                                     "creditLimit", "13521.0");
 
     subRecordTest(<@untainted> customer, AddressbookCollection, "totalResults", "0");
@@ -178,7 +179,7 @@ function testCurrency() {
 
     // Create currency record
     string createdId = createOrSearchIfExist(currency, "name IS BLA");
-    currency = <Currency> readRecord(<@untained> createdId, Currency);
+    currency = <Currency> readRecord(<@untainted> createdId, Currency);
 
     updateAPartOfARecord(currency, { "currencyPrecisioun": 4, "symbol" : "BBB" }, "symbol", "BBB");
     Currency replaceCurrency = { name: "BLA", symbol: "BFF", currencyPrecision: 3, exchangeRate: 5.89 };
@@ -231,14 +232,14 @@ function testSalesOrder() {
     };
 
     string createdId = createOrSearchIfExist(salesOrder);
-    salesOrder = <SalesOrder> readRecord(<@untained> createdId, SalesOrder);
+    salesOrder = <SalesOrder> readRecord(<@untainted> createdId, SalesOrder);
 
     updateAPartOfARecord(salesOrder, { "shipAddress": "Germany" }, "shipAddress", "Germany");
     Customer? customerEntity = getDummyCustomer();
 
     SalesOrder newSalesOrder = { billAddress: "Denmark", entity: <Customer> customer, currency: <Currency>
             currency, item: { items: [serviceItem], totalResults: 1 } };
-    newSalesOrder = <SalesOrder> upsertCompleteRecord(newSalesOrder, "16836EID");
+    newSalesOrder = <SalesOrder> upsertCompleteRecord(<@untainted> newSalesOrder, "16836EID");
 
     deleteRecordTest(<@untainted> salesOrder);
     deleteRecordTest(<@untainted> newSalesOrder);
@@ -285,7 +286,7 @@ function testInvoice() {
 
     // Create invoice record
     string createdId = createOrSearchIfExist(invoice, "memo IS \"ballerina test\"");
-    invoice = <Invoice> readRecord(<@untained> createdId, Invoice);
+    invoice = <Invoice> readRecord(<@untainted> createdId, Invoice);
 
     updateAPartOfARecord(invoice, { "memo": "updated ballerina test" }, "memo", "updated ballerina test");
     Invoice replaceInvoice = { entity: <Customer> customer, class: <Classification> class, item: { items: [serviceItem]
@@ -309,7 +310,7 @@ function testClassification() {
         name: "Ballerina test class"
     };
     string createdId = createOrSearchIfExist(class, "name IS \"Ballerina test class\"");
-    class = <Classification> readRecord(<@untained> createdId, Classification);
+    class = <Classification> readRecord(<@untainted> createdId, Classification);
     deleteRecordTest(<@untainted> class);
 }
 
@@ -343,7 +344,7 @@ function testCustomerPayment() {
         memo: "Ballerina test customerPayment"
     };
     string createdId = createOrSearchIfExist(customerPayment, "memo IS \"Ballerina test customerPayment\"");
-    customerPayment = <CustomerPayment> readRecord(<@untained> createdId, CustomerPayment);
+    customerPayment = <CustomerPayment> readRecord(<@untainted> createdId, CustomerPayment);
     deleteRecordTest(<@untainted> customerPayment);
 }
 
@@ -365,7 +366,7 @@ function testAccount() {
         acctnumber: "67425629"
     };
     string createdId = createOrSearchIfExist(account, "acctnumber IS 67425629");
-    account = <Account> readRecord(<@untained> createdId, Account);
+    account = <Account> readRecord(<@untainted> createdId, Account);
     updateAPartOfARecord(account, { "acctname": "updated Ballerina test account" }, "acctname",
                                     "updated Ballerina test account");
 }
@@ -388,7 +389,7 @@ function testPartner() {
         subsidiary: <Subsidiary> subsidiary
     };
     string createdId = createOrSearchIfExist(partner, "companyName IS ballerinalang");
-    partner = <Partner> readRecord(<@untained> createdId, Partner);
+    partner = <Partner> readRecord(<@untainted> createdId, Partner);
     deleteRecordTest(<@untainted> partner);
 }
 
@@ -422,7 +423,7 @@ function testOpportunity() {
           }
     };
     string createdId = createOrSearchIfExist(opportunity, "titile IS Ballerina test opportunity");
-    opportunity = <Opportunity> readRecord(<@untained> createdId, Opportunity);
+    opportunity = <Opportunity> readRecord(<@untainted> createdId, Opportunity);
     deleteRecordTest(<@untainted> opportunity);
 }
 
@@ -445,7 +446,7 @@ function testVendor() {
     };
 
     string createdId = createOrSearchIfExist(vendor, "companyName IS ballerinalang");
-    vendor = <Vendor> readRecord(<@untained> createdId, Vendor);
+    vendor = <Vendor> readRecord(<@untainted> createdId, Vendor);
     updateAPartOfARecord(vendor, { "entityId": "updated ballerina vendor" }, "entityId", "updated ballerina vendor");
     deleteRecordTest(<@untainted> vendor);
 }
@@ -494,7 +495,7 @@ function testVendorBill() {
     };
 
     string createdId = createOrSearchIfExist(vendorBill, "memo IS \"ballerina test\"");
-    vendorBill = <VendorBill> readRecord(<@untained> createdId, VendorBill);
+    vendorBill = <VendorBill> readRecord(<@untainted> createdId, VendorBill);
     deleteRecordTest(<@untainted> vendorBill);
 }
 
@@ -522,7 +523,7 @@ function testContact() {
         subsidiary: <Subsidiary> subsidiary
     };
     string createdId = createOrSearchIfExist(contact, "entityId IS \"Ballerina test contact\"");
-    contact = <Contact> readRecord(<@untained> createdId, Contact);
+    contact = <Contact> readRecord(<@untainted> createdId, Contact);
     deleteRecordTest(<@untainted> contact);
 }
 
@@ -535,7 +536,7 @@ function testLocation() {
         name: "Ballerina test location"
     };
     string createdId = createOrSearchIfExist(location, "name IS \"Ballerina test location\"");
-    location = <Location> readRecord(<@untained> createdId, Location);
+    location = <Location> readRecord(<@untainted> createdId, Location);
     deleteRecordTest(<@untainted> location);
 }
 
@@ -548,7 +549,7 @@ function testDepartment() {
         name: "Ballerina test department"
     };
     string createdId = createOrSearchIfExist(department, "name IS \"Ballerina test department\"");
-    department = <Department> readRecord(<@untained> createdId, Department);
+    department = <Department> readRecord(<@untainted> createdId, Department);
     deleteRecordTest(<@untainted> department);
 }
 
@@ -562,7 +563,7 @@ function testPaymentMethod() {
         name: "Ballerina test paymentMethod"
     };
     string createdId = createOrSearchIfExist(paymentMethod, "name IS \"Ballerina test paymentMethod\"");
-    paymentMethod = <PaymentMethod> readRecord(<@untained> createdId, PaymentMethod);
+    paymentMethod = <PaymentMethod> readRecord(<@untainted> createdId, PaymentMethod);
     deleteRecordTest(<@untainted> paymentMethod);
 }
 
@@ -588,7 +589,7 @@ function testEmployee() {
         currency: currency
     };
     string createdId = createOrSearchIfExist(employee, "entityId IS \"Ballerina test employee\"");
-    employee = <Employee> readRecord(<@untained> createdId, Employee);
+    employee = <Employee> readRecord(<@untainted> createdId, Employee);
     deleteRecordTest(<@untainted> employee);
 }
 
@@ -629,7 +630,7 @@ function testPurchaseOrder() {
     };
 
     string createdId = createOrSearchIfExist(purchaseOrder, "memo IS \"Ballerina test location\"");
-    purchaseOrder = <PurchaseOrder> readRecord(<@untained> createdId, PurchaseOrder);
+    purchaseOrder = <PurchaseOrder> readRecord(<@untainted> createdId, PurchaseOrder);
     deleteRecordTest(<@untainted> purchaseOrder);
 }
 
