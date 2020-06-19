@@ -70,7 +70,7 @@ public function main() {
     // Create the currency record in NetSuite and return the internal ID.
     string|netsuite:Error created = nsClient->create(<@untainted> currency);
     if created is netsuite:Error {
-        io:println("Error: " + created.detail()?.message.toString());
+        io:println("Error: " + created.message());
     }
     string id = <string> created;
     io:println("Currency ID = " + id);
@@ -79,7 +79,7 @@ public function main() {
     // Confirm the record creation.
     netsuite:ReadableRecord|netsuite:Error retrieved = nsClient->get(<@untainted> id, netsuite:Currency);
     if (retrieved is netsuite:Error) {
-        io:println("Error: " + retrieved.detail()?.message.toString());
+        io:println("Error: " + retrieved.message());
     }
     currency = <netsuite:Currency> retrieved;
     io:println("Verify the name = " + currency["name"].toString());
@@ -89,14 +89,14 @@ public function main() {
     json symbol = { displaySymbol: "$" };
     string|netsuite:Error updated = nsClient->update(<@untainted> currency, symbol);
     if updated is netsuite:Error {
-        io:println("Error: " + updated.detail()?.message.toString());
+        io:println("Error: " + updated.message());
     }
 
 
     // Check the NetSuite currency record and confirm the update.
     netsuite:ReadableRecord|netsuite:Error getUpdated = nsClient->get(<@untainted> currency.id, netsuite:Currency);
     if (getUpdated is netsuite:Error) {
-        io:println("Error: " + getUpdated.detail()?.message.toString());
+        io:println("Error: " + getUpdated.message());
     }
     currency = <netsuite:Currency> getUpdated;
     io:println("Verify the displaySymbol = " + currency["displaySymbol"].toString());
@@ -112,7 +112,7 @@ public function main() {
 
     string|netsuite:Error upserted = nsClient->upsert("163572E", netsuite:Currency, externalCurrency);
     if upserted is netsuite:Error {
-        io:println("Error: " + upserted.detail()?.message.toString());
+        io:println("Error: " + upserted.message());
     }
     string exId = <string> upserted;
     io:println("External currency ID = " + exId);
@@ -121,7 +121,7 @@ public function main() {
     // Confirm the upsertion.
     netsuite:ReadableRecord|netsuite:Error getUpserted = nsClient->get(<@untainted> exId, netsuite:Currency);
     if (getUpserted is netsuite:Error) {
-        io:println("Error: " + getUpserted.detail()?.message.toString());
+        io:println("Error: " + getUpserted.message());
     }
     externalCurrency = <netsuite:Currency> getUpserted;
     io:println("Verify the upserted name = " + externalCurrency["name"].toString());
@@ -130,7 +130,7 @@ public function main() {
     // Search for some other popular currency in the account using a filter.
     [string[], boolean]|netsuite:Error result = nsClient->search(netsuite:Currency, "symbol IS LKR");
     if result is netsuite:Error {
-        io:println("Error: " + result.detail()?.message.toString());
+        io:println("Error: " + result.message());
     } else {
         var [idArr, hasMore] = result;
         if (idArr.length() == 0) {
@@ -144,12 +144,12 @@ public function main() {
     // Delete the inserted records.
     netsuite:Error? deletedCurrency = nsClient->delete(<@untainted> currency);
     if deletedCurrency is netsuite:Error {
-        io:println("Error: " + deletedCurrency.detail()?.message.toString());
+        io:println("Error: " + deletedCurrency.message());
     }
 
     netsuite:Error? deletedExCurrency = nsClient->delete(<@untainted> externalCurrency);
     if deletedExCurrency is netsuite:Error {
-        io:println("Error: " + deletedExCurrency.detail()?.message.toString());
+        io:println("Error: " + deletedExCurrency.message());
     }
 }
 ```
