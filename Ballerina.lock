@@ -1,5 +1,5 @@
 org_name = "ballerinax"
-version = "0.9.0"
+version = "0.9.1"
 lockfile_version = "1.0.0"
 ballerina_version = "slp1"
 
@@ -233,26 +233,6 @@ org_name = "ballerina"
 name = "java"
 version = "0.9.0"
 
-[[imports."ballerinax/netsuite:0.9.0"]]
-org_name = "ballerina"
-name = "http"
-version = "1.0.0"
-
-[[imports."ballerinax/netsuite:0.9.0"]]
-org_name = "ballerina"
-name = "log"
-version = "1.0.0"
-
-[[imports."ballerinax/netsuite:0.9.0"]]
-org_name = "ballerina"
-name = "oauth2"
-version = "1.0.0"
-
-[[imports."ballerinax/netsuite:0.9.0"]]
-org_name = "ballerina"
-name = "stringutils"
-version = "0.5.0"
-
 [[imports."ballerina/time:1.0.0"]]
 org_name = "ballerina"
 name = "java"
@@ -347,3 +327,23 @@ version = "0.6.0"
 org_name = "ballerina"
 name = "java"
 version = "0.9.0"
+
+[[imports."ballerinax/netsuite:0.9.1"]]
+org_name = "ballerina"
+name = "http"
+version = "1.0.0"
+
+[[imports."ballerinax/netsuite:0.9.1"]]
+org_name = "ballerina"
+name = "log"
+version = "1.0.0"
+
+[[imports."ballerinax/netsuite:0.9.1"]]
+org_name = "ballerina"
+name = "oauth2"
+version = "1.0.0"
+
+[[imports."ballerinax/netsuite:0.9.1"]]
+org_name = "ballerina"
+name = "stringutils"
+version = "0.5.0"
