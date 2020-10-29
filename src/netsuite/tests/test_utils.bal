@@ -165,7 +165,7 @@ function readExistingRecord(ReadableRecordType recordType, string? customPath = 
     }
 }
 
-function getARandomPrerequisiteRecord(ReadableRecordType recordType, public string? filter = ()) returns
+function getARandomPrerequisiteRecord(ReadableRecordType recordType, string? filter = ()) returns
                                       @tainted ReadableRecord? {
     string recordName = getRecordNameFromTypeDescForTests(recordType);
     var lists = nsClient->search(recordType, filter);
