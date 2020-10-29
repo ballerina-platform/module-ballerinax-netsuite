@@ -38,10 +38,16 @@ public type ItemCollection record {
 # + itemSubType - The sub type of the item
 # + itemType - The type of the item
 public type ItemElement record {
-    float amount;
-    NsResource item;
+    decimal amount?;
+    NsResource item?;
     string itemSubType?;
     string itemType?;
+    //----------------SLP4 Update Temp WorkArounds--------------
+    decimal custcol_statistical_value_base_curr?;
+    decimal initQuantity?;
+    decimal quantity?;
+    decimal weightInLb?;
+    decimal rate?;
 };
 
 # Represents the `AddressBook` NetSuite sub record.
@@ -54,7 +60,7 @@ public type ItemElement record {
 # + offset - The starting point of the items
 public type AddressbookCollection record {
     Link[] links?;
-    AddressElement[] items;
+    AddressElement[] items?;
     int totalResults?;
     int count?;
     boolean hasMore?;
@@ -73,7 +79,7 @@ public type AddressbookCollection record {
 # + label - The address label
 public type AddressElement record {
     Link[] links?;
-    AddressbookAddress addressbookaddress;
+    AddressbookAddress addressBookAddress?;
     string addressId?;
     boolean defaultBilling?;
     boolean defaultShipping?;
@@ -194,7 +200,7 @@ public type VisualsElement record {
 # + offset - The starting point of the items
 public type CurrencylistCollection record {
     Link[] links?;
-    CurrencylistElement[] items;
+    CurrencylistElement[] items?;
     int totalResults?;
     int count?;
     boolean hasMore?;
@@ -212,6 +218,24 @@ public type CurrencylistElement record {
     Link[] links?;
     Currency currency?;
     string refName?;
-    float balance?;
+    decimal balance?;
+    decimal depositBalance?;
+    decimal overdueBalance?;
+    decimal unbilledOrders?;
     string displaySymbol?;
 };
+
+//----------------SLP4 Update Temp WorkArounds--------------
+public type Installments record{
+    Link[] links?;
+    InstallmentItem[] items?;
+
+};
+
+public type InstallmentItem record{
+    Link[] links?;
+    decimal amount?;
+    decimal amountdue?;
+};
+
+
