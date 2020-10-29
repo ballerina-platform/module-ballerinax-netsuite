@@ -5,6 +5,7 @@
 // in compliance with the License.
 // You may obtain a copy of the License at
 //
+
 // http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing,
@@ -13,11 +14,13 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
+//import ballerina/io;
 # Record type to hold the details of an error.
 #
 # + statusCode - The HTTP status code
 # + errorCode - The standard NetSuite error code
+
+
 public type Detail record {
     int statusCode?;
     string errorCode?;
@@ -26,9 +29,21 @@ public type Detail record {
 # Represents the NetSuite error type with details.
 public type Error distinct error<Detail>;
 
-function createErrorFromPayload(map<json> errorPayload) returns Error {
+isolated function createErrorFromPayload(map<json> errorPayload,json res=()) returns Error {
     string errMsg = <string> errorPayload["title"];
     int statusCode = <int> errorPayload["status"];
-    string errorCode = <string> errorPayload["o:errorCode"];
+    //------------------SLP3 version---------------
+    //string errorCode = <string> errorPayload["o:errorCode"][0];
+    //-------------------SLP4 version-------------------------
+    string errorCode = res.toString();
+    foreach var v in errorPayload{
+        if(v is json[]){
+            json[] errorData = v;
+            json errorCodeFull = errorData[0];
+            map<json> erCode=<map<json>> errorCodeFull;
+            errorCode = <string>erCode["o:errorCode"];
+        }
+    }
+    //-------------------------------------------------------
     return Error(errMsg, statusCode = statusCode, errorCode = errorCode);
 }
