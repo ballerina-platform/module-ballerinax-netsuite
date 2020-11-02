@@ -17,7 +17,7 @@ The following sections provide you details on how to use the NetSuite connector.
 
 |                             |           Version           |
 |:---------------------------:|:---------------------------:|
-| Ballerina Language          |     Swan Lake Preview4      |
+| Ballerina Language          |     Swan Lake Preview5      |
 | NetSuite REST API           |            Beta             |
 
 ## Feature Overview
