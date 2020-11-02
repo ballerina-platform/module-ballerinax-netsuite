@@ -76,6 +76,25 @@ public type SalesOrder record {
     string endDate?;
     string memo?;
     string billAddress?;
+    decimal balance?;
+    decimal discountTotal?;
+    decimal estGrossProfit?;
+    decimal estGrossProfitPercent?;
+    decimal exchangeRate?;
+    decimal giftCertApplied?;
+    decimal handlingCost?;
+    decimal overallbalance?;
+    decimal overallunbilledorders?;
+    decimal paymentSessionAmount?;
+    decimal primarycurrency?;
+    decimal primarycurrencyfxrate?;
+    decimal subtotal?;
+    decimal taxTotal?;
+    decimal totalCostEstimate?;
+    decimal total?;
+    decimal unbilledOrders?;
+
+
 };
 
 # Represents the writable `Currency` NetSuite record.

@@ -42,12 +42,16 @@ public type ItemElement record {
     NsResource item?;
     string itemSubType?;
     string itemType?;
+
     //----------------SLP4 Update Temp WorkArounds--------------
     decimal custcol_statistical_value_base_curr?;
     decimal initQuantity?;
     decimal quantity?;
     decimal weightInLb?;
     decimal rate?;
+    decimal costEstimate?;
+    decimal costEstimateRate?;
+    decimal origQuantity?;
 };
 
 # Represents the `AddressBook` NetSuite sub record.
@@ -70,7 +74,7 @@ public type AddressbookCollection record {
 # Represents the `AddressbookCollection` NetSuite element.
 #
 # + links - The HATEOAS record links
-# + addressbookaddress - The attributes of the item
+# + addressBookAddress - The attributes of the item
 # + addressId - The string ID of the address element
 # + defaultBilling - Whether the value is the default billing address or not
 # + defaultShipping - Whether the value is the default shipping address or not

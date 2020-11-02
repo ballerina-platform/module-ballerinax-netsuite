@@ -29,13 +29,13 @@ public type Detail record {
 # Represents the NetSuite error type with details.
 public type Error distinct error<Detail>;
 
-isolated function createErrorFromPayload(map<json> errorPayload,json res=()) returns Error {
+isolated function createErrorFromPayload(map<json> errorPayload,json actualPayload=()) returns Error {
+
     string errMsg = <string> errorPayload["title"];
     int statusCode = <int> errorPayload["status"];
-    //------------------SLP3 version---------------
-    //string errorCode = <string> errorPayload["o:errorCode"][0];
+
     //-------------------SLP4 version-------------------------
-    string errorCode = res.toString();
+    string errorCode ="";
     foreach var v in errorPayload{
         if(v is json[]){
             json[] errorData = v;
