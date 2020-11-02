@@ -178,7 +178,7 @@ public client class Client{
             jsonPayload = requestBody;
         }
 
-        http:Response|error result = self.netsuiteClient->execute(httpMethod, REST_RESOURCE + path, jsonPayload);
+        http:Response|http:Payload|error result =  self.netsuiteClient->execute(httpMethod, REST_RESOURCE + path, jsonPayload);
         if (result is error) {
         	 return Error("execution failed", result);
         }
@@ -203,7 +203,7 @@ function createRecord(http:Client nsClient, @tainted WritableRecord recordValue,
         return Error("Error while constructing request payload for create operation", payload);
     }
     json jsonValue = <json> payload;
-    http:Response|error result = nsClient->post(REST_RESOURCE + recordName, jsonValue);
+    http:Response|http:Payload|error result = nsClient->post(REST_RESOURCE + recordName, jsonValue);
     if (result is error) {
          return Error("record creation request failed", result);
     }
@@ -263,7 +263,7 @@ function updateRecord(http:Client nsClient, @tainted WritableRecord existingValu
         payload = newValue;
     }
     
-    http:Response|error result = nsClient->patch(REST_RESOURCE + recordName + "/" + recordId, payload);
+    http:Response|http:Payload|error result = nsClient->patch(REST_RESOURCE + recordName + "/" + recordId, payload);
     if (result is error) {
          return Error("record update request failed", result);
     }
@@ -287,7 +287,7 @@ function deleteRecord(http:Client nsClient, WritableRecord value, string? custom
         return Error("invalid internal ID: field cannot be empty");
     }
 
-    http:Response|error result = nsClient->delete(REST_RESOURCE + recordName + "/" + id);
+    http:Response|http:Payload|error result = nsClient->delete(REST_RESOURCE + recordName + "/" + id);
     if (result is error) {
         return Error("record deletion request failed", result);
     }
@@ -319,7 +319,7 @@ function upsertRecord(http:Client nsClient, WritableRecordType targetType, strin
         payload = newValue;
     }
 
-    http:Response|error result = nsClient->put(REST_RESOURCE + recordName + "/" + EID + recordId, payload);
+    http:Response|http:Payload|error result = nsClient->put(REST_RESOURCE + recordName + "/" + EID + recordId, payload);
     if (result is error) {
         return Error("record upsertion request failed", result);
     }
@@ -347,7 +347,7 @@ function searchRecord(http:Client nsClient, ReadableRecordType targetType, strin
             return "Search query param: " + queryStr;
         });
         
-    http:Response|error result = nsClient->get(REST_RESOURCE + recordName + queryStr);
+    http:Response|http:Payload|error result = nsClient->get(REST_RESOURCE + recordName + queryStr);
     if (result is error) {
         return Error("record search() request failed", result);
     }

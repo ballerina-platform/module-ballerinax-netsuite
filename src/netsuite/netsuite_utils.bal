@@ -169,7 +169,7 @@ isolated function constructRecord(ReadableRecordType|WritableRecordType|SubRecor
 }
 
 function getJsonPayload(http:Client nsclient, string resourcePath, string recordName) returns @tainted json|Error {
-    http:Response|error result = nsclient->get(resourcePath);
+    http:Response|http:Payload|error result = nsclient->get(resourcePath);
     if (result is error) {
         return Error("'" + recordName + "' record retrival request failed", result);
     }
