@@ -42,7 +42,6 @@ public type ItemElement record {
     NsResource item?;
     string itemSubType?;
     string itemType?;
-
     //----------------SLP4 Update Temp WorkArounds--------------
     decimal custcol_statistical_value_base_curr?;
     decimal initQuantity?;

@@ -42,8 +42,7 @@ public type Customer record {
     decimal overduebalance?;
     decimal depositbalance?;
     decimal unbilledorders?;
-    decimal creditLimit?;
-    
+    decimal creditLimit?;    
 };
 
 # Represents the writable `SalesOrder` NetSuite record.
@@ -93,8 +92,6 @@ public type SalesOrder record {
     decimal totalCostEstimate?;
     decimal total?;
     decimal unbilledOrders?;
-
-
 };
 
 # Represents the writable `Currency` NetSuite record.
@@ -248,9 +245,7 @@ public type CustomerPayment record {
     decimal applied?;
     PayApply apply?;
     decimal unapplied?;
-    decimal total?;
-    
-    
+    decimal total?;    
 };
 
 public type PayApply record{
@@ -338,8 +333,6 @@ public type Opportunity record {
     decimal weightedTotal?;
     decimal primarycurrency?;
     decimal primarycurrencyfxrate?;
-
-
 };
 
 # Represents the writable `Partner` NetSuite record.
@@ -405,7 +398,6 @@ public type Vendor record {
     SubMachine subMachine?;
     decimal unbilledOrders?;
     decimal unbilledOrdersPrimary?;
-
 };
 
 //----------------SLP4 Update Temp WorkArounds--------------
@@ -421,12 +413,7 @@ public type SubMachineItems record{
     decimal baseUnbilledOrders?;
     Subsidiary subsidiary?;
     decimal unbilledOrders?;
-
 };
-
-
-
-
 
 # Represents the writable `VendorBill` NetSuite record.
 # |                                            |
@@ -463,8 +450,6 @@ public type VendorBill record {
     decimal total?;
     decimal balance?;
     decimal exchangeRate?;
-
-
 };
 
 # Represents the writable `ServiceItem` NetSuite record.
@@ -530,8 +515,7 @@ public type NonInventoryItem record {
     string nonInventoryItemType?;
     NsResource productfeed?;
     //----------------SLP4 Update Temp WorkArounds--------------
-     PriceList price?;
-
+    PriceList price?;
 };
 
 //----------------SLP4 Update Temp WorkArounds--------------
@@ -542,8 +526,7 @@ public type PriceList record{
 public type PriceItem record{
     Link[] links?;
     decimal price?;
-    decimal discountDisplay?;
-    
+    decimal discountDisplay?;   
 };
 
 # Represents the writable `InventoryItem` NetSuite record.
@@ -573,8 +556,7 @@ public type InventoryItem record {
     string inventoryItemType?;
     string VSOESopGroup?;
     boolean VSOEDelivered?;
-    NsResource productfeed?;
-   
+    NsResource productfeed?;  
 };
 # Represents the writable `InventoryItem` NetSuite record.
 # |                                            |
@@ -912,7 +894,6 @@ public type PurchaseOrder record {
 public type Expense record{
     Link[] links?;
     ExpenseItem[] items?;
-
 };
 
 public type ExpenseItem record{
