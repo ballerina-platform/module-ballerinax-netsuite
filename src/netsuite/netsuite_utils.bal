@@ -88,7 +88,7 @@ isolated function getRecordName(ReadableRecordType|WritableRecordType|SubRecordT
         return RECORD_PATH_PURCHASE_ORDER;
     } else {
         return Error("operation not implemented for " + recordTypedesc.toString() +
-                                   ", trybvb defining it a custom record");
+                                   ", try defining it a custom record");
     }
 }
 
