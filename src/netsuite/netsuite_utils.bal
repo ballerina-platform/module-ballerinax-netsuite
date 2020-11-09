@@ -164,7 +164,7 @@ isolated function constructRecord(ReadableRecordType|WritableRecordType|SubRecor
         return <CustomRecord> payload.cloneWithType(recordTypedesc);
     } else {
         return Error("operation not implemented for " + recordTypedesc.toString() +
-                                   ", defining it as a custom record");
+                                   ", try defining it as a custom record");
     }
 }
 
