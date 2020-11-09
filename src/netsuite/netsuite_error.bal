@@ -13,7 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-//import ballerina/io;
+
 # Record type to hold the details of an error.
 #
 # + statusCode - The HTTP status code
