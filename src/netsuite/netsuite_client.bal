@@ -20,7 +20,7 @@ import ballerina/oauth2;
 
 # The NetSuite Client object that allows ballerina to connector with NetSuite Account to execute CRUD and search
 # operations to perform business processing on NetSuite records and to navigate dynamically between records.
-public client class Client{
+public client class Client {
     private http:Client netsuiteClient;
 
     # Gets invoked to initialize the `client`.
