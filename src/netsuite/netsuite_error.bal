@@ -18,8 +18,6 @@
 #
 # + statusCode - The HTTP status code
 # + errorCode - The standard NetSuite error code
-
-
 public type Detail record {
     int statusCode?;
     string errorCode?;
