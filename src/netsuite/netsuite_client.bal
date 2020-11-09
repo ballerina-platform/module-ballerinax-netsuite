@@ -217,7 +217,7 @@ function createRecord(http:Client nsClient, @tainted WritableRecord recordValue,
     if (responsePayload is error) {
         return Error("record creation failed", responsePayload);
     }
-    return createErrorFromPayload(<map<json>> responsePayload,<json>responsePayload);
+    return createErrorFromPayload(<map<json>> responsePayload, <json>responsePayload);
 }
 
 function getRecord(http:Client nsClient, string id, ReadableRecordType targetType, IdType idType,
