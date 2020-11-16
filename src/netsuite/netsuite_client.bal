@@ -217,7 +217,7 @@ function createRecord(http:Client nsClient, @tainted WritableRecord recordValue,
     if (responsePayload is error) {
         return Error("record creation failed", responsePayload);
     }
-    return createErrorFromPayload(<map<json>> responsePayload, <json>responsePayload);
+    return createErrorFromPayload(<map<json>> responsePayload);
 }
 
 function getRecord(http:Client nsClient, string id, ReadableRecordType targetType, IdType idType,
@@ -301,7 +301,7 @@ function deleteRecord(http:Client nsClient, WritableRecord value, string? custom
     if (responsePayload is error) {
         return Error("record deletion failed", responsePayload);
     }
-    return createErrorFromPayload(<map<json>> responsePayload,<json>responsePayload);
+    return createErrorFromPayload(<map<json>> responsePayload);
 }
 
 function upsertRecord(http:Client nsClient, WritableRecordType targetType, string recordId,

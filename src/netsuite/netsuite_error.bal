@@ -26,21 +26,18 @@ public type Detail record {
 # Represents the NetSuite error type with details.
 public type Error distinct error<Detail>;
 
-isolated function createErrorFromPayload(map<json> errorPayload,json actualPayload=()) returns Error {
+isolated function createErrorFromPayload(map<json> errorPayload) returns Error {
 
     string errMsg = <string> errorPayload["title"];
     int statusCode = <int> errorPayload["status"];
-
-    //-------------------SLP4 version-------------------------
     string errorCode ="";
-    foreach var v in errorPayload{
-        if(v is json[]){
-            json[] errorData = v;
+    foreach var item in errorPayload{
+        if(item is json[]){
+            json[] errorData = item;
             json errorCodeFull = errorData[0];
             map<json> erCode=<map<json>> errorCodeFull;
             errorCode = <string>erCode["o:errorCode"];
         }
     }
-    //-------------------------------------------------------
     return Error(errMsg, statusCode = statusCode, errorCode = errorCode);
 }
