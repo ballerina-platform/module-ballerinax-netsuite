@@ -1,6 +1,6 @@
 [project]
 org-name= "ballerinax"
-version= "0.9.1"
+version= "0.9.2"
 authors = ["Ballerina"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-netsuite"
 keywords = ["NetSuite", "Finance", "Integration"]
