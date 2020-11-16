@@ -99,7 +99,9 @@ const string RECORD_PATH_ADDRESSBOOK_ADDRESS = "/addressbookaddress";
 const string RECORD_PATH_SHIPPING_ADDRESS = "/shippingAddress";
 const string RECORD_PATH_BILLING_ADDRESS = "/billingaddress";
 const string RECORD_PATH_CURRENCY = "/currency";
-const string RECORD_PATH_NON_INVENTORY_ITEM = "/nonInventoryItem";
+//-------SLP4----------Should change into 3 types of Sales,ReSale etc.
+const string RECORD_PATH_NON_INVENTORY_ITEM = "/nonInventorySaleItem";
+//-----------------
 const string RECORD_PATH_ITEM_COLLECTION = "/item";
 const string RECORD_PATH_INVOICE = "/invoice";
 const string RECORD_PATH_ACCOUNTING_PERIOD = "/accountingPeriod";

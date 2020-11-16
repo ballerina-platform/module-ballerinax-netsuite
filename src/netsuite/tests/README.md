@@ -2,7 +2,7 @@
 
 | Ballerina Language Version | NetSuite API Version |  
 |:--------------------------:|:--------------------:|
-| Swan Lake Preview1         |        Beta          |
+| Swan Lake Preview5         |        Beta          |
 
 ### Prerequisites
 

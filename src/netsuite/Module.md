@@ -9,7 +9,7 @@ services API.
 ## Compatibility
 |                     |    Version           |
 |:-------------------:|:--------------------:|
-| Ballerina Language  | Swan Lake Preview1   |
+| Ballerina Language  | Swan Lake Preview5   |
 | NetSuite REST API   | Beta                 |
 
 ## Configurations

@@ -18,7 +18,7 @@ import ballerina/http;
 import ballerina/log;
 import ballerina/stringutils;
 
-function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc)
+isolated function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc)
                        returns string|Error {
     if (recordTypedesc is typedesc<Customer>) {
         return RECORD_PATH_CUSTOMER;
@@ -92,8 +92,8 @@ function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recor
     }
 }
 
-function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc, json payload)
-                         returns ReadableRecord|WritableRecord|SubRecord|error {
+isolated function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc, json payload)
+                         returns ReadableRecord|WritableRecord|SubRecord|error {                             
     if (recordTypedesc is typedesc<Customer>) {
         return payload.cloneWithType(Customer);
     } else if (recordTypedesc is typedesc<SalesOrder>) {
@@ -169,14 +169,14 @@ function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType rec
 }
 
 function getJsonPayload(http:Client nsclient, string resourcePath, string recordName) returns @tainted json|Error {
-    http:Response|error result = nsclient->get(resourcePath);
+    http:Response|http:Payload|error result = nsclient->get(resourcePath);
     if (result is error) {
         return Error("'" + recordName + "' record retrival request failed", result);
     }
     return processJson(<http:Response> result, recordName);
 }
 
-function processJson(http:Response response, string? recordName = ()) returns @tainted json|Error{
+isolated function processJson(http:Response response, string? recordName = ()) returns @tainted json|Error{
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
         string identifier = recordName is () ? "JSON payload" : "'" + recordName + "' record";
@@ -189,7 +189,7 @@ function processJson(http:Response response, string? recordName = ()) returns @t
     }
 }
 
-function isErrorResponse(http:Response response) returns boolean {
+isolated function isErrorResponse(http:Response response) returns boolean {
     if (!response.hasHeader(CONTENT_TYPE_HEADER)) {
         return false;
     }
@@ -210,19 +210,19 @@ function isErrorResponse(http:Response response) returns boolean {
     return false;
 }
 
-function resolveRecordName(string? customRecordPath, ReadableRecordType targetType) returns string|Error {
+isolated function resolveRecordName(string? customRecordPath, ReadableRecordType targetType) returns string|Error {
     if (customRecordPath is string) {
         return customRecordPath;
     }
     return getRecordName(targetType);
 }
 
-function extractInternalId(http:Response response) returns string {
+isolated function extractInternalId(http:Response response) returns string {
     string locationHeader = response.getHeader(LOCATION_HEADER);
     return spitAndGetLastElement(locationHeader, "/");
 }
 
-function spitAndGetLastElement(string receiver, string delimiter) returns string {
+isolated function spitAndGetLastElement(string receiver, string delimiter) returns string {
     string[] directives = stringutils:split(receiver, delimiter);
     return directives[directives.length() - 1];
 }

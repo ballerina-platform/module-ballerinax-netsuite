@@ -31,13 +31,18 @@
 # + currencylist - The list of currecncies used by the customer
 public type Customer record {
     *NsResource;
-    string entityId;
-    string companyName;
-    Subsidiary subsidiary;
+    string entityId?;
+    string companyName?;
+    Subsidiary subsidiary?;
     boolean isPerson?;
     Currency currency?;
     AddressbookCollection addressbook?;
-    CurrencylistCollection currencylist?;
+    CurrencylistCollection currencyList?;
+    decimal balance?;
+    decimal overduebalance?;
+    decimal depositbalance?;
+    decimal unbilledorders?;
+    decimal creditLimit?;    
 };
 
 # Represents the writable `SalesOrder` NetSuite record.
@@ -70,6 +75,23 @@ public type SalesOrder record {
     string endDate?;
     string memo?;
     string billAddress?;
+    decimal balance?;
+    decimal discountTotal?;
+    decimal estGrossProfit?;
+    decimal estGrossProfitPercent?;
+    decimal exchangeRate?;
+    decimal giftCertApplied?;
+    decimal handlingCost?;
+    decimal overallbalance?;
+    decimal overallunbilledorders?;
+    decimal paymentSessionAmount?;
+    decimal primarycurrency?;
+    decimal primarycurrencyfxrate?;
+    decimal subtotal?;
+    decimal taxTotal?;
+    decimal totalCostEstimate?;
+    decimal total?;
+    decimal unbilledOrders?;
 };
 
 # Represents the writable `Currency` NetSuite record.
@@ -91,7 +113,7 @@ public type Currency record {
     *NsResource;
     string name?;
     string symbol?;
-    float exchangeRate?;
+    decimal exchangeRate?;
     string displaySymbol?;
     int currencyPrecision?;
     boolean isInactive?;
@@ -117,11 +139,33 @@ public type Invoice record {
     *NsResource;
     Entity entity;
     ItemCollection item;
-    Classification class?;
+    Classification 'class?;
     string tranId?;
     AccountingPeriod postingperiod?;
     string trandate?;
     string memo?;
+    //----------------SLP4 Update Temp WorkArounds--------------
+    decimal amountpaid?;
+    decimal amountremaining?;
+    decimal amountremainingtotalbox?;
+    decimal balance?;
+    decimal discountTotal?;
+    decimal estGrossProfit?;
+    decimal estGrossProfitPercent?;
+    decimal exchangeRate?;
+    decimal handlingCost?;
+    decimal overallbalance?;
+    decimal overallunbilledorders?;
+    decimal subtotal?;
+    decimal taxTotal?;
+    decimal total?;
+    decimal totalCostEstimate?;
+    decimal primarycurrencyfxrate?;
+    decimal primarycurrency?;
+    Installments installment?;
+    decimal deferredrevenue?;
+    decimal giftCertApplied?;
+    decimal recognizedrevenue?;
 };
 
 # Represents the writable `Classification` NetSuite record.
@@ -185,18 +229,35 @@ public type AccountingPeriod record {
 # + subsidiary - The associated `Subsidiary`
 public type CustomerPayment record {
     *NsResource;
-    Customer customer;
-    float payment;
+    Customer customer?;
+    decimal payment?;
     Currency currency?;
     Account araccount?;
     string tranId?;
-    float exchangeRate?;
+    decimal exchangeRate?;
     string trandate?;
     AccountingPeriod postingperiod?;
     string memo?;
-    float balance?;
-    float pending?;
+    decimal balance?;
+    decimal pending?;
+    //----------------SLP4 Update Temp WorkArounds--------------
     Subsidiary subsidiary?;
+    decimal applied?;
+    PayApply apply?;
+    decimal unapplied?;
+    decimal total?;    
+};
+
+public type PayApply record{
+    Link[] links?;
+    PayItem[] items?;
+
+};
+public type PayItem record{
+    Link[] links?;
+    decimal due?;
+    decimal total?;
+    decimal amount?;
 };
 
 # Represents the writable `Account` NetSuite record.
@@ -250,13 +311,28 @@ public type Opportunity record {
     string tranId?;
     Partner partner?;
     Entity salesRep?;
-    float probability?;
+    decimal probability?;
     string expectedCloseDate?;
     NsResource winLossReason?;
     string memo?;
-    float projectedtotal?;
+    decimal projectedTotal?;
     Currency currency?;
     Subsidiary subsidiary?;
+    //----------------SLP4 Update Temp WorkArounds--------------
+    decimal balance?;
+    decimal credlim?;
+    decimal estGrossProfit?;
+    decimal estGrossProfitPercent?;
+    decimal exchangeRate?;
+    decimal overallbalance?;
+    decimal overallunbilledorders?;
+    decimal rangeHigh?;
+    decimal rangeLow?;
+    decimal total?;
+    decimal totalCostEstimate?;
+    decimal weightedTotal?;
+    decimal primarycurrency?;
+    decimal primarycurrencyfxrate?;
 };
 
 # Represents the writable `Partner` NetSuite record.
@@ -309,14 +385,34 @@ public type Vendor record {
     string companyName?;
     Subsidiary subsidiary?;
     string entityId?;
-    AddressbookCollection addressbook?;
-    float balance?;
+    AddressbookCollection addressBook?;
+    decimal balance?;
     Currency currency?;
     CurrencylistCollection currencylist?;
-    boolean isinactive?;
+    boolean isInactive?;
     boolean isPerson?;
     string lastModifiedDate?;
     NsResource workCalendar?;
+    //----------------SLP4 Update Temp WorkArounds--------------
+    decimal balancePrimary?;
+    SubMachine subMachine?;
+    decimal unbilledOrders?;
+    decimal unbilledOrdersPrimary?;
+};
+
+//----------------SLP4 Update Temp WorkArounds--------------
+public type SubMachine record{
+    Link[] links?;
+    SubMachineItems[] items?;
+
+};
+public type SubMachineItems record{
+    Link[] links?;
+    decimal balance?;
+    decimal baseBalance?;
+    decimal baseUnbilledOrders?;
+    Subsidiary subsidiary?;
+    decimal unbilledOrders?;
 };
 
 # Represents the writable `VendorBill` NetSuite record.
@@ -339,16 +435,21 @@ public type Vendor record {
 # + memo - The memo to describe the vendor bill
 public type VendorBill record {
     *NsResource;
-    Entity entity;
-    string tranId;
-    ItemCollection item;
-    float userTotal?;
-    Classification class?;
+    Entity entity?;
+    string tranId?;
+    ItemCollection item?;
+    decimal userTotal?;
+    Classification 'class?;
     Currency currency?;
     Subsidiary subsidiary?;
     string trandate?;
     AccountingPeriod postingperiod?;
     string memo?;
+    //----------------SLP4 Update Temp WorkArounds--------------
+    decimal discpct?;
+    decimal total?;
+    decimal balance?;
+    decimal exchangeRate?;
 };
 
 # Represents the writable `ServiceItem` NetSuite record.
@@ -413,6 +514,19 @@ public type NonInventoryItem record {
     boolean VSOEDelivered?;
     string nonInventoryItemType?;
     NsResource productfeed?;
+    //----------------SLP4 Update Temp WorkArounds--------------
+    PriceList price?;
+};
+
+//----------------SLP4 Update Temp WorkArounds--------------
+public type PriceList record{
+    Link[] links?;
+    PriceItem[] items?;
+};
+public type PriceItem record{
+    Link[] links?;
+    decimal price?;
+    decimal discountDisplay?;   
 };
 
 # Represents the writable `InventoryItem` NetSuite record.
@@ -442,9 +556,8 @@ public type InventoryItem record {
     string inventoryItemType?;
     string VSOESopGroup?;
     boolean VSOEDelivered?;
-    NsResource productfeed?;
+    NsResource productfeed?;  
 };
-
 # Represents the writable `InventoryItem` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|
@@ -530,7 +643,7 @@ public type DiscountItem record {
     *Item;
     string discountItemType?;
     Account account?;
-    float rate?;
+    int|decimal rate?;
 };
 
 # Represents the writable `DiscountItem` NetSuite record.
@@ -558,7 +671,7 @@ public type DiscountItem record {
 public type PaymentItem record {
     *Item;
     Account account?;
-    Classification class?;
+    Classification 'class?;
     Department department?;
     PaymentMethod paymentMethod?;
 };
@@ -636,7 +749,7 @@ public type Location record {
     string name?;
     Collection subsidiary?;
     string timeZone?;
-    float latitude?;
+    int|decimal latitude?;
 };
 
 # Represents the writable `Contact` NetSuite record.
@@ -706,15 +819,18 @@ public type Employee record {
     AddressbookCollection addressbook?;
     string firstName?;
     string lastName?;
-    boolean isinactive?;
+    boolean isInactive?;
     string dateCreated?;
     string lastModifiedDate?;
     string email?;
     NsResource workCalendar?;
     NsResource defaultexpensereportcurrency?;
-    Classification class?;
+    Classification 'class?;
     Department department?;
     Location location?;
+    //----------------SLP4 Update Temp WorkArounds--------------
+    decimal targetUtilization?;
+    decimal purchaseorderlimit?;
 };
 
 # Represents the writable `PurchaseOrder` NetSuite record.
@@ -748,8 +864,8 @@ public type Employee record {
 # + shippingAddress - The shipping address
 public type PurchaseOrder record {
     *NsResource;
-    Entity entity;
-    ItemCollection item;
+    Entity entity?;
+    ItemCollection item?;
     Currency currency?;
     string currencyName?;
     string currencysymbol?;
@@ -761,12 +877,26 @@ public type PurchaseOrder record {
     string shipAddress?;
     string tranId?;
     string trandate?;
-    float total?;
-    Classification class?;
+    decimal total?;
+    Classification 'class?;
     Department department?;
     Location location?;
     Customer shipTo?;
     string memo?;
     BillingAddress billingaddress?;
     ShippingAddress shippingAddress?;
+    //----------------SLP4 Update Temp WorkArounds--------------
+    decimal exchangeRate?;
+    Expense expense?;
+
+};
+//----------------SLP4 Update Temp WorkArounds--------------
+public type Expense record{
+    Link[] links?;
+    ExpenseItem[] items?;
+};
+
+public type ExpenseItem record{
+    Link[] links?;
+    decimal amount?;
 };

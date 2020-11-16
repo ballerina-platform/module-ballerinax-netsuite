@@ -20,7 +20,7 @@ import ballerina/oauth2;
 
 # The NetSuite Client object that allows ballerina to connector with NetSuite Account to execute CRUD and search
 # operations to perform business processing on NetSuite records and to navigate dynamically between records.
-public type Client client object {
+public client class Client {
     private http:Client netsuiteClient;
 
     # Gets invoked to initialize the `client`.
@@ -52,7 +52,7 @@ public type Client client object {
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
     # + return - The `netsuite:Error` if it is a failure or else the internal ID of created record
-    public remote function create(@tainted WritableRecord value, public string? customRecordPath = ()) returns
+    public remote function create(@tainted WritableRecord value, string? customRecordPath = ()) returns
                                   @tainted string|Error {
         return createRecord(self.netsuiteClient, value, customRecordPath);
     }
@@ -67,8 +67,8 @@ public type Client client object {
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
     # + return - The `netsuite:Error` if it is a failure or else the record
-    public remote function get(string id, ReadableRecordType targetType, public IdType idType = INTERNAL,
-                               public string? customRecordPath = ()) returns @tainted ReadableRecord|Error {
+    public remote function get(string id, ReadableRecordType targetType, IdType idType = INTERNAL,
+                               string? customRecordPath = ()) returns @tainted ReadableRecord|Error {
         return getRecord(self.netsuiteClient, id, targetType, idType, customRecordPath);
     }
 
@@ -80,7 +80,7 @@ public type Client client object {
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
     # + return - The `netsuite:Error` if it is a failure or else the internal ID of updated record
     public remote function update(@tainted WritableRecord existingValue, WritableRecord|json newValue,
-                                  public string? customRecordPath = ()) returns @tainted string|Error {
+                                   string? customRecordPath = ()) returns @tainted string|Error {
         return updateRecord(self.netsuiteClient, existingValue, newValue, customRecordPath);
     }
 
@@ -90,7 +90,7 @@ public type Client client object {
     # + customRecordPath - The optional parameter to indicate the resource path, if the record is a custom,
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
     # + return - The `netsuite:Error` if it is a failure or else `()`
-    public remote function delete(WritableRecord value, public string? customRecordPath = ()) returns @tainted Error? {
+    public remote function delete(WritableRecord value, string? customRecordPath = ()) returns @tainted Error? {
         return deleteRecord(self.netsuiteClient, value, customRecordPath);
     }
 
@@ -104,7 +104,7 @@ public type Client client object {
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
     # + return - The `netsuite:Error` if it is a failure or else the internal ID of created or updated record
     public remote function upsert(string externalId, WritableRecordType targetType, WritableRecord|json value,
-                                  public string? customRecordPath = ()) returns @tainted string|Error {
+                                   string? customRecordPath = ()) returns @tainted string|Error {
         return upsertRecord(self.netsuiteClient, targetType, externalId, value, customRecordPath);
     }
 
@@ -122,8 +122,8 @@ public type Client client object {
     # + offset - The offset used for selecting a specific starting point of a set of results
     # + return - The `netsuite:Error` if it is a failure or else a tuple with an array of string IDs and boolean
     #            to indicate the availability of more search results
-    public remote function search(ReadableRecordType targetType, public string? filter = (), public string?
-                                  customRecordPath = (), public int maxLimit = 1000, public int offset = 0) returns
+    public remote function search(ReadableRecordType targetType,  string? filter = (), string?
+                                  customRecordPath = (),  int maxLimit = 1000,  int offset = 0) returns
                                   @tainted [string[], boolean]|Error {
         return searchRecord(self.netsuiteClient, targetType, filter, customRecordPath, maxLimit, offset);
     }
@@ -136,7 +136,7 @@ public type Client client object {
     #                      company-specific or not implemented yet. Eg: "/customrecord_path"
     # + return - The `netsuite:Error` if it is a failure or else the nested record
     public remote function getSubRecord(ReadableRecord parent, SubRecordType subRecordType,
-                                        public string? customRecordPath = ()) returns @tainted SubRecord|Error {
+                                         string? customRecordPath = ()) returns @tainted SubRecord|Error {
         string parentRecordName = check resolveRecordName(customRecordPath, typeof parent);
         string subRecordName = check getRecordName(subRecordType);
         string recordId = parent.id;
@@ -165,7 +165,7 @@ public type Client client object {
     # + requestBody - The union of custom record or JSON to be set as request body
     # + return - The `netsuite:Error` if it is a failure or else the response body. If the response status code is a
     #            204, headers will be returned as a JSON
-    public remote function execute(HttpMethod httpMethod, string path, public CustomRecord|json requestBody = ())
+    public remote function execute(HttpMethod httpMethod, string path, CustomRecord|json requestBody = ())
                                    returns @tainted json|Error {
         json jsonPayload;
         if (requestBody is CustomRecord) {
@@ -178,7 +178,7 @@ public type Client client object {
             jsonPayload = requestBody;
         }
 
-        http:Response|error result = self.netsuiteClient->execute(httpMethod, REST_RESOURCE + path, jsonPayload);
+        http:Response|http:Payload|error result =  self.netsuiteClient->execute(httpMethod, REST_RESOURCE + path, jsonPayload);
         if (result is error) {
         	 return Error("execution failed", result);
         }
@@ -193,19 +193,17 @@ public type Client client object {
         }
         return processJson(response);
     }
-};
+}
 
 function createRecord(http:Client nsClient, @tainted WritableRecord recordValue, string? customRecordPath)
                       returns @tainted string|Error {
     string recordName = check resolveRecordName(customRecordPath, typeof recordValue);
-
     json|error payload = recordValue.cloneWithType(json);
     if (payload is error) {
         return Error("Error while constructing request payload for create operation", payload);
     }
-
     json jsonValue = <json> payload;
-    http:Response|error result = nsClient->post(REST_RESOURCE + recordName, jsonValue);
+    http:Response|http:Payload|error result = nsClient->post(REST_RESOURCE + recordName, jsonValue);
     if (result is error) {
          return Error("record creation request failed", result);
     }
@@ -215,7 +213,7 @@ function createRecord(http:Client nsClient, @tainted WritableRecord recordValue,
         return extractInternalId(response);
     }
 
-    json|error responsePayload = response.getJsonPayload();
+    json|error responsePayload = response.getJsonPayload(); 
     if (responsePayload is error) {
         return Error("record creation failed", responsePayload);
     }
@@ -264,8 +262,8 @@ function updateRecord(http:Client nsClient, @tainted WritableRecord existingValu
     } else {
         payload = newValue;
     }
-
-    http:Response|error result = nsClient->patch(REST_RESOURCE + recordName + "/" + recordId, payload);
+    
+    http:Response|http:Payload|error result = nsClient->patch(REST_RESOURCE + recordName + "/" + recordId, payload);
     if (result is error) {
          return Error("record update request failed", result);
     }
@@ -289,7 +287,7 @@ function deleteRecord(http:Client nsClient, WritableRecord value, string? custom
         return Error("invalid internal ID: field cannot be empty");
     }
 
-    http:Response|error result = nsClient->delete(REST_RESOURCE + recordName + "/" + id);
+    http:Response|http:Payload|error result = nsClient->delete(REST_RESOURCE + recordName + "/" + id);
     if (result is error) {
         return Error("record deletion request failed", result);
     }
@@ -321,7 +319,7 @@ function upsertRecord(http:Client nsClient, WritableRecordType targetType, strin
         payload = newValue;
     }
 
-    http:Response|error result = nsClient->put(REST_RESOURCE + recordName + "/" + EID + recordId, payload);
+    http:Response|http:Payload|error result = nsClient->put(REST_RESOURCE + recordName + "/" + EID + recordId, payload);
     if (result is error) {
         return Error("record upsertion request failed", result);
     }
@@ -348,8 +346,8 @@ function searchRecord(http:Client nsClient, ReadableRecordType targetType, strin
     log:printDebug(function () returns string {
             return "Search query param: " + queryStr;
         });
-
-    http:Response|error result = nsClient->get(REST_RESOURCE + recordName + queryStr);
+        
+    http:Response|http:Payload|error result = nsClient->get(REST_RESOURCE + recordName + queryStr);
     if (result is error) {
         return Error("record search() request failed", result);
     }
