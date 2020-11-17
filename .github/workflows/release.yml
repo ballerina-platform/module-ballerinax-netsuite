@@ -12,7 +12,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: ballerina-platform/ballerina-action/@master
+              uses: ballerina-platform/ballerina-action/@swan-lake-connector-release
               with:
                   args:
                       build -a -c
@@ -24,7 +24,7 @@ jobs:
                   NS_CLIENT_ID: ${{ secrets.NS_CLIENT_ID }}
                   NS_CLIENT_SECRET: ${{ secrets.NS_CLIENT_SECRET }}
             - name: Ballerina Push
-              uses: ballerina-platform/ballerina-action/@master
+              uses: ballerina-platform/ballerina-action/@swan-lake-connector-release
               with:
                   args:
                       push -a
