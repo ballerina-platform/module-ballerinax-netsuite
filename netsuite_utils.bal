@@ -13,13 +13,12 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/http;
 import ballerina/log;
 import ballerina/stringutils;
 
-isolated function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc)
-                       returns string|Error {
+isolated function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc) returns string|
+Error {
     if (recordTypedesc is typedesc<Customer>) {
         return RECORD_PATH_CUSTOMER;
     } else if (recordTypedesc is typedesc<SalesOrder>) {
@@ -87,13 +86,12 @@ isolated function getRecordName(ReadableRecordType|WritableRecordType|SubRecordT
     } else if (recordTypedesc is typedesc<PurchaseOrder>) {
         return RECORD_PATH_PURCHASE_ORDER;
     } else {
-        return Error("operation not implemented for " + recordTypedesc.toString() +
-                                   ", try defining it a custom record");
+        return Error("operation not implemented for " + recordTypedesc.toString() + ", try defining it a custom record");
     }
 }
 
-isolated function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc, json payload)
-                         returns ReadableRecord|WritableRecord|SubRecord|error {                             
+isolated function constructRecord(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc, json payload) returns 
+ReadableRecord|WritableRecord|SubRecord|error {
     if (recordTypedesc is typedesc<Customer>) {
         return payload.cloneWithType(Customer);
     } else if (recordTypedesc is typedesc<SalesOrder>) {
@@ -161,10 +159,10 @@ isolated function constructRecord(ReadableRecordType|WritableRecordType|SubRecor
     } else if (recordTypedesc is typedesc<PurchaseOrder>) {
         return payload.cloneWithType(PurchaseOrder);
     } else if (recordTypedesc is typedesc<CustomRecord>) {
-        return <CustomRecord> payload.cloneWithType(recordTypedesc);
+        return <CustomRecord>payload.cloneWithType(recordTypedesc);
     } else {
-        return Error("operation not implemented for " + recordTypedesc.toString() +
-                                   ", try defining it as a custom record");
+        return Error("operation not implemented for " + recordTypedesc.toString() + 
+        ", try defining it as a custom record");
     }
 }
 
@@ -173,17 +171,17 @@ function getJsonPayload(http:Client nsclient, string resourcePath, string record
     if (result is error) {
         return Error("'" + recordName + "' record retrival request failed", result);
     }
-    return processJson(<http:Response> result, recordName);
+    return processJson(<http:Response>result, recordName);
 }
 
-isolated function processJson(http:Response response, string? recordName = ()) returns @tainted json|Error{
+isolated function processJson(http:Response response, string? recordName = ()) returns @tainted json|Error {
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
         string identifier = recordName is () ? "JSON payload" : "'" + recordName + "' record";
         return Error(identifier + " retrieval failed: Invalid payload", responsePayload);
     } else {
         if (isErrorResponse(response)) {
-            return createErrorFromPayload(<map<json>> responsePayload);
+            return createErrorFromPayload(<map<json>>responsePayload);
         }
         return responsePayload;
     }
@@ -201,7 +199,7 @@ isolated function isErrorResponse(http:Response response) returns boolean {
         return false;
     }
 
-    var [val, params] = <[string, map<any>]> value;
+    var [val, params] = <[string, map<any>]>value;
     if (params["type"].toString() == "error") {
         return true;
     }

@@ -38,7 +38,6 @@ public type Customer record {
     Currency currency?;
     AddressbookCollection addressbook?;
     CurrencylistCollection currencyList?;
- 
 };
 
 # Represents the writable `SalesOrder` NetSuite record.
@@ -198,12 +197,12 @@ public type CustomerPayment record {
     decimal pending?;
 };
 
-public type PayApply record{
+public type PayApply record {
     Link[] links?;
     PayItem[] items?;
-
 };
-public type PayItem record{
+
+public type PayItem record {
     Link[] links?;
     decimal due?;
     decimal total?;
@@ -331,12 +330,12 @@ public type Vendor record {
 };
 
 //----------------SLP4 Update Temp WorkArounds--------------
-public type SubMachine record{
+public type SubMachine record {
     Link[] links?;
     SubMachineItems[] items?;
-
 };
-public type SubMachineItems record{
+
+public type SubMachineItems record {
     Link[] links?;
     decimal balance?;
     decimal baseBalance?;
@@ -468,8 +467,9 @@ public type InventoryItem record {
     string inventoryItemType?;
     string VSOESopGroup?;
     boolean VSOEDelivered?;
-    NsResource productfeed?;  
+    NsResource productfeed?;
 };
+
 # Represents the writable `InventoryItem` NetSuite record.
 # |                                            |
 # |:-------------------------------------------|

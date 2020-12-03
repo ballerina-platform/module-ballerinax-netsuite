@@ -215,6 +215,3 @@ public type CurrencylistElement record {
     decimal balance?;
     string displaySymbol?;
 };
-
-
-

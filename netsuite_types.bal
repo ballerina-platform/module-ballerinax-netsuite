@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/http;
 import ballerina/oauth2;
 
@@ -45,26 +44,31 @@ type CustomRecord record {|
 
 # The types of records, which support the writable NetSuite operations such as create, update, and delete.
 public type WritableRecord Customer|SalesOrder|Currency|NonInventoryItem|Invoice|AccountingPeriod|CustomerPayment|
-                           Account|Opportunity|Partner|Classification|CustomRecord|Vendor|VendorBill|ServiceItem|
-                           InventoryItem|OtherChargeItem|ShipItem|DiscountItem|PaymentItem|PaymentMethod|Department|
-                           Location|Contact|Employee|PurchaseOrder;
+Account|Opportunity|Partner|Classification|CustomRecord|Vendor|VendorBill|ServiceItem|InventoryItem|OtherChargeItem|
+ShipItem|DiscountItem|PaymentItem|PaymentMethod|Department|Location|Contact|Employee|PurchaseOrder;
+
 # The types of records, which support the readable NetSuite operations such as read and search.
 public type ReadableRecord Subsidiary|WritableRecord;
+
 # The types of nested records, which reside inside a parent record.
 public type SubRecord AddressbookCollection|AddressbookAddress|Currency|ItemCollection|AccountingPeriod|CustomRecord|
-                      VisualsCollection|CurrencylistCollection|ShippingAddress|BillingAddress;
+VisualsCollection|CurrencylistCollection|ShippingAddress|BillingAddress;
 
 # The type description of records, which support the writable NetSuite operations.
 public type WritableRecordType typedesc<WritableRecord>;
+
 # The type description of records, which support the readable NetSuite operations.
 public type ReadableRecordType typedesc<ReadableRecord>;
+
 # The type description of the nested records.
 public type SubRecordType typedesc<SubRecord>;
 
 # The types of the record identifiers.
 public type IdType INTERNAL|EXTERNAL;
+
 # The types of the HTTP methods, which NetSuite API supports.
 public type HttpMethod GET|POST|PATCH|DELETE|PUT;
+
 # The types of the `ItemEntity`, which are available and supported.
 public type ItemEntity ServiceItem|NonInventoryItem|InventoryItem|OtherChargeItem|ShipItem|DiscountItem|PaymentItem|
-                       NsResource;
+NsResource;

@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/config;
 import ballerina/log;
 import ballerina/system;
@@ -39,7 +38,7 @@ Configuration nsConfig = {
     }
 };
 
-Client nsClient = new(nsConfig);
+Client nsClient = new (nsConfig);
 
 type BalTestCustomRecord record {
     string id = "";
@@ -48,7 +47,7 @@ type BalTestCustomRecord record {
     string custrecord_address;
 };
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 // Before enabling the test case, create the BalTestCustomRecord type in NetSuite account providing the record type
 // id as "customrecord_bal_test".
 function testCustomizedCompanySpecificRecord() {
@@ -64,22 +63,28 @@ function testCustomizedCompanySpecificRecord() {
     };
 
     string createdId = createOrSearchIfExist(customRecord, "name IS  Bal Test Custom Record", customPath);
-    customRecord = <BalTestCustomRecord> readRecord(<@untainted> createdId, BalTestCustomRecord,customPath);
+    customRecord = <BalTestCustomRecord>readRecord(<@untainted>createdId, BalTestCustomRecord, customPath);
 
-    updateAPartOfARecord(customRecord, { "custrecord_version": 3.13 }, "custrecord_version", "3.13", customPath);
+    updateAPartOfARecord(customRecord, {"custrecord_version": 3.13}, "custrecord_version", "3.13", customPath);
 
-    BalTestCustomRecord replaceCustomRecord = { name: "Replaced ballerina testing", custrecord_version: 1.4,
-                                                custrecord_address: "pg" };
+    BalTestCustomRecord replaceCustomRecord = {
+        name: "Replaced ballerina testing",
+        custrecord_version: 1.4,
+        custrecord_address: "pg"
+    };
     updateCompleteRecord(customRecord, replaceCustomRecord, "custrecord_version", "1.4", customPath);
 
-    BalTestCustomRecord newCustomRecord = { name: "Updated ballerina testing", custrecord_version: 5.1,
-                                            custrecord_address: "pg" };
-    newCustomRecord = <BalTestCustomRecord> upsertCompleteRecord(newCustomRecord, "168334D", customPath);
-    newCustomRecord = <BalTestCustomRecord> upsertAPartOfARecord(<@untainted> newCustomRecord,
-                            { "custrecord_address": "USA" }, "168334D", "custrecord_address", "USA", customPath);
+    BalTestCustomRecord newCustomRecord = {
+        name: "Updated ballerina testing",
+        custrecord_version: 5.1,
+        custrecord_address: "pg"
+    };
+    newCustomRecord = <BalTestCustomRecord>upsertCompleteRecord(newCustomRecord, "168334D", customPath);
+    newCustomRecord = <BalTestCustomRecord>upsertAPartOfARecord(<@untainted>newCustomRecord, {"custrecord_address": 
+        "USA"}, "168334D", "custrecord_address", "USA", customPath);
 
-    deleteRecordTest(<@untainted> customRecord, customPath);
-    deleteRecordTest(<@untainted> newCustomRecord, customPath);
+    deleteRecordTest(<@untainted>customRecord, customPath);
+    deleteRecordTest(<@untainted>newCustomRecord, customPath);
 }
 
 type TestMessage record {
@@ -87,13 +92,11 @@ type TestMessage record {
     string subject;
 };
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testExecuteAction() {
     log:printInfo("Testing Execute action :");
 
-    TestMessage message = {
-        subject: "Ballerina test message"
-    };
+    TestMessage message = {subject: "Ballerina test message"};
 
     log:printInfo("Creating...");
     json|Error createResult = nsClient->execute(POST, "/message", message);
@@ -101,7 +104,7 @@ function testExecuteAction() {
         test:assertFail(msg = "execute operation failed: " + createResult.message());
     }
 
-    map<json> headers = <map<json>> createResult;
+    map<json> headers = <map<json>>createResult;
     string locationHeader = headers[LOCATION_HEADER].toString();
     string internalId = spitAndGetLastElement(locationHeader, "/");
 
@@ -111,23 +114,23 @@ function testExecuteAction() {
         test:assertFail(msg = "execute operation failed: " + readResult.toString());
     }
 
-    json jsonMessage = <json> readResult;
+    json jsonMessage = <json>readResult;
     var result = jsonMessage.cloneWithType(TestMessage);
     if result is error {
         test:assertFail(msg = "record construct failed: " + result.toString());
     }
 
-    message = <TestMessage> result;
+    message = <TestMessage>result;
     test:assertTrue(message.id != "", msg = "record retrieval failed");
 
     log:printInfo("Deleting...");
-    json|Error deleteResult = nsClient->execute(DELETE, "/message/" + <@untainted> message.id);
+    json|Error deleteResult = nsClient->execute(DELETE, "/message/" + <@untainted>message.id);
     if deleteResult is Error {
         test:assertFail(msg = "execute operation failed: " + deleteResult.toString());
     }
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 // Subsidiary is a prerequisite record for the following test case
 function testCustomer() {
     log:printInfo("Testing Customer :");
@@ -138,7 +141,7 @@ function testCustomer() {
         subsidiary = recordSubsidiary;
     }
 
-    Subsidiary subs = <Subsidiary> subsidiary;
+    Subsidiary subs = <Subsidiary>subsidiary;
     Customer customer = {
         entityId: "ballerina",
         companyName: "ballerinalang",
@@ -147,26 +150,34 @@ function testCustomer() {
 
     // Create customer record
     string createdId = createOrSearchIfExist(customer, "entityId IS ballerina");
-    customer = <Customer> readRecord(<@untainted> createdId, Customer);
+    customer = <Customer>readRecord(<@untainted>createdId, Customer);
 
-    updateAPartOfARecord(customer, { "creditLimit": 200003.1 }, "creditLimit", "200003.1");
-    Customer replaceCustomer = { entityId: "ballerina", companyName: "ballerina.io",
-                                    "creditLimit": 3002.0, subsidiary: subs };
+    updateAPartOfARecord(customer, {"creditLimit": 200003.1}, "creditLimit", "200003.1");
+    Customer replaceCustomer = {
+        entityId: "ballerina",
+        companyName: "ballerina.io",
+        "creditLimit": 3002.0,
+        subsidiary: subs
+    };
     updateCompleteRecord(customer, replaceCustomer, "creditLimit", "3002.0");
 
-    Customer newCustomer = { entityId: "ballerinaUpsert", companyName: "ballerina", "creditLimit": 100000.0,
-                                subsidiary : subs };
-    newCustomer = <Customer> upsertCompleteRecord(<@untainted> newCustomer, "16835EID");
-    newCustomer = <Customer> upsertAPartOfARecord(<@untainted> newCustomer, { "creditLimit": 13521.0 }, "16835EID",
-                                                    "creditLimit", "13521.0");
+    Customer newCustomer = {
+        entityId: "ballerinaUpsert",
+        companyName: "ballerina",
+        "creditLimit": 100000.0,
+        subsidiary: subs
+    };
+    newCustomer = <Customer>upsertCompleteRecord(<@untainted>newCustomer, "16835EID");
+    newCustomer = <Customer>upsertAPartOfARecord(<@untainted>newCustomer, {"creditLimit": 13521.0}, "16835EID", 
+    "creditLimit", "13521.0");
 
-    subRecordTest(<@untainted> customer, AddressbookCollection, "totalResults", "0");
+    subRecordTest(<@untainted>customer, AddressbookCollection, "totalResults", "0");
 
-    deleteRecordTest(<@untainted> customer);
-    deleteRecordTest(<@untainted> newCustomer);
+    deleteRecordTest(<@untainted>customer);
+    deleteRecordTest(<@untainted>newCustomer);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testCurrency() {
     log:printInfo("Testing Currency :");
 
@@ -179,22 +190,37 @@ function testCurrency() {
 
     // Create currency record
     string createdId = createOrSearchIfExist(currency, "name IS BLA");
-    currency = <Currency> readRecord(<@untainted> createdId, Currency);
+    currency = <Currency>readRecord(<@untainted>createdId, Currency);
 
-    updateAPartOfARecord(currency, { "currencyPrecisioun": 4, "symbol" : "BBB" }, "symbol", "BBB");
-    Currency replaceCurrency = { name: "BLA", symbol: "BFF", currencyPrecision: 3, exchangeRate: 5.89 };
+    updateAPartOfARecord(currency, {
+        "currencyPrecisioun": 4,
+        "symbol": "BBB"
+    }, "symbol", "BBB");
+    Currency replaceCurrency = {
+        name: "BLA",
+        symbol: "BFF",
+        currencyPrecision: 3,
+        exchangeRate: 5.89
+    };
     updateCompleteRecord(currency, replaceCurrency, "symbol", "BFF");
 
-    Currency newCurrency = { name: "BLB", symbol: "BLB", currencyPrecision: 6, exchangeRate: 52.89 };
-    newCurrency = <Currency> upsertCompleteRecord(newCurrency, "16834EID");
-    newCurrency = <Currency> upsertAPartOfARecord(<@untainted> newCurrency,
-                            { "currencyPrecisioun": 4, "symbol" : "BFB" }, "16834EID", "symbol", "BFB");
+    Currency newCurrency = {
+        name: "BLB",
+        symbol: "BLB",
+        currencyPrecision: 6,
+        exchangeRate: 52.89
+    };
+    newCurrency = <Currency>upsertCompleteRecord(newCurrency, "16834EID");
+    newCurrency = <Currency>upsertAPartOfARecord(<@untainted>newCurrency, {
+        "currencyPrecisioun": 4,
+        "symbol": "BFB"
+    }, "16834EID", "symbol", "BFB");
 
-    deleteRecordTest(<@untainted> currency);
-    deleteRecordTest(<@untainted> newCurrency);
+    deleteRecordTest(<@untainted>currency);
+    deleteRecordTest(<@untainted>newCurrency);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 // Subsidiary, Customer and ServiceItem are prerequisite records for the following test case
 function testSalesOrder() {
     log:printInfo("Testing SalesOrder :");
@@ -205,8 +231,8 @@ function testSalesOrder() {
         customer = recordCustomer;
     }
 
-    Customer retrievedCustomer = <Customer> customer;
-    Currency currency = <Currency> retrievedCustomer["currency"];
+    Customer retrievedCustomer = <Customer>customer;
+    Currency currency = <Currency>retrievedCustomer["currency"];
 
     NonInventoryItem? nonInventoryItem = ();
     var recordNonInventoryItem = getARandomPrerequisiteRecord(NonInventoryItem);
@@ -216,7 +242,7 @@ function testSalesOrder() {
 
     ItemElement serviceItem = {
         amount: 39000.0,
-        item: <NonInventoryItem> nonInventoryItem,
+        item: <NonInventoryItem>nonInventoryItem,
         itemSubType: "Sale",
         itemType: "NonInvtPart"
     };
@@ -232,20 +258,27 @@ function testSalesOrder() {
     };
 
     string createdId = createOrSearchIfExist(salesOrder);
-    salesOrder = <SalesOrder> readRecord(<@untainted> createdId, SalesOrder);
+    salesOrder = <SalesOrder>readRecord(<@untainted>createdId, SalesOrder);
 
-    updateAPartOfARecord(salesOrder, { "shipAddress": "Germany" }, "shipAddress", "Germany");
+    updateAPartOfARecord(salesOrder, {"shipAddress": "Germany"}, "shipAddress", "Germany");
     Customer? customerEntity = getDummyCustomer();
 
-    SalesOrder newSalesOrder = { billAddress: "Denmark", entity: <Customer> customer, currency: <Currency>
-            currency, item: { items: [serviceItem], totalResults: 1 } };
-    newSalesOrder = <SalesOrder> upsertCompleteRecord(<@untainted> newSalesOrder, "16836EID");
+    SalesOrder newSalesOrder = {
+        billAddress: "Denmark",
+        entity: <Customer>customer,
+        currency: <Currency>currency,
+        item: {
+            items: [serviceItem],
+            totalResults: 1
+        }
+    };
+    newSalesOrder = <SalesOrder>upsertCompleteRecord(<@untainted>newSalesOrder, "16836EID");
 
-    deleteRecordTest(<@untainted> salesOrder);
-    deleteRecordTest(<@untainted> newSalesOrder);
+    deleteRecordTest(<@untainted>salesOrder);
+    deleteRecordTest(<@untainted>newSalesOrder);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 // Customer, Classification and ServiceItem are prerequisite records for the following test case
 function testInvoice() {
     log:printInfo("Testing Invoice :");
@@ -269,14 +302,14 @@ function testInvoice() {
 
     ItemElement serviceItem = {
         amount: 39000.0,
-        item: <NonInventoryItem> nonInventoryItem,
+        item: <NonInventoryItem>nonInventoryItem,
         itemSubType: "Sale",
         itemType: "NonInvtPart"
     };
 
     Invoice invoice = {
-        entity: <Customer> customer,
-        'class: <Classification> classTest,
+        entity: <Customer>customer,
+        'class: <Classification>classTest,
         item: {
             items: [serviceItem],
             totalResults: 1
@@ -286,35 +319,41 @@ function testInvoice() {
 
     // Create invoice record
     string createdId = createOrSearchIfExist(invoice, "memo IS \"ballerina test\"");
-    invoice = <Invoice> readRecord(<@untainted> createdId, Invoice);
+    invoice = <Invoice>readRecord(<@untainted>createdId, Invoice);
 
-    updateAPartOfARecord(invoice, { "memo": "updated ballerina test" }, "memo", "updated ballerina test");
-    Invoice replaceInvoice = { entity: <Customer> customer, 'class: <Classification> classTest, item: { items: [serviceItem]
-                                }, memo: "replaced ballerina test" };
+    updateAPartOfARecord(invoice, {"memo": "updated ballerina test"}, "memo", "updated ballerina test");
+    Invoice replaceInvoice = {
+        entity: <Customer>customer,
+        'class: <Classification>classTest,
+        item: {items: [serviceItem]},
+        memo: "replaced ballerina test"
+    };
     updateCompleteRecord(invoice, replaceInvoice, "memo", "replaced ballerina test");
 
-    Invoice newInvoice = { entity: <Customer> customer, 'class: <Classification> classTest, item: { items: [serviceItem]
-                                    }, memo: "new invoice ballerina test" };
-    newInvoice = <Invoice> upsertCompleteRecord(<@untainted> newInvoice, "16835EID");
+    Invoice newInvoice = {
+        entity: <Customer>customer,
+        'class: <Classification>classTest,
+        item: {items: [serviceItem]},
+        memo: "new invoice ballerina test"
+    };
+    newInvoice = <Invoice>upsertCompleteRecord(<@untainted>newInvoice, "16835EID");
 
-    deleteRecordTest(<@untainted> invoice);
-    deleteRecordTest(<@untainted> newInvoice);
+    deleteRecordTest(<@untainted>invoice);
+    deleteRecordTest(<@untainted>newInvoice);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testClassification() {
     log:printInfo("Testing Classification :");
 
     readExistingRecord(Classification);
-    Classification classTest = {
-        name: "Ballerina test class"
-    };
+    Classification classTest = {name: "Ballerina test class"};
     string createdId = createOrSearchIfExist(classTest, "name IS \"Ballerina test class\"");
-    classTest = <Classification> readRecord(<@untainted> createdId, Classification);
-    deleteRecordTest(<@untainted> classTest);
+    classTest = <Classification>readRecord(<@untainted>createdId, Classification);
+    deleteRecordTest(<@untainted>classTest);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testAccountingPeriod() {
     log:printInfo("Testing AccountingPeriod :");
 
@@ -328,7 +367,7 @@ function testAccountingPeriod() {
     string searchedId = searchForRecord(accountingPeriod, "isinactive IS false");
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 // Record read operation fails due to NetSuite API issue
 function testCustomerPayment() {
     log:printInfo("Testing CustomerPayment :");
@@ -339,16 +378,16 @@ function testCustomerPayment() {
     Customer? customer = getDummyCustomer();
 
     CustomerPayment customerPayment = {
-        customer: <Customer> customer,
+        customer: <Customer>customer,
         payment: 32000.5,
         memo: "Ballerina test customerPayment"
     };
     string createdId = createOrSearchIfExist(customerPayment, "memo IS \"Ballerina test customerPayment\"");
-    customerPayment = <CustomerPayment> readRecord(<@untainted> createdId, CustomerPayment);
-    deleteRecordTest(<@untainted> customerPayment);
+    customerPayment = <CustomerPayment>readRecord(<@untainted>createdId, CustomerPayment);
+    deleteRecordTest(<@untainted>customerPayment);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testAccount() {
     log:printInfo("Testing Account :");
 
@@ -362,16 +401,16 @@ function testAccount() {
 
     Account account = {
         acctname: "Ballerina test account",
-        currency: <Currency> currency,
+        currency: <Currency>currency,
         acctnumber: "67425629"
     };
     string createdId = createOrSearchIfExist(account, "acctnumber IS 67425629");
-    account = <Account> readRecord(<@untainted> createdId, Account);
-    updateAPartOfARecord(account, { "acctname": "updated Ballerina test account" }, "acctname",
-                                    "updated Ballerina test account");
+    account = <Account>readRecord(<@untainted>createdId, Account);
+    updateAPartOfARecord(account, {"acctname": "updated Ballerina test account"}, "acctname", 
+    "updated Ballerina test account");
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testPartner() {
     log:printInfo("Testing Partner :");
 
@@ -386,14 +425,14 @@ function testPartner() {
     Partner partner = {
         entityId: "Ballerina test partner",
         companyName: "ballerinalang",
-        subsidiary: <Subsidiary> subsidiary
+        subsidiary: <Subsidiary>subsidiary
     };
     string createdId = createOrSearchIfExist(partner, "companyName IS ballerinalang");
-    partner = <Partner> readRecord(<@untainted> createdId, Partner);
-    deleteRecordTest(<@untainted> partner);
+    partner = <Partner>readRecord(<@untainted>createdId, Partner);
+    deleteRecordTest(<@untainted>partner);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testOpportunity() {
     log:printInfo("Testing Opportunity :");
 
@@ -414,20 +453,20 @@ function testOpportunity() {
     }
 
     Opportunity opportunity = {
-        entity: <Customer> customer,
+        entity: <Customer>customer,
         titile: "Ballerina test opportunity",
-        "custbody_end_user": <Customer> endUser,
+        "custbody_end_user": <Customer>endUser,
         "custbody_order_type": {
             "id": "1",
             "refName": "Contract - New"
-          }
+        }
     };
     string createdId = createOrSearchIfExist(opportunity, "titile IS Ballerina test opportunity");
-    opportunity = <Opportunity> readRecord(<@untainted> createdId, Opportunity);
-    deleteRecordTest(<@untainted> opportunity);
+    opportunity = <Opportunity>readRecord(<@untainted>createdId, Opportunity);
+    deleteRecordTest(<@untainted>opportunity);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testVendor() {
     log:printInfo("Testing Vendor :");
 
@@ -442,16 +481,16 @@ function testVendor() {
     Vendor vendor = {
         entityId: "Ballerina test vendor",
         companyName: "ballerinalang",
-        subsidiary: <Subsidiary> subsidiary
+        subsidiary: <Subsidiary>subsidiary
     };
 
     string createdId = createOrSearchIfExist(vendor, "companyName IS ballerinalang");
-    vendor = <Vendor> readRecord(<@untainted> createdId, Vendor);
-    updateAPartOfARecord(vendor, { "entityId": "updated ballerina vendor" }, "entityId", "updated ballerina vendor");
-    deleteRecordTest(<@untainted> vendor);
+    vendor = <Vendor>readRecord(<@untainted>createdId, Vendor);
+    updateAPartOfARecord(vendor, {"entityId": "updated ballerina vendor"}, "entityId", "updated ballerina vendor");
+    deleteRecordTest(<@untainted>vendor);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 //Error while accessing the resource: You have entered an invalid field value 159 for the following field: item
 function testVendorBill() {
     log:printInfo("Testing Vendor Bill :");
@@ -478,35 +517,35 @@ function testVendorBill() {
 
     ItemElement serviceItem = {
         amount: 39000.0,
-        item: <NonInventoryItem> nonInventoryItem,
+        item: <NonInventoryItem>nonInventoryItem,
         itemSubType: "Sale",
         itemType: "NonInvtPart"
     };
 
     VendorBill vendorBill = {
-        entity: <Vendor> vendor,
+        entity: <Vendor>vendor,
         tranId: "100102894",
         item: {
             items: [serviceItem],
             totalResults: 1
         },
-        'class: <Classification> classTest,
+        'class: <Classification>classTest,
         memo: "ballerina test"
     };
 
     string createdId = createOrSearchIfExist(vendorBill, "memo IS \"ballerina test\"");
-    vendorBill = <VendorBill> readRecord(<@untainted> createdId, VendorBill);
-    deleteRecordTest(<@untainted> vendorBill);
+    vendorBill = <VendorBill>readRecord(<@untainted>createdId, VendorBill);
+    deleteRecordTest(<@untainted>vendorBill);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testVendorBillRead() {
     log:printInfo("Testing Vendor Bill read :");
 
     readExistingRecord(VendorBill);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testContact() {
     log:printInfo("Testing Contact :");
 
@@ -520,55 +559,49 @@ function testContact() {
 
     Contact contact = {
         entityId: "Ballerina test contact",
-        subsidiary: <Subsidiary> subsidiary
+        subsidiary: <Subsidiary>subsidiary
     };
     string createdId = createOrSearchIfExist(contact, "entityId IS \"Ballerina test contact\"");
-    contact = <Contact> readRecord(<@untainted> createdId, Contact);
-    deleteRecordTest(<@untainted> contact);
+    contact = <Contact>readRecord(<@untainted>createdId, Contact);
+    deleteRecordTest(<@untainted>contact);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testLocation() {
     log:printInfo("Testing Location :");
 
     readExistingRecord(Location);
-    Location location = {
-        name: "Ballerina test location"
-    };
+    Location location = {name: "Ballerina test location"};
     string createdId = createOrSearchIfExist(location, "name IS \"Ballerina test location\"");
-    location = <Location> readRecord(<@untainted> createdId, Location);
-    deleteRecordTest(<@untainted> location);
+    location = <Location>readRecord(<@untainted>createdId, Location);
+    deleteRecordTest(<@untainted>location);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testDepartment() {
     log:printInfo("Testing Department :");
 
     readExistingRecord(Department);
-    Department department = {
-        name: "Ballerina test department"
-    };
+    Department department = {name: "Ballerina test department"};
     string createdId = createOrSearchIfExist(department, "name IS \"Ballerina test department\"");
-    department = <Department> readRecord(<@untainted> createdId, Department);
-    deleteRecordTest(<@untainted> department);
+    department = <Department>readRecord(<@untainted>createdId, Department);
+    deleteRecordTest(<@untainted>department);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 // Record delete operation fails due to a NetSuite API issue.
 //SLP4 version update : API issue Payment method created and deleted. but send error by API after deleting
 function testPaymentMethod() {
     log:printInfo("Testing PaymentMethod :");
 
     readExistingRecord(PaymentMethod);
-    PaymentMethod paymentMethod = {
-        name: "Ballerina test paymentMethod"
-    };
+    PaymentMethod paymentMethod = {name: "Ballerina test paymentMethod"};
     string createdId = createOrSearchIfExist(paymentMethod, "name IS \"Ballerina test paymentMethod\"");
-    paymentMethod = <PaymentMethod> readRecord(<@untainted> createdId, PaymentMethod);
-    deleteRecordTest(<@untainted> paymentMethod);
+    paymentMethod = <PaymentMethod>readRecord(<@untainted>createdId, PaymentMethod);
+    deleteRecordTest(<@untainted>paymentMethod);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testEmployee() {
     log:printInfo("Testing Employee :");
 
@@ -580,9 +613,8 @@ function testEmployee() {
         subsidiary = recordSubsidiary;
     }
 
-    Subsidiary retrievedSubsidiary = <Subsidiary> subsidiary;
-    Currency currency = <Currency> retrievedSubsidiary["currency"];
-
+    Subsidiary retrievedSubsidiary = <Subsidiary>subsidiary;
+    Currency currency = <Currency>retrievedSubsidiary["currency"];
 
     Employee employee = {
         entityId: "Ballerina test employee",
@@ -590,11 +622,11 @@ function testEmployee() {
         currency: currency
     };
     string createdId = createOrSearchIfExist(employee, "entityId IS \"Ballerina test employee\"");
-    employee = <Employee> readRecord(<@untainted> createdId, Employee);
-    deleteRecordTest(<@untainted> employee);
+    employee = <Employee>readRecord(<@untainted>createdId, Employee);
+    deleteRecordTest(<@untainted>employee);
 }
 
-@test:Config {enable:false}
+@test:Config {enable: false}
 //Error while accessing the resource: You have entered an invalid field value 159 for the following field: item
 function testPurchaseOrder() {
     log:printInfo("Testing PurchaseOrder :");
@@ -607,7 +639,7 @@ function testPurchaseOrder() {
         customer = recordCustomer;
     }
 
-    Customer retrievedCustomer = <Customer> customer;
+    Customer retrievedCustomer = <Customer>customer;
 
     NonInventoryItem? nonInventoryItem = ();
     var recordNonInventoryItem = getARandomPrerequisiteRecord(NonInventoryItem);
@@ -617,25 +649,23 @@ function testPurchaseOrder() {
 
     ItemElement serviceElement = {
         amount: 39000.0,
-        item: <NonInventoryItem> nonInventoryItem,
+        item: <NonInventoryItem>nonInventoryItem,
         itemSubType: "Sale",
         itemType: "NonInvtPart"
     };
 
     PurchaseOrder purchaseOrder = {
         entity: retrievedCustomer,
-        item: {
-            items: [serviceElement]
-        },
+        item: {items: [serviceElement]},
         memo: "Ballerina test purchaseOrder"
     };
 
     string createdId = createOrSearchIfExist(purchaseOrder, "memo IS \"Ballerina test location\"");
-    purchaseOrder = <PurchaseOrder> readRecord(<@untainted> createdId, PurchaseOrder);
-    deleteRecordTest(<@untainted> purchaseOrder);
+    purchaseOrder = <PurchaseOrder>readRecord(<@untainted>createdId, PurchaseOrder);
+    deleteRecordTest(<@untainted>purchaseOrder);
 }
 
-@test:Config { enable:false }
+@test:Config {enable: false}
 function testPurchaseOrderRead() {
     log:printInfo("Testing PurchaseOrder read:");
 
