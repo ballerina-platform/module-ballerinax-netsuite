@@ -15,10 +15,10 @@ The following sections provide you details on how to use the NetSuite connector.
 
 ## Compatibility
 
-|                             |           Version           |
-|:---------------------------:|:---------------------------:|
-| Ballerina Language          |     Swan Lake Preview5      |
-| NetSuite REST API           |            Beta             |
+|                             |           Version                    |
+|:---------------------------:|:------------------------------------:|
+| Ballerina Language          |     Swan Lake Preview7-SNAPSHOT      |
+| NetSuite REST API           |            Beta                      |
 
 ## Feature Overview
 - A single client is used across all network operations which supports the OAuth 2.0 authentication mechanism.

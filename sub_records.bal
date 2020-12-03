@@ -42,15 +42,6 @@ public type ItemElement record {
     NsResource item?;
     string itemSubType?;
     string itemType?;
-    //----------------SLP4 Update Temp WorkArounds--------------
-    decimal custcol_statistical_value_base_curr?;
-    decimal initQuantity?;
-    decimal quantity?;
-    decimal weightInLb?;
-    decimal rate?;
-    decimal costEstimate?;
-    decimal costEstimateRate?;
-    decimal origQuantity?;
 };
 
 # Represents the `AddressBook` NetSuite sub record.
@@ -222,23 +213,8 @@ public type CurrencylistElement record {
     Currency currency?;
     string refName?;
     decimal balance?;
-    decimal depositBalance?;
-    decimal overdueBalance?;
-    decimal unbilledOrders?;
     string displaySymbol?;
 };
 
-//----------------SLP4 Update Temp WorkArounds--------------
-public type Installments record{
-    Link[] links?;
-    InstallmentItem[] items?;
-
-};
-
-public type InstallmentItem record{
-    Link[] links?;
-    decimal amount?;
-    decimal amountdue?;
-};
 
 

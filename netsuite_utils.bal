@@ -195,9 +195,7 @@ isolated function isErrorResponse(http:Response response) returns boolean {
     }
 
     string contentType = response.getHeader(CONTENT_TYPE_HEADER);
-    log:printDebug(function () returns string {
-            return "Error response content type: " + contentType;
-        });
+    log:printDebug("Error response content type: " + contentType);
     var value = http:parseHeader(contentType);
     if (value is error) {
         return false;

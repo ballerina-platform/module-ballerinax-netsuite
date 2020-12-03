@@ -1,9 +1,12 @@
-[project]
-org-name= "ballerinax"
-version= "0.9.2"
+[package]
+org = "lakshitha"
+name = "module_ballerinax_netsuite"
+version = "0.9.2"
 authors = ["Ballerina"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-netsuite"
 keywords = ["NetSuite", "Finance", "Integration"]
 license = ["Apache-2.0"]
 
-[dependencies]
+
+[build-options]
+observabilityIncluded = true

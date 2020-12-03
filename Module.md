@@ -7,10 +7,10 @@ records to perform business processing and to navigate dynamically between recor
 services API.
 
 ## Compatibility
-|                     |    Version           |
-|:-------------------:|:--------------------:|
-| Ballerina Language  | Swan Lake Preview5   |
-| NetSuite REST API   | Beta                 |
+|                     |    Version                    |
+|:-------------------:|:-----------------------------:|
+| Ballerina Language  | Swan Lake Preview7 SNAPSHOT   |
+| NetSuite REST API   | Beta                          |
 
 ## Configurations
 

@@ -1,8 +1,8 @@
 ## Compatibility
 
-| Ballerina Language Version | NetSuite API Version |  
-|:--------------------------:|:--------------------:|
-| Swan Lake Preview5         |        Beta          |
+| Ballerina Language Version          | NetSuite API Version |  
+|:-----------------------------------:|:--------------------:|
+| Swan Lake Preview7-SNAPSHOT         |        Beta          |
 
 ### Prerequisites
 

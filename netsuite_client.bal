@@ -230,9 +230,7 @@ function getRecord(http:Client nsClient, string id, ReadableRecordType targetTyp
     string recordId = "/" + (idType is INTERNAL ? id : <string> EID + id);
     string resourcePath = REST_RESOURCE + targetRecordName + recordId + EXPAND_SUB_RESOURCES;
     json payload = check getJsonPayload(nsClient, resourcePath, targetRecordName);
-    log:printDebug(function () returns string {
-            return "Inbound JSON payload: " + payload.toString();
-        });
+    log:printDebug("Inbound JSON payload: " + payload.toString());
 
     var result = constructRecord(targetType, payload);
     if (result is ReadableRecord) {
@@ -343,9 +341,7 @@ function searchRecord(http:Client nsClient, ReadableRecordType targetType, strin
     string range = "limit=" + maxLimit.toString() + "&offset=" + offset.toString();
     string queryStr = filter is () ? "?" + range : "?q=" + filter + "&" + range;
 
-    log:printDebug(function () returns string {
-            return "Search query param: " + queryStr;
-        });
+    log:printDebug("Search query param: " + queryStr);
         
     http:Response|http:Payload|error result = nsClient->get(REST_RESOURCE + recordName + queryStr);
     if (result is error) {
