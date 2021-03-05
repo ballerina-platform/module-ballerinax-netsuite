@@ -51,7 +51,7 @@ type BalTestCustomRecord record {
 // Before enabling the test case, create the BalTestCustomRecord type in NetSuite account providing the record type
 // id as "customrecord_bal_test".
 function testCustomizedCompanySpecificRecord() {
-    log:printInfo("Testing Custom Record :");
+    log:print("Testing Custom Record :");
 
     string customPath = "/customrecord_bal_test";
     readExistingRecord(BalTestCustomRecord, customPath);
@@ -94,11 +94,11 @@ type TestMessage record {
 
 @test:Config {enable: false}
 function testExecuteAction() {
-    log:printInfo("Testing Execute action :");
+    log:print("Testing Execute action :");
 
     TestMessage message = {subject: "Ballerina test message"};
 
-    log:printInfo("Creating...");
+    log:print("Creating...");
     json|Error createResult = nsClient->execute(POST, "/message", message);
     if createResult is Error {
         test:assertFail(msg = "execute operation failed: " + createResult.message());
@@ -108,7 +108,7 @@ function testExecuteAction() {
     string locationHeader = headers[LOCATION_HEADER].toString();
     string internalId = spitAndGetLastElement(locationHeader, "/");
 
-    log:printInfo("Reading...");
+    log:print("Reading...");
     json|Error readResult = nsClient->execute(GET, "/message/" + internalId);
     if readResult is Error {
         test:assertFail(msg = "execute operation failed: " + readResult.toString());
@@ -123,7 +123,7 @@ function testExecuteAction() {
     message = <TestMessage>result;
     test:assertTrue(message.id != "", msg = "record retrieval failed");
 
-    log:printInfo("Deleting...");
+    log:print("Deleting...");
     json|Error deleteResult = nsClient->execute(DELETE, "/message/" + <@untainted>message.id);
     if deleteResult is Error {
         test:assertFail(msg = "execute operation failed: " + deleteResult.toString());
@@ -133,7 +133,7 @@ function testExecuteAction() {
 @test:Config {enable: false}
 // Subsidiary is a prerequisite record for the following test case
 function testCustomer() {
-    log:printInfo("Testing Customer :");
+    log:print("Testing Customer :");
 
     Subsidiary? subsidiary = ();
     var recordSubsidiary = getARandomPrerequisiteRecord(Subsidiary);
@@ -179,7 +179,7 @@ function testCustomer() {
 
 @test:Config {enable: false}
 function testCurrency() {
-    log:printInfo("Testing Currency :");
+    log:print("Testing Currency :");
 
     Currency currency = {
         name: "BLA",
@@ -223,7 +223,7 @@ function testCurrency() {
 @test:Config {enable: false}
 // Subsidiary, Customer and ServiceItem are prerequisite records for the following test case
 function testSalesOrder() {
-    log:printInfo("Testing SalesOrder :");
+    log:print("Testing SalesOrder :");
 
     Customer? customer = ();
     var recordCustomer = getARandomPrerequisiteRecord(Customer);
@@ -281,7 +281,7 @@ function testSalesOrder() {
 @test:Config {enable: false}
 // Customer, Classification and ServiceItem are prerequisite records for the following test case
 function testInvoice() {
-    log:printInfo("Testing Invoice :");
+    log:print("Testing Invoice :");
 
     readExistingRecord(Invoice);
 
@@ -344,7 +344,7 @@ function testInvoice() {
 
 @test:Config {enable: false}
 function testClassification() {
-    log:printInfo("Testing Classification :");
+    log:print("Testing Classification :");
 
     readExistingRecord(Classification);
     Classification classTest = {name: "Ballerina test class"};
@@ -355,7 +355,7 @@ function testClassification() {
 
 @test:Config {enable: false}
 function testAccountingPeriod() {
-    log:printInfo("Testing AccountingPeriod :");
+    log:print("Testing AccountingPeriod :");
 
     readExistingRecord(AccountingPeriod);
 
@@ -370,7 +370,7 @@ function testAccountingPeriod() {
 @test:Config {enable: false}
 // Record read operation fails due to NetSuite API issue
 function testCustomerPayment() {
-    log:printInfo("Testing CustomerPayment :");
+    log:print("Testing CustomerPayment :");
 
     readExistingRecord(CustomerPayment);
 
@@ -389,7 +389,7 @@ function testCustomerPayment() {
 
 @test:Config {enable: false}
 function testAccount() {
-    log:printInfo("Testing Account :");
+    log:print("Testing Account :");
 
     readExistingRecord(Account);
 
@@ -412,7 +412,7 @@ function testAccount() {
 
 @test:Config {enable: false}
 function testPartner() {
-    log:printInfo("Testing Partner :");
+    log:print("Testing Partner :");
 
     readExistingRecord(Partner);
 
@@ -434,7 +434,7 @@ function testPartner() {
 
 @test:Config {enable: false}
 function testOpportunity() {
-    log:printInfo("Testing Opportunity :");
+    log:print("Testing Opportunity :");
 
     readExistingRecord(Opportunity);
 
@@ -468,7 +468,7 @@ function testOpportunity() {
 
 @test:Config {enable: false}
 function testVendor() {
-    log:printInfo("Testing Vendor :");
+    log:print("Testing Vendor :");
 
     readExistingRecord(Vendor);
 
@@ -493,7 +493,7 @@ function testVendor() {
 @test:Config {enable: false}
 //Error while accessing the resource: You have entered an invalid field value 159 for the following field: item
 function testVendorBill() {
-    log:printInfo("Testing Vendor Bill :");
+    log:print("Testing Vendor Bill :");
 
     readExistingRecord(VendorBill);
 
@@ -540,14 +540,14 @@ function testVendorBill() {
 
 @test:Config {enable: false}
 function testVendorBillRead() {
-    log:printInfo("Testing Vendor Bill read :");
+    log:print("Testing Vendor Bill read :");
 
     readExistingRecord(VendorBill);
 }
 
 @test:Config {enable: false}
 function testContact() {
-    log:printInfo("Testing Contact :");
+    log:print("Testing Contact :");
 
     readExistingRecord(Contact);
 
@@ -568,7 +568,7 @@ function testContact() {
 
 @test:Config {enable: false}
 function testLocation() {
-    log:printInfo("Testing Location :");
+    log:print("Testing Location :");
 
     readExistingRecord(Location);
     Location location = {name: "Ballerina test location"};
@@ -579,7 +579,7 @@ function testLocation() {
 
 @test:Config {enable: false}
 function testDepartment() {
-    log:printInfo("Testing Department :");
+    log:print("Testing Department :");
 
     readExistingRecord(Department);
     Department department = {name: "Ballerina test department"};
@@ -592,7 +592,7 @@ function testDepartment() {
 // Record delete operation fails due to a NetSuite API issue.
 //SLP4 version update : API issue Payment method created and deleted. but send error by API after deleting
 function testPaymentMethod() {
-    log:printInfo("Testing PaymentMethod :");
+    log:print("Testing PaymentMethod :");
 
     readExistingRecord(PaymentMethod);
     PaymentMethod paymentMethod = {name: "Ballerina test paymentMethod"};
@@ -603,7 +603,7 @@ function testPaymentMethod() {
 
 @test:Config {enable: false}
 function testEmployee() {
-    log:printInfo("Testing Employee :");
+    log:print("Testing Employee :");
 
     readExistingRecord(Employee);
 
@@ -629,7 +629,7 @@ function testEmployee() {
 @test:Config {enable: false}
 //Error while accessing the resource: You have entered an invalid field value 159 for the following field: item
 function testPurchaseOrder() {
-    log:printInfo("Testing PurchaseOrder :");
+    log:print("Testing PurchaseOrder :");
 
     readExistingRecord(PurchaseOrder);
 
@@ -667,7 +667,7 @@ function testPurchaseOrder() {
 
 @test:Config {enable: false}
 function testPurchaseOrderRead() {
-    log:printInfo("Testing PurchaseOrder read:");
+    log:print("Testing PurchaseOrder read:");
 
     readExistingRecord(PurchaseOrder);
 }

@@ -167,7 +167,7 @@ ReadableRecord|WritableRecord|SubRecord|error {
 }
 
 function getJsonPayload(http:Client nsclient, string resourcePath, string recordName) returns @tainted json|Error {
-    http:Response|http:Payload|error result = nsclient->get(resourcePath);
+    var result = nsclient->get(resourcePath);
     if (result is error) {
         return Error("'" + recordName + "' record retrival request failed", result);
     }
@@ -193,7 +193,7 @@ isolated function isErrorResponse(http:Response response) returns boolean {
     }
 
     string contentType = response.getHeader(CONTENT_TYPE_HEADER);
-    log:printDebug("Error response content type: " + contentType);
+    log:printError("Error response content type: " + contentType);
     var value = http:parseHeader(contentType);
     if (value is error) {
         return false;
