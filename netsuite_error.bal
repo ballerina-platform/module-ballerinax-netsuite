@@ -39,5 +39,5 @@ isolated function createErrorFromPayload(map<json> errorPayload) returns Error {
             errorCode = <string>erCode["o:errorCode"];
         }
     }
-    return Error(errMsg, statusCode = statusCode, errorCode = errorCode);
+    return error Error(errMsg, statusCode = statusCode, errorCode = errorCode);
 }

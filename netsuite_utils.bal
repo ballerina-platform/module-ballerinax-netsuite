@@ -15,7 +15,7 @@
 // under the License.
 import ballerina/http;
 import ballerina/log;
-import ballerina/stringutils;
+import ballerina/regex;
 
 isolated function getRecordName(ReadableRecordType|WritableRecordType|SubRecordType recordTypedesc) returns string|
 Error {
@@ -86,7 +86,7 @@ Error {
     } else if (recordTypedesc is typedesc<PurchaseOrder>) {
         return RECORD_PATH_PURCHASE_ORDER;
     } else {
-        return Error("operation not implemented for " + recordTypedesc.toString() + ", try defining it a custom record");
+        return error Error("operation not implemented for " + recordTypedesc.toString() + ", try defining it a custom record");
     }
 }
 
@@ -159,9 +159,9 @@ ReadableRecord|WritableRecord|SubRecord|error {
     } else if (recordTypedesc is typedesc<PurchaseOrder>) {
         return payload.cloneWithType(PurchaseOrder);
     } else if (recordTypedesc is typedesc<CustomRecord>) {
-        return <CustomRecord>payload.cloneWithType(recordTypedesc);
+        return <CustomRecord>check payload.cloneWithType(recordTypedesc);
     } else {
-        return Error("operation not implemented for " + recordTypedesc.toString() + 
+        return error Error("operation not implemented for " + recordTypedesc.toString() + 
         ", try defining it as a custom record");
     }
 }
@@ -169,16 +169,17 @@ ReadableRecord|WritableRecord|SubRecord|error {
 function getJsonPayload(http:Client nsclient, string resourcePath, string recordName) returns @tainted json|Error {
     var result = nsclient->get(resourcePath);
     if (result is error) {
-        return Error("'" + recordName + "' record retrival request failed", result);
+        return error Error("'" + recordName + "' record retrival request failed", result);
+    } else {
+        return processJson(<http:Response>result, recordName);
     }
-    return processJson(<http:Response>result, recordName);
 }
 
 isolated function processJson(http:Response response, string? recordName = ()) returns @tainted json|Error {
     json|error responsePayload = response.getJsonPayload();
     if (responsePayload is error) {
         string identifier = recordName is () ? "JSON payload" : "'" + recordName + "' record";
-        return Error(identifier + " retrieval failed: Invalid payload", responsePayload);
+        return error Error(identifier + " retrieval failed: Invalid payload", responsePayload);
     } else {
         if (isErrorResponse(response)) {
             return createErrorFromPayload(<map<json>>responsePayload);
@@ -190,20 +191,25 @@ isolated function processJson(http:Response response, string? recordName = ()) r
 isolated function isErrorResponse(http:Response response) returns boolean {
     if (!response.hasHeader(CONTENT_TYPE_HEADER)) {
         return false;
+    } else {
+        string|error contentType = response.getHeader(CONTENT_TYPE_HEADER);
+        if(contentType is error) {
+            log:printError("Error response content type: " + contentType.message());
+            return false;
+        } else {
+            var value = http:parseHeader(contentType);
+            if (value is error) {
+                return false;
+            } else {
+                var [val, params] = <[string, map<any>]>value;
+                if (params["type"].toString() == "error") {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
     }
-
-    string contentType = response.getHeader(CONTENT_TYPE_HEADER);
-    log:printError("Error response content type: " + contentType);
-    var value = http:parseHeader(contentType);
-    if (value is error) {
-        return false;
-    }
-
-    var [val, params] = <[string, map<any>]>value;
-    if (params["type"].toString() == "error") {
-        return true;
-    }
-    return false;
 }
 
 isolated function resolveRecordName(string? customRecordPath, ReadableRecordType targetType) returns string|Error {
@@ -213,12 +219,12 @@ isolated function resolveRecordName(string? customRecordPath, ReadableRecordType
     return getRecordName(targetType);
 }
 
-isolated function extractInternalId(http:Response response) returns string {
-    string locationHeader = response.getHeader(LOCATION_HEADER);
+isolated function extractInternalId(http:Response response) returns string|error {
+    string locationHeader = check response.getHeader(LOCATION_HEADER);
     return spitAndGetLastElement(locationHeader, "/");
 }
 
 isolated function spitAndGetLastElement(string receiver, string delimiter) returns string {
-    string[] directives = stringutils:split(receiver, delimiter);
+    string[] directives = regex:split(receiver, delimiter);
     return directives[directives.length() - 1];
 }

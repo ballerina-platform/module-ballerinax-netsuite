@@ -52,14 +52,14 @@ public type ItemElement record {
 # + count - The amount of items stated in the collection out of all
 # + hasMore - The state of item availability
 # + offset - The starting point of the items
-public type AddressbookCollection record {
+public type AddressbookCollection record {|
     Link[] links?;
     AddressElement[] items?;
     int totalResults?;
     int count?;
     boolean hasMore?;
     int offset?;
-};
+|};
 
 # Represents the `AddressbookCollection` NetSuite element.
 #
@@ -192,14 +192,14 @@ public type VisualsElement record {
 # + count - The amount of items stated in the collection out of all the items
 # + hasMore - The state of item availability
 # + offset - The starting point of the items
-public type CurrencylistCollection record {
+public type CurrencylistCollection record {|
     Link[] links?;
     CurrencylistElement[] items?;
     int totalResults?;
     int count?;
     boolean hasMore?;
     int offset?;
-};
+|};
 
 # Represents the `CurrencylistElement` NetSuite element.
 #

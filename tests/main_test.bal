@@ -13,32 +13,27 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import ballerina/config;
+import ballerina/os;
 import ballerina/log;
-import ballerina/system;
 import ballerina/test;
 
-string baseUrl = system:getEnv("NS_BASE_URL");
-string accessToken = system:getEnv("NS_ACCESS_TOKEN");
-string refreshUrl = system:getEnv("NS_REFRESH_URL");
-string refreshToken = system:getEnv("NS_REFRESH_TOKEN");
-string clientId = system:getEnv("NS_CLIENT_ID");
-string clientSecret = system:getEnv("NS_CLIENT_SECRET");
+configurable string baseUrl = os:getEnv("NS_BASE_URL");
+configurable string refreshUrl = os:getEnv("NS_REFRESH_URL");
+configurable string refreshToken = os:getEnv("NS_REFRESH_TOKEN");
+configurable string clientId = os:getEnv("NS_CLIENT_ID");
+configurable string clientSecret = os:getEnv("NS_CLIENT_SECRET");
 
 Configuration nsConfig = {
-    baseUrl: baseUrl == "" ? config:getAsString("BASE_URL") : baseUrl,
+    baseUrl: baseUrl,
     oauth2Config: {
-        accessToken: accessToken == "" ? config:getAsString("ACCESS_TOKEN") : accessToken,
-        refreshConfig: {
-            refreshUrl: refreshUrl == "" ? config:getAsString("REFRESH_URL") : refreshUrl,
-            refreshToken: refreshToken == "" ? config:getAsString("REFRESH_TOKEN") : refreshToken,
-            clientId: clientId == "" ? config:getAsString("CLIENT_ID") : clientId,
-            clientSecret: clientSecret == "" ? config:getAsString("CLIENT_SECRET") : clientSecret
-        }
+            refreshUrl: refreshUrl,
+            refreshToken: refreshToken,
+            clientId: clientId ,
+            clientSecret: clientSecret
     }
 };
 
-Client nsClient = new (nsConfig);
+Client nsClient = checkpanic new (nsConfig);
 
 type BalTestCustomRecord record {
     string id = "";
@@ -102,31 +97,30 @@ function testExecuteAction() {
     json|Error createResult = nsClient->execute(POST, "/message", message);
     if createResult is Error {
         test:assertFail(msg = "execute operation failed: " + createResult.message());
-    }
+    } else {
+        map<json> headers = <map<json>>createResult;
+        string locationHeader = headers[LOCATION_HEADER].toString();
+        string internalId = spitAndGetLastElement(locationHeader, "/");
 
-    map<json> headers = <map<json>>createResult;
-    string locationHeader = headers[LOCATION_HEADER].toString();
-    string internalId = spitAndGetLastElement(locationHeader, "/");
-
-    log:print("Reading...");
-    json|Error readResult = nsClient->execute(GET, "/message/" + internalId);
-    if readResult is Error {
-        test:assertFail(msg = "execute operation failed: " + readResult.toString());
-    }
-
-    json jsonMessage = <json>readResult;
-    var result = jsonMessage.cloneWithType(TestMessage);
-    if result is error {
-        test:assertFail(msg = "record construct failed: " + result.toString());
-    }
-
-    message = <TestMessage>result;
-    test:assertTrue(message.id != "", msg = "record retrieval failed");
-
-    log:print("Deleting...");
-    json|Error deleteResult = nsClient->execute(DELETE, "/message/" + <@untainted>message.id);
-    if deleteResult is Error {
-        test:assertFail(msg = "execute operation failed: " + deleteResult.toString());
+        log:print("Reading...");
+        json|Error readResult = nsClient->execute(GET, "/message/" + internalId);
+        if readResult is Error {
+            test:assertFail(msg = "execute operation failed: " + readResult.toString());
+        } else {
+            json jsonMessage = <json>readResult;
+            var result = jsonMessage.cloneWithType(TestMessage);
+            if result is error {
+                test:assertFail(msg = "record construct failed: " + result.toString());
+            } else {
+                message = <TestMessage>result;
+                test:assertTrue(message.id != "", msg = "record retrieval failed");
+                log:print("Deleting...");
+                json|Error deleteResult = nsClient->execute(DELETE, "/message/" + <@untainted>message.id);
+                if deleteResult is Error {
+                    test:assertFail(msg = "execute operation failed: " + deleteResult.toString());
+                }
+            }   
+        }    
     }
 }
 

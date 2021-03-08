@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 import ballerina/http;
-import ballerina/oauth2;
 
 # The configuration used to create a NetSuite `Client`.
 #
@@ -27,7 +26,7 @@ import ballerina/oauth2;
 # + retryConfig - The configurations associated with retrying
 public type Configuration record {|
     string baseUrl;
-    oauth2:DirectTokenConfig oauth2Config;
+    http:OAuth2DirectTokenConfig oauth2Config;
     http:ClientSecureSocket secureSocketConfig?;
     http:ProxyConfig proxy?;
     int timeoutInMillis = 60000;

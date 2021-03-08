@@ -13,9 +13,9 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
+
 import ballerina/http;
 import ballerina/log;
-import ballerina/oauth2;
 
 # The NetSuite Client object that allows ballerina to connector with NetSuite Account to execute CRUD and search
 # operations to perform business processing on NetSuite records and to navigate dynamically between records.
@@ -25,22 +25,30 @@ public client class Client {
     # Gets invoked to initialize the `client`.
     #
     # + netsuiteConfig - The configurations to be used when initializing the `client`
-    public function init(Configuration netsuiteConfig) {
-        oauth2:OutboundOAuth2Provider oauth2Provider = new (netsuiteConfig.oauth2Config);
-        http:BearerAuthHandler bearerHandler = new (oauth2Provider);
-
-        http:ClientConfiguration httpClientConfig = {
-            auth: {authHandler: bearerHandler},
-            secureSocket: netsuiteConfig?.secureSocketConfig,
+    public function init(Configuration netsuiteConfig) returns error?{
+         http:ClientSecureSocket? socketConfig = netsuiteConfig?.secureSocketConfig;
+        if(socketConfig is http:ClientSecureSocket) {
+            self.netsuiteClient = check new (netsuiteConfig.baseUrl, {
+            auth : netsuiteConfig.oauth2Config,
+            secureSocket : socketConfig,
+            http1Settings : {
+                keepAlive : http:KEEPALIVE_NEVER,
+                proxy: netsuiteConfig?.proxy
+            },
             timeoutInMillis: netsuiteConfig.timeoutInMillis,
-            retryConfig: netsuiteConfig?.retryConfig,
-            http1Settings: {
+            retryConfig: netsuiteConfig?.retryConfig
+            });
+        } else {
+            self.netsuiteClient = check new (netsuiteConfig.baseUrl, {
+            auth: netsuiteConfig.oauth2Config,
+            http1Settings : {
                 keepAlive: http:KEEPALIVE_NEVER,
                 proxy: netsuiteConfig?.proxy
-            }
-        };
-
-        self.netsuiteClient = new (netsuiteConfig.baseUrl, httpClientConfig);
+            },
+            timeoutInMillis: netsuiteConfig.timeoutInMillis,
+            retryConfig: netsuiteConfig?.retryConfig
+            });
+        }
     }
 
     # Creates the NetSuite record and returns it's internal identifier.
@@ -137,7 +145,7 @@ public client class Client {
         string subRecordName = check getRecordName(subRecordType);
         string recordId = parent.id;
         if (recordId == "") {
-            return Error("invalid internal ID: field cannot be empty");
+            return error Error("invalid internal ID: field cannot be empty");
         }
 
         string resourcePath = REST_RESOURCE + parentRecordName + "/" + recordId + "/" + subRecordName + 
@@ -148,9 +156,9 @@ public client class Client {
             return result;
         }
         if (result is WritableRecord|ReadableRecord) {
-            panic Error("subrecord retrieval failed: illegal state error");
+            panic error Error("subrecord retrieval failed: illegal state error");
         }
-        return Error("subrecord mapping failed", <error>result);
+        return error Error("subrecord mapping failed", <error>result);
     }
 
     # Common action to execute all queries in a generic manner. This action can be use as an alternative for
@@ -168,27 +176,33 @@ public client class Client {
         if (requestBody is CustomRecord) {
             json|error payload = requestBody.cloneWithType(json);
             if (payload is error) {
-                return Error("Error while constructing request payload for execute operation", payload);
+                return error Error("Error while constructing request payload for execute operation", payload);
+            } else {
+                jsonPayload = <json>payload;
             }
-            jsonPayload = <json>payload;
         } else {
             jsonPayload = requestBody;
         }
 
         var result = self.netsuiteClient->execute(httpMethod, REST_RESOURCE + path, jsonPayload);
         if (result is error) {
-            return Error("execution failed", result);
-        }
-
-        http:Response response = <http:Response>result;
-        if (response.statusCode == 204) {
-            map<json> headers = {};
-            foreach string key in response.getHeaderNames() {
-                headers[key] = response.getHeader(<@untainted>key);
+            return error Error("execution failed", result);
+        } else {
+            http:Response response = <http:Response>result;
+            if (response.statusCode == 204) {
+                map<json> headers = {};
+                foreach string key in response.getHeaderNames() {
+                    transaction {
+                        headers[key] = check response.getHeader(<@untainted>key);
+                         var res = commit;
+                    } on fail error e {
+                        return error Error(key + "Header not found");
+                    }
+                }
+                return headers;
             }
-            return headers;
+            return processJson(response);
         }
-        return processJson(response);
     }
 }
 
@@ -196,32 +210,39 @@ function createRecord(http:Client nsClient, @tainted WritableRecord recordValue,
 Error {
     string recordName = check resolveRecordName(customRecordPath, typeof recordValue);
     json|error payload = recordValue.cloneWithType(json);
+    
     if (payload is error) {
-        return Error("Error while constructing request payload for create operation", payload);
-    }
-    json jsonValue = <json>payload;
-    var result = nsClient->post(REST_RESOURCE + recordName, jsonValue);
-    if (result is error) {
-        return Error("record creation request failed", result);
-    }
-
-    http:Response response = <http:Response>result;
-    if (response.statusCode == 204 && response.hasHeader(LOCATION_HEADER)) {
-        return extractInternalId(response);
-    }
-
-    json|error responsePayload = response.getJsonPayload();
-    if (responsePayload is error) {
-        return Error("record creation failed", responsePayload);
-    }
-    return createErrorFromPayload(<map<json>>responsePayload);
+        return error Error("Error while constructing request payload for create operation", payload);
+    } else {
+        var result = nsClient->post(REST_RESOURCE + recordName, payload);
+        if (result is error) {
+            return error Error("record creation request failed", result);
+        } else {
+            http:Response response = <http:Response>result;
+            if (response.statusCode == 204 && response.hasHeader(LOCATION_HEADER)) {
+                string|error externalID = extractInternalId(response);
+                if (externalID is string) {
+                    return externalID;
+                } else {
+                    return error Error(externalID.message());
+                }
+            } else {
+                json|error responsePayload = response.getJsonPayload();
+                if (responsePayload is error) {
+                    return error Error("record creation failed", responsePayload);
+                } else {
+                    return createErrorFromPayload(<map<json>>responsePayload);
+                }
+            }  
+        }
+    }  
 }
 
 function getRecord(http:Client nsClient, string id, ReadableRecordType targetType, IdType idType, 
                    string? customRecordPath) returns @tainted ReadableRecord|Error {
     string targetRecordName = check resolveRecordName(customRecordPath, targetType);
     if (id == "") {
-        return Error("invalid internal ID: field cannot be empty");
+        return error Error("invalid internal ID: field cannot be empty");
     }
 
     string recordId = "/" + (idType is INTERNAL ? id : <string>EID + id);
@@ -233,9 +254,9 @@ function getRecord(http:Client nsClient, string id, ReadableRecordType targetTyp
     if (result is ReadableRecord) {
         return result;
     } else if (result is error) {
-        return Error("record mapping failed", result);
+        return error Error("record mapping failed", result);
     } else {
-        panic Error("get operation failed: illegal state error");
+        return error Error("get operation failed: illegal state error");
     }
 }
 
@@ -244,59 +265,64 @@ function updateRecord(http:Client nsClient, @tainted WritableRecord existingValu
     string recordName = check resolveRecordName(customRecordPath, typeof existingValue);
     string recordId = existingValue.id;
     if (recordId == "") {
-        return Error("invalid internal ID: field cannot be empty");
+        return error Error("invalid internal ID: field cannot be empty");
     }
-
     json payload;
     if (newValue is WritableRecord) {
         json|error jsonValue = newValue.cloneWithType(json);
         if (jsonValue is error) {
-            return Error("Error while constructing request payload for update operation", jsonValue);
-        }
-        payload = <json>jsonValue;
+            return error Error("Error while constructing request payload for update operation", jsonValue);
+        } else {
+            payload = <json>jsonValue;
+        } 
     } else {
         payload = newValue;
     }
-
     var result = nsClient->patch(REST_RESOURCE + recordName + "/" + recordId, payload);
     if (result is error) {
-        return Error("record update request failed", result);
-    }
-
-    http:Response response = <http:Response>result;
-    if (response.statusCode == 204 && response.hasHeader(LOCATION_HEADER)) {
-        return extractInternalId(response);
-    }
-
-    json|error responsePayload = response.getJsonPayload();
-    if (responsePayload is error) {
-        return Error("record update failed", responsePayload);
-    }
-    return createErrorFromPayload(<map<json>>responsePayload);
+        return error Error("record update request failed", result);
+    } else {
+        http:Response response = <http:Response>result;
+        if (response.statusCode == 204 && response.hasHeader(LOCATION_HEADER)) {
+            string|error externalID = extractInternalId(response);
+            if (externalID is string) {
+                return externalID;
+            } else {
+                return error Error(externalID.message());
+            }
+        } else {
+            json|error responsePayload = response.getJsonPayload();
+            if (responsePayload is error) {
+                return error Error("record update failed", responsePayload);
+            } else {
+                return createErrorFromPayload(<map<json>>responsePayload);
+            }
+        }
+    }   
 }
 
 function deleteRecord(http:Client nsClient, WritableRecord value, string? customRecordPath) returns @tainted Error? {
     string recordName = check resolveRecordName(customRecordPath, typeof value);
     string id = value.id;
     if (id == "") {
-        return Error("invalid internal ID: field cannot be empty");
+        return error Error("invalid internal ID: field cannot be empty");
     }
-
     var result = nsClient->delete(REST_RESOURCE + recordName + "/" + id);
     if (result is error) {
-        return Error("record deletion request failed", result);
-    }
-
-    http:Response response = <http:Response>result;
-    if (response.statusCode == 204) {
-        return;
-    }
-
-    json|error responsePayload = response.getJsonPayload();
-    if (responsePayload is error) {
-        return Error("record deletion failed", responsePayload);
-    }
-    return createErrorFromPayload(<map<json>>responsePayload);
+        return error Error("record deletion request failed", result);
+    } else {
+        http:Response response = <http:Response>result;
+        if (response.statusCode == 204) {
+            return;
+        } else {
+            json|error responsePayload = response.getJsonPayload();
+            if (responsePayload is error) {
+                return error Error("record deletion failed", responsePayload);
+            } else {
+                return createErrorFromPayload(<map<json>>responsePayload);
+            }
+        } 
+    }   
 }
 
 function upsertRecord(http:Client nsClient, WritableRecordType targetType, string recordId, WritableRecord|json newValue, 
@@ -307,72 +333,76 @@ function upsertRecord(http:Client nsClient, WritableRecordType targetType, strin
     if newValue is WritableRecord {
         json|error jsonValue = newValue.cloneWithType(json);
         if jsonValue is error {
-            return Error("Error while constructing request payload for upsert operation", jsonValue);
-        }
-        payload = <json>jsonValue;
+            return error Error("Error while constructing request payload for upsert operation", jsonValue);
+        } else {
+            payload = <json>jsonValue;
+        }    
     } else {
         payload = newValue;
     }
-
     var result = nsClient->put(REST_RESOURCE + recordName + "/" + EID + recordId, payload);
     if (result is error) {
-        return Error("record upsertion request failed", result);
-    }
-
-    http:Response response = <http:Response>result;
-    if (response.statusCode == 204 && response.hasHeader(LOCATION_HEADER)) {
-        return extractInternalId(response);
-    }
-
-    json|error responsePayload = response.getJsonPayload();
-    if responsePayload is error {
-        return Error("record upsertion failed", responsePayload);
-    }
-    return createErrorFromPayload(<map<json>>responsePayload);
+        return error Error("record upsertion request failed", result);
+    } else {
+        http:Response response = <http:Response>result;
+        if (response.statusCode == 204 && response.hasHeader(LOCATION_HEADER)) {
+            string|error externalID = extractInternalId(response);
+            if (externalID is string) {
+                return externalID;
+            } else {
+                return error Error(externalID.message());
+            }
+        } else {
+            json|error responsePayload = response.getJsonPayload();
+            if responsePayload is error {
+                return error Error("record upsertion failed", responsePayload);
+            } else {
+                return createErrorFromPayload(<map<json>>responsePayload);
+            }
+        }  
+    }  
 }
 
 function searchRecord(http:Client nsClient, ReadableRecordType targetType, string? filter, string? customRecordPath, 
                       int maxLimit, int offset) returns @tainted [string[], boolean]|Error {
-
     string recordName = check resolveRecordName(customRecordPath, targetType);
     string range = "limit=" + maxLimit.toString() + "&offset=" + offset.toString();
     string queryStr = filter is () ? "?" + range : "?q=" + filter + "&" + range;
-
     log:print("Search query param: " + queryStr);
-
     var result = nsClient->get(REST_RESOURCE + recordName + queryStr);
     if (result is error) {
-        return Error("record search() request failed", result);
-    }
-    http:Response response = <http:Response>result;
-    if (response.statusCode != 200) {
-        json|error responsePayload = response.getJsonPayload();
-        if (responsePayload is error) {
-            return Error("record search failed", responsePayload);
+        return error Error("record search() request failed", result);
+    } else {
+        http:Response response = <http:Response>result;
+        if (response.statusCode != 200) {
+            json|error responsePayload = response.getJsonPayload();
+            if (responsePayload is error) {
+                return error Error("record search failed", responsePayload);
+            } else {
+                return createErrorFromPayload(<map<json>>responsePayload);
+            }
+        } else {
+            json|error responsePayload = response.getJsonPayload();
+            if (responsePayload is error) {
+                return error Error("record search failed", responsePayload);
+            } else {
+                string[] collection = [];
+                map<json> jsonPayload = <map<json>>responsePayload;
+                var convetResult = jsonPayload.cloneWithType(Collection);
+                if (convetResult is error) {
+                    return error Error("failed search operation: Invalid content", convetResult);
+                } else{
+                    Collection listOfItem = <Collection>convetResult;
+                    if (<int>listOfItem["totalResults"] == 0) {
+                        return [collection, false];
+                    }
+                    NsResource[] items = <NsResource[]>listOfItem["items"];
+                    foreach NsResource item in items {
+                        collection.push(item.id);
+                    }
+                    return [collection, <boolean>listOfItem["hasMore"]];
+                }  
+            }                
         }
-        return createErrorFromPayload(<map<json>>responsePayload);
-    }
-
-    json|error responsePayload = response.getJsonPayload();
-    if (responsePayload is error) {
-        return Error("record search failed", responsePayload);
-    }
-
-    string[] collection = [];
-    map<json> jsonPayload = <map<json>>responsePayload;
-    var convetResult = jsonPayload.cloneWithType(Collection);
-    if (convetResult is error) {
-        return Error("failed search operation: Invalid content", convetResult);
-    }
-
-    Collection listOfItem = <Collection>convetResult;
-    if (<int>listOfItem["totalResults"] == 0) {
-        return [collection, false];
-    }
-
-    NsResource[] items = <NsResource[]>listOfItem["items"];
-    foreach NsResource item in items {
-        collection.push(item.id);
-    }
-    return [collection, <boolean>listOfItem["hasMore"]];
+    } 
 }
