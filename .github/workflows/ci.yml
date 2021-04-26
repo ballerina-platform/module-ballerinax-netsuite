@@ -10,7 +10,15 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: SanduDS/ballerina-action/@swan-lake-connector-release
+              uses: ballerina-platform/ballerina-action/@master
               with:
                   args:
-                      build -c --skip-tests
+                      build -c
+              env:
+                  NS_BASE_URL: ${{ secrets.BASEURL }}
+                  NS_TOKEN_SECRET: ${{ secrets.TOKENSECRET }}
+                  NS_TOKEN: ${{ secrets.TOKEN }}
+                  NS_CLIENT_ID: ${{ secrets.CONSUMERID }}
+                  NS_CLIENT_SECRET: ${{ secrets.CONSUMERSECRET }}
+                  NS_ACCOUNTID: ${{secrets.ACCOUNTID}}
+                  
