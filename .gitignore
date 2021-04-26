@@ -1,6 +1,6 @@
 # Compiled class file
 *.class
-
+*.balx
 # Log file
 *.log
 
@@ -16,7 +16,6 @@ ballerina.conf
 # Package Files #
 *.jar
 *.war
-*.nar
 *.ear
 *.zip
 *.tar.gz
@@ -36,11 +35,17 @@ target
 .idea
 .m2
 .vscode/
-
 # Ignore ballerina files
 accessToken.bal
 temp.bal.ballerina/
-target/
+target
 .DS_Store
 *Ballerina.lock
+#test CI file
+test.yml
 
+# Ignore resource .json files
+**/resources/*.json
+
+#Ingnore Config.toml
+Config.toml
