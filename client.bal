@@ -24,9 +24,9 @@ public client class Client {
     public http:Client basicClient;
     private NetSuiteConfiguration config;
 
-    public function init(NetSuiteConfiguration config)returns error? {
+    isolated  function init(NetSuiteConfiguration config)returns error? {
         self.config = config;
-        self.basicClient = check new (config.baseURL);
+        self.basicClient = check new (config.baseURL, {timeout: 120});
     }
 
     # This isolated remote operation creates a record instance in NetSuite according to the given detail
@@ -34,7 +34,8 @@ public client class Client {
     # + customer - Details of NetSuite record instance creation
     # + return - If success returns a RecordAddResponse type record otherwise the relevant error
     @display {label: "Add new customer"}
-    isolated remote function addNewCustomer(@display {label: "Customer"} Customer customer) returns @tainted RecordAddResponse|error{
+    isolated remote function addNewCustomer(@display {label: "Customer"} Customer customer) returns @tainted 
+                                            @display {label: "Response"} RecordAddResponse|error{
         xml payload = check buildAddRecord(customer, CUSTOMER, self.config);
         http:Response response = check sendRequest(self.basicClient, ADD_SOAP_ACTION, payload);
         return getCreateResponse(response); 
@@ -45,7 +46,8 @@ public client class Client {
     # + contact - Details of NetSuite record instance creation
     # + return - If success returns a RecordAddResponse type record otherwise the relevant error
     @display {label: "Add new contact"}
-    isolated remote function addNewContact(@display {label: "Contact"} Contact contact) returns @tainted RecordAddResponse|error{
+    isolated remote function addNewContact(@display {label: "Contact"} Contact contact) returns @tainted 
+                                           @display {label: "Response"} RecordAddResponse|error{
         xml payload = check buildAddRecord(contact, CONTACT, self.config);
         http:Response response = check sendRequest(self.basicClient, ADD_SOAP_ACTION, payload);
         return getCreateResponse(response); 
@@ -56,7 +58,8 @@ public client class Client {
     # + invoice - Invoice type record with detail
     # + return - If success returns a RecordAddResponse type record otherwise the relevant error
     @display {label: "Add new invoice"}  
-    isolated remote function addNewInvoice(@display {label: "Invoice"} Invoice invoice) returns @tainted RecordAddResponse|error{
+    isolated remote function addNewInvoice(@display {label: "Invoice"} Invoice invoice) returns @tainted 
+                                           @display {label: "Response"} RecordAddResponse|error{
         xml payload = check buildAddRecord(invoice, INVOICE, self.config);
         http:Response response = check sendRequest(self.basicClient, ADD_SOAP_ACTION, payload);
         return getCreateResponse(response); 
@@ -67,7 +70,8 @@ public client class Client {
     # + currency - Currency type record with detail
     # + return - If success returns a RecordAddResponse type record otherwise the relevant error
     @display {label: "Add new currency"} 
-    isolated remote function addNewCurrency(@display {label: "Currency"} Currency currency) returns @tainted RecordAddResponse|error{
+    isolated remote function addNewCurrency(@display {label: "Currency"} Currency currency) returns @tainted
+                                            @display {label: "Response"} RecordAddResponse|error{
         xml payload = check buildAddRecord(currency, CURRENCY, self.config);
         http:Response response = check sendRequest(self.basicClient, ADD_SOAP_ACTION, payload);
         return getCreateResponse(response); 
@@ -78,7 +82,8 @@ public client class Client {
     # + salesOrder - SalesOrder type record with detail
     # + return - If success returns a RecordAddResponse type record otherwise the relevant error
     @display {label: "Add new sales order"} 
-    isolated remote function addNewSalesOrder(@display {label: "Sales Order"} SalesOrder salesOrder) returns @tainted RecordAddResponse|error{
+    isolated remote function addNewSalesOrder(@display {label: "Sales Order"} SalesOrder salesOrder) returns @tainted
+                                              @display {label: "Response"} RecordAddResponse|error{
         xml payload = check buildAddRecord(salesOrder, SALES_ORDER, self.config);
         http:Response response = check sendRequest(self.basicClient, ADD_SOAP_ACTION, payload);
         return getCreateResponse(response); 
@@ -89,7 +94,8 @@ public client class Client {
     # + classification - Classification type record with detail
     # + return - If success returns a RecordAddResponse type record otherwise the relevant error
     @display {label: "Add new classification"}
-    isolated remote function addNewClassification(@display {label: "Classification"} Classification classification) returns @tainted RecordAddResponse|error {
+    isolated remote function addNewClassification(@display {label: "Classification"} Classification classification) 
+                                                  returns @tainted @display {label: "Response"} RecordAddResponse|error {
         xml payload = check buildAddRecord(classification, CLASSIFICATION, self.config);
         http:Response response = check sendRequest(self.basicClient, ADD_SOAP_ACTION, payload);
         return getCreateResponse(response); 
@@ -100,7 +106,8 @@ public client class Client {
     # + account - Account type record with detail
     # + return - If success returns a RecordAddResponse type record otherwise the relevant error
     @display {label: "Add new account"}
-    isolated remote function addNewAccount(@display {label: "Account"} Account account) returns @tainted RecordAddResponse|error {
+    isolated remote function addNewAccount(@display {label: "Account"} Account account) returns @tainted
+                                           @display {label: "Response"} RecordAddResponse|error {
         xml payload = check buildAddRecord(account, ACCOUNT, self.config);
         http:Response response = check sendRequest(self.basicClient, ADD_SOAP_ACTION, payload);
         return getCreateResponse(response); 
@@ -111,7 +118,8 @@ public client class Client {
     # + info - Details of NetSuite record instance to be deleted
     # + return - If success returns a RecordDeletionResponse type record otherwise the relevant error
     @display {label: "Delete a record"}
-    isolated remote function deleteRecord(@display {label: "Record Detail"} RecordDetail info) returns @tainted RecordDeletionResponse|error{
+    isolated remote function deleteRecord(@display {label: "Record Detail"} RecordDetail info) returns @tainted
+                                          @display {label: "Response"} RecordDeletionResponse|error{
         xml payload = check buildDeletePayload(info, self.config);
         http:Response response = check sendRequest(self.basicClient, DELETE_SOAP_ACTION, payload);
         //getDeleteResponse
@@ -123,7 +131,8 @@ public client class Client {
     # + customer - Customer record with details and internalId
     # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
     @display {label: "Update customer record"}   
-    isolated remote function updateCustomerRecord(@display {label: "Customer"} Customer customer) returns @tainted RecordUpdateResponse|error {
+    isolated remote function updateCustomerRecord(@display {label: "Customer"} Customer customer) returns @tainted
+                                                  @display {label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateRecord(customer, CUSTOMER , self.config);
         //sendRequest
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
@@ -135,7 +144,8 @@ public client class Client {
     # + contact - Contact record with details and internalId
     # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
     @display {label: "Update contact record"} 
-    isolated remote function updateContactRecord(@display {label: "Contact"} Contact contact) returns @tainted RecordUpdateResponse|error {
+    isolated remote function updateContactRecord(@display {label: "Contact"} Contact contact) returns @tainted
+                                                 @display {label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateRecord(contact, CONTACT , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
         return getUpdateResponse(response); 
@@ -146,7 +156,8 @@ public client class Client {
     # + currency - Currency record with details and internalId
     # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
     @display {label: "Update currency record"} 
-    isolated remote function updateCurrencyRecord(@display {label: "Currency"} Currency currency) returns @tainted RecordUpdateResponse|error {
+    isolated remote function updateCurrencyRecord(@display {label: "Currency"} Currency currency) returns @tainted
+                                                  @display {label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateRecord(currency, CURRENCY , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
         return getUpdateResponse(response); 
@@ -157,7 +168,8 @@ public client class Client {
     # + invoice - Invoice record with details and internalId
     # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error 
     @display {label: "Update invoice record"}
-    isolated remote function updateInvoiceRecord(@display {label: "Invoice"} Invoice invoice) returns @tainted RecordUpdateResponse|error {
+    isolated remote function updateInvoiceRecord(@display {label: "Invoice"} Invoice invoice) returns @tainted
+                                                 @display {label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateRecord(invoice, INVOICE , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
         return getUpdateResponse(response); 
@@ -168,7 +180,8 @@ public client class Client {
     # + salesOrder - SalesOrder record with details and internalId
     # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
     @display {label: "Update sales order record"} 
-    isolated remote function updateSalesOrderRecord(@display {label: "Sales Order"} SalesOrder salesOrder) returns @tainted RecordUpdateResponse|error {
+    isolated remote function updateSalesOrderRecord(@display {label: "Sales Order"} SalesOrder salesOrder) returns 
+                                                    @tainted @display {label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateRecord(salesOrder, SALES_ORDER , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
         return getUpdateResponse(response); 
@@ -179,8 +192,9 @@ public client class Client {
     # + classification - Classification record with details and internalId
     # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
     @display {label: "Update classification record"} 
-    isolated remote function updateClassificationRecord(@display {label: "Classification"} Classification classification) returns @tainted RecordUpdateResponse|
-                                                error {
+    isolated remote function updateClassificationRecord(@display {label: "Classification"} Classification classification) 
+                                                        returns @tainted @display {label: "Response"} 
+                                                        RecordUpdateResponse|error {
         xml payload = check buildUpdateRecord(classification, CLASSIFICATION , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
         return getUpdateResponse(response); 
@@ -191,7 +205,8 @@ public client class Client {
     # + account - Account record with details and internalId
     # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
     @display {label: "Update account record"} 
-    isolated remote function updateAccountRecord(@display {label: "Account"} Account account) returns @tainted RecordUpdateResponse|error {
+    isolated remote function updateAccountRecord(@display {label: "Account"} Account account) returns @tainted @display 
+                                                {label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateRecord(account, ACCOUNT , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
         return getUpdateResponse(response); 
@@ -202,7 +217,8 @@ public client class Client {
     # + recordInfo - A NetSuite record instance to be retrieved from NetSuite
     # + return - If success returns a json array otherwise the relevant error
     @display {label: "Get all records"} 
-    remote function getAll(@display {label: "Record type(GetAll supported)"} RecordGetAllType recordInfo) returns @tainted json[]|error {
+    remote function getAll(@display {label: "Record type(GetAll supported)"} RecordGetAllType recordInfo) returns 
+                           @tainted @display {label: "Response"} json[]|error {
         xml payload = check buildGetAllPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_ALL_SOAP_ACTION, payload);
         return formatGetAllResponse(response);
@@ -214,7 +230,8 @@ public client class Client {
     # + recordInfo - A NetSuite SavedSearch record type to be retrieved from NetSuite
     # + return - If success returns a json array otherwise the relevant error
     @display {label: "Get saved search"} 
-    remote function getSavedSearch(@display {label: "Record type(SavedSearch supported)"} RecordSaveSearchType recordInfo) returns @tainted json[]|error {
+    remote function getSavedSearch(@display {label: "Record type(SavedSearch supported)"} RecordSaveSearchType 
+                                   recordInfo) returns @tainted @display {label: "Response"} json[]|error {
         xml payload = check buildGetSavedSearchPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SAVED_SEARCH_SOAP_ACTION, payload);
         return getSavedSearchResponse(response);
@@ -226,7 +243,8 @@ public client class Client {
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
     # + return - If success returns a json otherwise the relevant error
     @display {label: "Search a customer record"} 
-    isolated remote function searchCustomerRecord(@display {label: "Search elements"} SearchElement[] searchElements) returns @tainted Customer|error {
+    isolated remote function searchCustomerRecord(@display {label: "Search elements"} SearchElement[] searchElements) 
+                                                  returns @tainted @display {label: "Response"} Customer|error {
         xml payload = check buildCustomerSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getCustomerSearchResult(response);
@@ -238,7 +256,8 @@ public client class Client {
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
     # + return - If success returns a json otherwise the relevant error
     @display {label: "Search a transaction record"}
-    isolated remote function searchTransactionRecord(@display {label: "Search elements"} SearchElement[] searchElements) returns @tainted RecordList|error {
+    isolated remote function searchTransactionRecord(@display {label: "Search elements"} SearchElement[] searchElements) 
+                                                     returns @tainted @display {label: "Response"} RecordList|error {
         xml payload = check buildTransactionSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getTransactionSearchResult(response);
@@ -250,7 +269,8 @@ public client class Client {
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
     # + return - If success returns a json otherwise the relevant error
     @display {label: "Search a account record"}
-    isolated remote function searchAccountRecord(@display {label: "Search elements"} SearchElement[] searchElements) returns @tainted Account|error {
+    isolated remote function searchAccountRecord(@display {label: "Search elements"} SearchElement[] searchElements) 
+                                                 returns @tainted @display {label: "Response"} Account|error {
         xml payload = check buildAccountSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getAccountSearchResult(response);
@@ -261,7 +281,8 @@ public client class Client {
     # + recordDetail - Ballerina record for Netsuite record information
     # + return - If success returns a Customer type record otherwise the relevant error
     @display {label: "Get a customer record"}
-    isolated remote function getCustomerRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns @tainted Customer|error {
+    isolated remote function getCustomerRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns 
+                                               @tainted @display {label: "Response"} Customer|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordDetail, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
@@ -273,7 +294,8 @@ public client class Client {
     # + recordDetail - Ballerina record for Netsuite record information
     # + return - If success returns a Contact type record otherwise the relevant error
     @display {label: "Get a contact record"}  
-    isolated remote function getContactRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns @tainted Contact|error {
+    isolated remote function getContactRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns 
+                                              @tainted @display {label: "Response"} Contact|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordDetail, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
@@ -285,7 +307,8 @@ public client class Client {
     # + recordDetail - Ballerina record for Netsuite record information
     # + return - If success returns a Currency type record otherwise the relevant error
     @display {label: "Get a currency record"}
-    isolated remote function getCurrencyRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns @tainted Currency|error {
+    isolated remote function getCurrencyRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns 
+                                               @tainted @display {label: "Response"} Currency|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordDetail, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
@@ -297,7 +320,8 @@ public client class Client {
     # + recordDetail - Ballerina record for Netsuite record information
     # + return - If success returns a Classification type record otherwise the relevant error
     @display {label: "Get a classification record"}
-    isolated remote function getClassificationRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns @tainted Classification|error {
+    isolated remote function getClassificationRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns 
+                                                     @tainted @display {label: "Response"} Classification|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordDetail, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
@@ -309,7 +333,8 @@ public client class Client {
     # + recordDetail - Ballerina record for Netsuite record information
     # + return - If success returns a invoice type record otherwise the relevant error
     @display {label: "Get a invoice record"}
-    isolated remote function getInvoiceRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns @tainted Invoice|error {
+    isolated remote function getInvoiceRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns 
+                                              @tainted @display {label: "Response"} Invoice|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordDetail, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
@@ -321,7 +346,8 @@ public client class Client {
     # + recordDetail - Ballerina record for Netsuite record information
     # + return - If success returns a SalesOrder type record otherwise the relevant error
     @display {label: "Get a sales order record"}
-    isolated remote function getSalesOrderRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns @tainted SalesOrder|error {
+    isolated remote function getSalesOrderRecord(@display {label: "Record detail"} RecordDetail recordDetail) returns 
+                                                 @tainted @display {label: "Response"} SalesOrder|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordDetail, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
