@@ -116,7 +116,7 @@ isolated function getUpdateResponse(http:Response response) returns @tainted Rec
     }
 }
  
- function formatGetAllResponse(http:Response response) returns @tainted json[]|error {
+isolated function formatGetAllResponse(http:Response response) returns @tainted json[]|error {
     xml xmlValure = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) {
         xml output  = xmlValure/**/<status>;
@@ -134,9 +134,9 @@ isolated function getUpdateResponse(http:Response response) returns @tainted Rec
     }
 }
 
-function categorizeGetALLResponse(xml baseRef) returns @tainted json[] {
+isolated function categorizeGetALLResponse(xml baseRef) returns @tainted json[] {
     json[] recordList = [];
-    xmlLib:forEach(baseRef, function(xml platformCoreRecord) {
+    foreach xml platformCoreRecord in baseRef {
         string|error count =  platformCoreRecord.xsi_type;
         if(count is string ) {
             match count {
@@ -178,7 +178,7 @@ function categorizeGetALLResponse(xml baseRef) returns @tainted json[] {
             }
             
         }
-    });
+    }
     return recordList;
 }
 
@@ -199,7 +199,7 @@ isolated function formatPayload(http:Response response) returns @tainted xml|err
     return check xmlLib:fromString(formattedXMLResponse);
 }
 
-function getSavedSearchResponse(http:Response response) returns @tainted json[]|error {
+isolated function getSavedSearchResponse(http:Response response) returns @tainted json[]|error {
     xml formattedPayload = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) {
         xml output  = formattedPayload/**/<status>;
@@ -208,7 +208,7 @@ function getSavedSearchResponse(http:Response response) returns @tainted json[]|
             xml:Element records = <xml:Element> formattedPayload/**/<recordRefList>;
             xml recordElements  = xmlLib:getChildren(records);
             json[] recordList = [];
-            xmlLib:forEach(recordElements, function(xml platformCoreRecord) { 
+            foreach xml platformCoreRecord in recordElements {
                 string|error count =  platformCoreRecord.xsi_type;
                 if(count is string ) {
                     match count {
@@ -221,7 +221,7 @@ function getSavedSearchResponse(http:Response response) returns @tainted json[]|
                         }
                     }
                 }
-            });          
+            }     
             return recordList;
         } else {
             json errorMessage= check xmldata:toJson(formattedPayload/**/<statusDetail>/*);

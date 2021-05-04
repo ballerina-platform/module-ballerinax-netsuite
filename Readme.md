@@ -2,7 +2,6 @@
 based on SOAP webservice
 
 [![CI](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/ci.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/ci.yml)
-[![Deployment](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/release.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/release.yml)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ballerina-platform/module-ballerinax-netsuite?color=green&include_prereleases&label=latest%20release)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 # Introduction
@@ -22,7 +21,7 @@ The following sections provide you details on how to use the NetSuite connector.
 
 |                             |           Version                    |
 |:---------------------------:|:------------------------------------:|
-| Ballerina Language          |     Swan Lake Alpha2                 |
+| Ballerina Language          |     Swan Lake Alpha5                 |
 | NetSuite SOAP API           |     SOAP 1.1                         |
 | WSDL version                |     2020.2.0                         |
 
