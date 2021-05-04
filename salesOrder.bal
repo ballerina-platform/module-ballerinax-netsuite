@@ -100,8 +100,8 @@ isolated function mapSalesOrderRecord(xml response) returns SalesOrder|error {
         currency: extractRecordRefFromXML(response/**/<tranSales:currency>),
         drAccount: extractRecordRefFromXML(response/**/<tranSales:drAccount>),
         fxAccount: extractRecordRefFromXML(response/**/<tranSales:fxAccount>),
-        tranId: (response/**/<tranSales:fxAccount>/<name>/*).toString(),
-        orderStatus: (response/**/<tranSales:orderStatus>/*).toString(),
+        tranId: extractStringFromXML(response/**/<tranSales:fxAccount>/<name>/*),
+        orderStatus: extractStringFromXML(response/**/<tranSales:orderStatus>/*),
         tranDate: extractStringFromXML(response/**/<tranSales:tranDate>/*),
         nextBill: extractStringFromXML(response/**/<tranSales:nextBill>/*),
         totalCostEstimate: extractDecimalFromXML(response/**/<tranSales:totalCostEstimate>/*),
@@ -116,7 +116,9 @@ isolated function mapSalesOrderRecord(xml response) returns SalesOrder|error {
         total: extractDecimalFromXML(response/**/<tranSales:total>/*),
         balance:extractDecimalFromXML(response/**/<tranSales:balance>/*),
         subTotal:extractDecimalFromXML(response/**/<tranSales:subTotal>/*),
-        subsidiary: extractRecordRefFromXML(response/**/<tranSales:subsidiary>)
+        subsidiary: extractRecordRefFromXML(response/**/<tranSales:subsidiary>),
+        startDate: extractStringFromXML(response/**/<tranSales:startDate>/*),
+        endDate: extractStringFromXML(response/**/<tranSales:endDate>/*)
     };
     return salesOrder;
 }

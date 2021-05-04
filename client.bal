@@ -217,7 +217,7 @@ public client class Client {
     # + recordInfo - A NetSuite record instance to be retrieved from NetSuite
     # + return - If success returns a json array otherwise the relevant error
     @display {label: "Get all records"} 
-    remote function getAll(@display {label: "Record type(GetAll supported)"} RecordGetAllType recordInfo) returns 
+    isolated remote function getAll(@display {label: "Record type(GetAll supported)"} RecordGetAllType recordInfo) returns 
                            @tainted @display {label: "Response"} json[]|error {
         xml payload = check buildGetAllPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_ALL_SOAP_ACTION, payload);
@@ -230,7 +230,7 @@ public client class Client {
     # + recordInfo - A NetSuite SavedSearch record type to be retrieved from NetSuite
     # + return - If success returns a json array otherwise the relevant error
     @display {label: "Get saved search"} 
-    remote function getSavedSearch(@display {label: "Record type(SavedSearch supported)"} RecordSaveSearchType 
+    isolated remote function getSavedSearch(@display {label: "Record type(SavedSearch supported)"} RecordSaveSearchType 
                                    recordInfo) returns @tainted @display {label: "Response"} json[]|error {
         xml payload = check buildGetSavedSearchPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SAVED_SEARCH_SOAP_ACTION, payload);
