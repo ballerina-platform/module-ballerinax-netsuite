@@ -24,7 +24,7 @@ public client class Client {
     public http:Client basicClient;
     private NetSuiteConfiguration config;
 
-    isolated  function init(NetSuiteConfiguration config)returns error? {
+    public isolated function init(NetSuiteConfiguration config)returns error? {
         self.config = config;
         self.basicClient = check new (config.baseURL, {timeout: 120});
     }
