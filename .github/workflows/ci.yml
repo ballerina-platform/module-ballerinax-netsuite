@@ -10,10 +10,10 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: ballerina-platform/ballerina-action/@master
+              uses: ballerina-platform/ballerina-action/@nightly
               with:
                   args:
-                      build -c
+                      build -c ./netsuite
               env:
                   NS_BASE_URL: ${{ secrets.BASEURL }}
                   NS_TOKEN_SECRET: ${{ secrets.TOKENSECRET }}

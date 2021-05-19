@@ -15,7 +15,7 @@ jobs:
               uses: ballerina-platform/ballerina-action/@master
               with:
                   args:
-                      build -c
+                      build -c ./netsuite
               env:
                   NS_BASE_URL: ${{ secrets.BASEURL }}
                   NS_TOKEN_SECRET: ${{ secrets.TOKENSECRET }}
