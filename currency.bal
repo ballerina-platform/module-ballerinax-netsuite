@@ -25,6 +25,8 @@ isolated function mapCurrencyRecordFields(Currency currency) returns string {
         foreach var item in currency {
             if (item is string|boolean|decimal|int) {
                 finalResult += setSimpleType(keys[position], item, LIST_ACCT);
+            } else if (item is RecordRef) {
+                finalResult += getXMLRecordRef(<RecordRef>item);
             }
             position += 1;
         }
@@ -32,7 +34,27 @@ isolated function mapCurrencyRecordFields(Currency currency) returns string {
     return finalResult;
 }
 
-isolated function wrapCurrencyElementsToBeCreatedWithParentElement(string subElements) returns string{
+isolated function mapNewCurrencyRecordFields(NewCurrency currency) returns string {
+    string finalResult = EMPTY_STRING;
+    map<anydata>|error currencyMap = currency.cloneWithType(MapAnyData);
+    if (currencyMap is map<anydata>) {
+        string[] keys = currencyMap.keys();
+        int position = 0;
+        foreach var item in currency {
+            if (item is string|boolean|decimal|int) {
+                finalResult += setSimpleType(keys[position], item, LIST_ACCT);
+            } else if (item is RecordInputRef) {
+                finalResult += getXMLRecordInputRef(<RecordInputRef>item);
+            } else if (item is RecordRef) {
+                finalResult += getXMLRecordRef(<RecordRef>item);
+            }
+            position += 1;
+        }
+    }
+    return finalResult;
+}
+
+isolated function wrapCurrencyElements(string subElements) returns string{
     return string `<urn:record xsi:type="listAcct:Currency" 
         xmlns:listAcct="urn:accounting_2020_2.lists.webservices.netsuite.com">
             ${subElements}

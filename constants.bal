@@ -15,43 +15,45 @@
 // under the License.
 
 //SOAP Actions
-public const string ADD_SOAP_ACTION = "add";
-public const string DELETE_SOAP_ACTION = "delete";
-public const string UPDATE_SOAP_ACTION = "update";
-public const string GET_ALL_SOAP_ACTION = "getAll";
-public const string SEARCH_SOAP_ACTION = "search";
-public const string GET_SOAP_ACTION = "get";
-public const string GET_SAVED_SEARCH_SOAP_ACTION = "getSavedSearch";
-public const string SOAP_ACTION_HEADER = "SOAPAction";
-public const string EMPTY_STRING = "";
-public const string AMPERSAND = "&";
+public const string & readonly ADD_SOAP_ACTION = "add";
+public const string & readonly DELETE_SOAP_ACTION = "delete";
+public const string & readonly UPDATE_SOAP_ACTION = "update";
+public const string & readonly GET_ALL_SOAP_ACTION = "getAll";
+public const string & readonly SEARCH_SOAP_ACTION = "search";
+public const string & readonly GET_SOAP_ACTION = "get";
+public const string & readonly GET_SAVED_SEARCH_SOAP_ACTION = "getSavedSearch";
+public const string & readonly SOAP_ACTION_HEADER = "SOAPAction";
+public const string & readonly GET_SERVER_TIME_ACTION = "getServerTime";
 
 //Error Messages
-public const string UNKNOWN_TYPE = "Unknown record type provided";
-public const string NO_RECORD_FOUND = "No record found!";
-public const string NO_RECORD_CHECK = "No any record found, Check the record detail";
-public const string NOT_SUCCESS = "Search was not successful in Netsuite";
-public const string ERROR_IN_RESULTS = "Error in search results";
+public const string & readonly UNKNOWN_TYPE = "Unknown record type provided";
+public const string & readonly NO_RECORD_FOUND = "No record found!";
+public const string & readonly NO_RECORD_CHECK = "No any record found, Check the record detail";
+public const string & readonly NOT_SUCCESS = "Search was not successful in Netsuite";
+public const string & readonly ERROR_IN_RESULTS = "Error in search results";
 
 //XSD types
-public const string LIST_ACCT = "listAcct";
-public const string TRAN_SALES = "tranSales";
+public const string & readonly LIST_ACCT = "listAcct";
+public const string & readonly TRAN_SALES = "tranSales";
 
 //String Replacements
-public const string MESSAGES_NS = "xmlns=\"urn:messages_2020_2.platform.webservices.netsuite.com\"";
-public const string CORE_NS = "xmlns:platformCore=\"urn:core_2020_2.platform.webservices.netsuite.com\"";
-public const string XSI_NS = "xmlns:xsi=\"http://www.w3.org/http:STATUS_OK1/XMLSchema-instance\"";
-public const string PLATFORM_MSGS = "platformMsgs:";
-public const string PLATFORM_MSGS_ = "platformMsgs_";
-public const string PLATFORM_CORE = "platformCore:";
-public const string XSI = "xsi:";
-public const string XSI_ = "xsi_";
-public const string SOAP_ENV = "soapenv:";
-public const string SOAP_ENV_ = "soapenv_";
-public const string LIST_ACCT_WITH_COLON = "listAcct:";
-public const string LIST_MRK_WITH_COLON = "listMkt:";
-public const string LIST_REL_WITH_COLON = "listRel:";
-public const string LIST_REL = "listRel";
-
+public const string & readonly MESSAGES_NS = "xmlns=\"urn:messages_2020_2.platform.webservices.netsuite.com\"";
+public const string & readonly CORE_NS = "xmlns:platformCore=\"urn:core_2020_2.platform.webservices.netsuite.com\"";
+public const string & readonly XSI_NS = "xmlns:xsi=\"http://www.w3.org/http:STATUS_OK1/XMLSchema-instance\"";
+public const string & readonly PLATFORM_MSGS = "platformMsgs:";
+public const string & readonly PLATFORM_MSGS_ = "platformMsgs_";
+public const string & readonly PLATFORM_CORE = "platformCore:";
+public const string & readonly XSI = "xsi:";
+public const string & readonly XSI_ = "xsi_";
+public const string & readonly SOAP_ENV = "soapenv:";
+public const string & readonly SOAP_ENV_ = "soapenv_";
+public const string & readonly LIST_ACCT_WITH_COLON = "listAcct:";
+public const string & readonly LIST_MRK_WITH_COLON = "listMkt:";
+public const string & readonly LIST_REL_WITH_COLON = "listRel:";
+public const string & readonly LIST_REL = "listRel";
+public const string & readonly EMPTY_STRING = "";
+public const string & readonly AMPERSAND = "&";
+public const string & readonly ERROR = "ERROR";
+public const string & readonly CURRENCY_XSI_TYPE = "listAcct:Currency";
 //Constant values
 public const decimal DEFAULT_ZERO_VALUE = 0.0;

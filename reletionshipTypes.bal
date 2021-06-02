@@ -40,7 +40,7 @@ public type CustomerAddressbook record {
 
 # Netsuite Subscription type record
 #
-# + subscribed - Subscription ID  
+# + subscribed - Subscription Id  
 # + subscription - Subscription Detail  
 # + lastModifiedDate - Last modified date of the subscription  
 public type Subscription record {

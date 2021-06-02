@@ -45,8 +45,8 @@ public function main() returns error? {
     netsuite:Client netSuiteClient = check new (config);
 
     //create a Netsuite customer record
-    log:print("AddCustomerRecord");
-    netsuite:RecordRef subsidiary = {
+    log:printInfo("AddCustomerRecord");
+    netsuite:RecordInputRef subsidiary = {
         internalId : "12",
         'type: "subsidiary"
     };
@@ -81,7 +81,7 @@ public function main() returns error? {
         overrideCurrencyFormat: false
     };
     
-    netsuite:Customer customer= {
+    netsuite:NewCustomer customer= {
         entityId: "Ballerina_Test_Customer_Sample",
         isPerson: true,
         salutation: "Mr",
@@ -106,8 +106,8 @@ public function main() returns error? {
 
     //Creates a Netsuite invoice record
     //Adds Netsuite entity instance for the invoice record
-    log:print("AddInvoiceRecord");
-    netsuite:RecordRef entity = {
+    log:printInfo("AddInvoiceRecord");
+    netsuite:RecordInputRef entity = {
         internalId : customerRecordResponse.internalId,
         'type: "entity"
     };
@@ -131,7 +131,7 @@ public function main() returns error? {
     };
 
     //Creates the invoice record to be created in Netsuite
-    netsuite:Invoice invoice = {
+    netsuite:NewInvoice invoice = {
         entity: entity,
         itemList: [item01, item02],
         currency : {
@@ -142,14 +142,14 @@ public function main() returns error? {
 
     //Makes the http request to the Netsuite SOAP web service.
     netsuite:RecordAddResponse invoiceRecordResponse = check netSuiteClient->addNewInvoice(invoice);
-    log:print(invoiceRecordResponse.toString());
+    log:printInfo(invoiceRecordResponse.toString());
 
     //Delete the record from Netsuite
-    log:print("DeleteInvoiceRecord");
+    log:printInfo("DeleteInvoiceRecord");
     netsuite:RecordDetail recordDeletionInfo = {
         recordInternalId : invoiceRecordResponse.internalId,
         recordType: netsuite:INVOICE
     };
     netsuite:RecordDeletionResponse output = check netSuiteClient->deleteRecord(recordDeletionInfo);
-    log:print(output.toString());
+    log:printInfo(output.toString());
 }
