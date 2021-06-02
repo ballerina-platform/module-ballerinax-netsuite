@@ -34,7 +34,27 @@ isolated function mapClassificationRecordFields(Classification classification) r
     return finalResult;
 }
 
-isolated function wrapClassificationElementsToBeCreatedWithParentElement(string subElements) returns string{
+isolated function mapNewClassificationRecordFields(NewClassification classification) returns string {
+    string finalResult = EMPTY_STRING;
+    map<anydata>|error classificationMap = classification.cloneWithType(MapAnyData);
+    if (classificationMap is map<anydata>) {
+        string[] keys = classificationMap.keys();
+        int position = 0;
+        foreach var item in classification {
+            if (item is string) {
+                finalResult += setSimpleType(keys[position], item, LIST_ACCT);
+            } else if (item is RecordInputRef) {
+                finalResult += getXMLRecordInputRef(<RecordInputRef>item);
+            } else if (item is RecordRef) {
+                finalResult += getXMLRecordRef(<RecordRef>item);
+            }    
+            position += 1;
+        }
+    }
+    return finalResult;
+}
+
+isolated function wrapClassificationElements(string subElements) returns string{
     return string `<urn:record xsi:type="listAcct:Classification" 
         xmlns:listAcct="urn:accounting_2020_2.lists.webservices.netsuite.com">
             ${subElements}

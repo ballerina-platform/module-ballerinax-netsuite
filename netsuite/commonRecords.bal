@@ -26,7 +26,7 @@ type TokenData record {
 
 # Ballerina record for netsuite record creation response
 #
-# + internalId - NetSuite record ID 
+# + internalId - NetSuite record Id 
 # + recordType - Netsuite record type  
 # + afterSubmitFailed - Boolean for checking  After submission NetSuite failures
 # + warning - Netsuite warnings
@@ -51,15 +51,27 @@ public type RecordUpdateResponse record {
 
 # Ballerina record for Netsuite record delete response
 #
-# + deletionReasonId - Reason ID for deletion  
-# + recordType - NetSuite Record type   
+# + deletionReasonId - Reason Id for deletion  
 # + deletionReasonMemo - NetSuite Reason memo for deletion   
-# + recordInternalId - Internal ID of the Netsuite record
+@display{label: "Record Details"}
 public type RecordDetail record {
-    string recordInternalId;
-    string recordType;
+    *RecordInfo;
+    @display{label: "Record Delete Reason Id"}
     string deletionReasonId?;
+    @display{label: "Record Delete Reason Memo"}
     string deletionReasonMemo?;
+};
+
+# Ballerina record for Netsuite record delete response
+#
+# + recordType - NetSuite Record type Eg: "currency","invoice", netsuite:INVOICE etc. 
+# + recordInternalId - Internal Id of the Netsuite record
+@display{label: "Record Information"}
+public type RecordInfo record {
+    @display{label: "Record Type"}
+    string recordType;
+    @display{label: "Record Internal Id"}
+    string recordInternalId;
 };
 
 # Netsuite saveSearch list response record
@@ -74,7 +86,10 @@ public type SavedSearchResponse record {
 };
 
 # RecordType Connector supports for creation operation for now.  
-public type RecordType Customer|Contact|Currency|Invoice|Classification;
+public type NewRecordType NewCustomer|NewContact|NewCurrency|NewInvoice|NewClassification|NewAccount|NewSalesOrder;
+
+# RecordType Connector supports for update operation for now.   
+public type ExistingRecordType Customer|Contact|Currency|Invoice|Classification|Account|SalesOrder;
 
 #Map type for record to Map conversion
 type MapAnyData map<anydata>;
@@ -92,11 +107,17 @@ public type RecordList record {|
 # + operator - Searching operator 
 # + searchType - Netsuite Search field type  
 # + value1 - Primary Search value 
-# + value2 - Secondary Search value  
+# + value2 - Secondary Search value
+@display{label: "Search Element"}
 public type SearchElement record {
+    @display{label: "Search Field Name"}
     string fieldName;
+    @display{label: "Search Operator"}
     string operator;
+    @display{label: "Search Type"}
     SearchType searchType;
+    @display{label: "First Search Value"}
     string value1;
+    @display{label: "Second Search Value"}
     string value2?;
 };

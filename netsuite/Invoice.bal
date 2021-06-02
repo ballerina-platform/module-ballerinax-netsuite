@@ -42,6 +42,33 @@ isolated function mapInvoiceRecordFields(Invoice invoice) returns string|error {
     return finalResult;
 }
 
+isolated function mapNewInvoiceRecordFields(NewInvoice invoice) returns string|error {
+    string finalResult = EMPTY_STRING;
+    map<anydata>|error invoiceMap = invoice.cloneWithType(MapAnyData);
+    if (invoiceMap is map<anydata>) {
+        string[] keys = invoiceMap.keys();
+        int position = 0;
+        foreach var invoiceField in invoice {
+            if (invoiceField is string|decimal) {
+                finalResult += setSimpleType(keys[position], invoiceField, TRAN_SALES);
+            } else if (invoiceField is RecordInputRef) {
+                finalResult += getXMLRecordInputRef(<RecordInputRef>invoiceField);
+            } else if (invoiceField is RecordRef) {
+                finalResult += getXMLRecordRef(<RecordRef>invoiceField);
+            } else if (invoiceField is Item[]) {
+                string itemXMLList = EMPTY_STRING;
+                foreach Item item in invoiceField {
+                    string itemElements = check buildInvoiceItemElement(item);
+                    itemXMLList += itemElements;
+                }
+                finalResult += string`<itemList>${itemXMLList}</itemList>`;  
+            } 
+            position += 1;
+        }
+    }
+    return finalResult;
+}
+
 isolated function buildInvoiceItemElement(Item item) returns string|error {
     string itemElements = EMPTY_STRING;
     map<anydata> itemMap = check item.cloneWithType(MapAnyData);
@@ -58,7 +85,7 @@ isolated function buildInvoiceItemElement(Item item) returns string|error {
     return string`<item>${itemElements}</item>`;
 }
 
-isolated function wrapInvoiceElementsToBeCreatedWithParentElement(string subElements) returns string{
+isolated function wrapInvoiceElements(string subElements) returns string{
     return string `<urn:record xsi:type="tranSales:Invoice" 
         xmlns:tranSales="urn:sales_2020_2.transactions.webservices.netsuite.com">
             ${subElements}

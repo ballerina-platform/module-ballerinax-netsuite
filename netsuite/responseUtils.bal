@@ -18,6 +18,9 @@ import ballerina/http;
 import ballerina/lang.'xml as xmlLib;
 import ballerina/regex;
 import ballerina/xmldata;
+import ballerina/time;
+
+xmlns "urn:core_2020_2.platform.webservices.netsuite.com" as platformCore;
 
 isolated function getCreateResponse(http:Response response) returns @tainted RecordAddResponse|error {
     xml formattedPayload = check formatPayload(response);
@@ -25,7 +28,7 @@ isolated function getCreateResponse(http:Response response) returns @tainted Rec
         string|error statusDetail = formattedPayload/**/<statusDetail>.'type;
         boolean|error isAfterSubmitFailed =  extractBooleanValueFromXMLOrText(formattedPayload/**/<afterSubmitFailed>/*);
         if(statusDetail is string) {
-            if(statusDetail == "ERROR" && isAfterSubmitFailed is error) {
+            if(statusDetail == ERROR && isAfterSubmitFailed is error) {
                 fail error((formattedPayload/**/<message>/*).toString());
             }
         } 
@@ -116,7 +119,7 @@ isolated function getUpdateResponse(http:Response response) returns @tainted Rec
     }
 }
  
-isolated function formatGetAllResponse(http:Response response) returns @tainted json[]|error {
+isolated function formatGetAllResponse(http:Response response) returns @tainted anydata|error {
     xml xmlValure = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) {
         xml output  = xmlValure/**/<status>;
@@ -134,52 +137,19 @@ isolated function formatGetAllResponse(http:Response response) returns @tainted 
     }
 }
 
-isolated function categorizeGetALLResponse(xml baseRef) returns @tainted json[] {
-    json[] recordList = [];
+isolated function categorizeGetALLResponse(xml baseRef) returns @tainted Currency[]|error {
+    Currency[] recordLists = [];
     foreach xml platformCoreRecord in baseRef {
-        string|error count =  platformCoreRecord.xsi_type;
-        if(count is string ) {
-            match count {
-                "listAcct:Currency" => {
-                    xml recordItems = checkpanic replaceRegexInXML(platformCoreRecord, LIST_ACCT_WITH_COLON);
-                    json|error  afterSubmissionResponse = xmldata:toJson(recordItems/*);
-                    if(afterSubmissionResponse is json) {
-                        recordList.push(afterSubmissionResponse);
-                    }
-                }
-                "listAcct:budgetCategory" => {
-                    xml recordItems = checkpanic replaceRegexInXML(platformCoreRecord, LIST_ACCT_WITH_COLON);
-                    json|error  afterSubmissionResponse = xmldata:toJson(recordItems/*);
-                    if(afterSubmissionResponse is json) {
-                        recordList.push(afterSubmissionResponse);
-                    }  
-                }
-                "listMkt:campaignAudience" => {
-                    xml recordItems = checkpanic replaceRegexInXML(platformCoreRecord, LIST_MRK_WITH_COLON);
-                    json|error  afterSubmissionResponse = xmldata:toJson(recordItems/*);
-                    if(afterSubmissionResponse is json) {
-                        recordList.push(afterSubmissionResponse);
-                    }  
-                }
-                "listAcct:taxAcct" => {
-                    xml recordItems = checkpanic replaceRegexInXML(platformCoreRecord, LIST_ACCT_WITH_COLON);
-                    json|error  afterSubmissionResponse = xmldata:toJson(recordItems/*);
-                    if(afterSubmissionResponse is json) {
-                        recordList.push(afterSubmissionResponse);
-                    }  
-                }
-                "listRel:state" => {
-                    xml recordItems = checkpanic replaceRegexInXML(platformCoreRecord, LIST_REL_WITH_COLON);
-                    json|error  afterSubmissionResponse = xmldata:toJson(recordItems/*);
-                    if(afterSubmissionResponse is json) {
-                        recordList.push(afterSubmissionResponse);
-                    }  
-                }
-            }
-            
+        string|error xsiType =  platformCoreRecord.xsi_type;
+        if(xsiType is string ) {
+            match xsiType {
+                CURRENCY_XSI_TYPE => {
+                    recordLists.push(check mapCurrencyRecord(platformCoreRecord));
+                }  
+            }  
         }
     }
-    return recordList;
+    return recordLists;
 }
 
 isolated function replaceRegexInXML(xml value, string regex, string replacement = EMPTY_STRING) returns xml|error {
@@ -199,36 +169,20 @@ isolated function formatPayload(http:Response response) returns @tainted xml|err
     return check xmlLib:fromString(formattedXMLResponse);
 }
 
-isolated function getSavedSearchResponse(http:Response response) returns @tainted json[]|error {
-    xml formattedPayload = check formatPayload(response);
+isolated function getServerTimeResponse(http:Response response) returns @tainted time:Civil|error {
+    xml payload = check response.getXmlPayload();
     if (response.statusCode == http:STATUS_OK) {
-        xml output  = formattedPayload/**/<status>;
-        boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess);
-        if(isSuccess == true) {
-            xml:Element records = <xml:Element> formattedPayload/**/<recordRefList>;
-            xml recordElements  = xmlLib:getChildren(records);
-            json[] recordList = [];
-            foreach xml platformCoreRecord in recordElements {
-                string|error count =  platformCoreRecord.xsi_type;
-                if(count is string ) {
-                    match count {
-                        "CustomizationRef" => {
-                            xml recordItems = checkpanic replaceRegexInXML(platformCoreRecord, LIST_ACCT_WITH_COLON);
-                            json|error  afterSubmissionResponse = xmldata:toJson(recordItems/*);
-                            if(afterSubmissionResponse is json) {
-                                recordList.push(afterSubmissionResponse);
-                            }
-                        }
-                    }
-                }
-            }     
-            return recordList;
+        string isSuccessInText = check payload/**/<platformCore:status>.isSuccess;
+        boolean isSuccess = check extractBooleanValueFromXMLOrText(isSuccessInText);
+        if (isSuccess) {
+            xml serverTimeInText =  payload/**/<platformCore:serverTime>/*;  
+            return check time:civilFromString(serverTimeInText.toString());
         } else {
-            json errorMessage= check xmldata:toJson(formattedPayload/**/<statusDetail>/*);
+            json errorMessage= check xmldata:toJson(payload/**/<statusDetail>/*);
             fail error(errorMessage.toString());
-        }    
+        }
     } else {
-        fail error(formattedPayload.toString());
+        fail error(payload.toString());
     }
 }
 
