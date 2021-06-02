@@ -63,6 +63,18 @@ isolated function getXMLRecordRef(RecordRef recordRef) returns string {
     return xmlRecord;
 }
 
+isolated function getXMLRecordInputRef(RecordInputRef recordRef) returns string {
+    string xmlRecord = string `<${recordRef.'type.toString()} xsi:type="urn1:RecordRef" 
+    internalId="${recordRef.internalId}"/>`;
+    string? externalId = recordRef?.externalId;
+    if (externalId is string) {
+        xmlRecord = string `<${recordRef?.'type.toString()} xsi:type="urn1:RecordRef" 
+        internalId="${recordRef.internalId}" 
+        externalId="${externalId}"/>`;
+    } 
+    return xmlRecord;
+}
+
 isolated function setSimpleType(string elementName, string|boolean|decimal|int value, string XSDName) returns string {
     if (value is string) {
         return string `<${XSDName}:${elementName}>${value}</${XSDName}:${elementName}>`;
@@ -98,7 +110,7 @@ isolated function getUpdateXMLBodyWithParentElement(string subElements) returns 
     </soapenv:Envelope>`;
 }
 
-isolated function buildAddRecord(RecordType recordType, RecordCoreType recordCoreType, NetSuiteConfiguration config) 
+isolated function buildAddRecord(NewRecordType recordType, RecordCoreType recordCoreType, NetSuiteConfiguration config) 
                                 returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string subElements = check getAddOperationElements(recordType, recordCoreType);
@@ -113,7 +125,7 @@ isolated function buildDeletePayload(RecordDetail recordType, NetSuiteConfigurat
     return getSoapPayload(header, body);
 }
 
-isolated function buildUpdateRecord(RecordType recordType, RecordCoreType recordCoreType, NetSuiteConfiguration config) 
+isolated function buildUpdateRecord(ExistingRecordType recordType, RecordCoreType recordCoreType, NetSuiteConfiguration config) 
                                     returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string elements = check getUpdateOperationElements(recordType, recordCoreType);
@@ -121,7 +133,7 @@ isolated function buildUpdateRecord(RecordType recordType, RecordCoreType record
     return getSoapPayload(header, body);    
 }
 
-isolated function getUpdateOperationElements(RecordType recordType, RecordCoreType recordCoreType) returns string|error {
+isolated function getUpdateOperationElements(ExistingRecordType recordType, RecordCoreType recordCoreType) returns string|error {
     string subElements = EMPTY_STRING;   
     match recordCoreType {
         CUSTOMER => {
@@ -158,37 +170,36 @@ isolated function getUpdateOperationElements(RecordType recordType, RecordCoreTy
     }
 }
 
-isolated function getAddOperationElements(RecordType recordType, RecordCoreType recordCoreType) returns string|error{ 
+isolated function getAddOperationElements(NewRecordType recordType, RecordCoreType recordCoreType) returns string|error{ 
     string subElements = EMPTY_STRING;  
     match recordCoreType {
         CUSTOMER => {
-             subElements = mapCustomerRecordFields(<Customer>recordType); 
-             //wrap create customer element -->change all occur
-             return wrapCustomerElementsToBeCreatedWithParentElement(subElements);
+             subElements = mapNewCustomerRecordFields(<NewCustomer>recordType); 
+             return wrapCustomerElements(subElements);
         }
         CONTACT => {
-             subElements = mapContactRecordFields(<Contact>recordType); 
-             return wrapContactElementsToBeCreatedWithParentElement(subElements);
+             subElements = mapNewContactRecordFields(<NewContact>recordType); 
+             return wrapContactElements(subElements);
         }
         CURRENCY => {
-            subElements = mapCurrencyRecordFields(<Currency>recordType);
-            return wrapCurrencyElementsToBeCreatedWithParentElement(subElements);
+            subElements = mapNewCurrencyRecordFields(<NewCurrency>recordType);
+            return wrapCurrencyElements(subElements);
         }
         SALES_ORDER => {
-            subElements = mapSalesOrderRecordFields(<SalesOrder>recordType);
-            return wrapSalesOrderElementsToBeCreatedWithParentElement(subElements);
+            subElements = mapNewSalesOrderRecordFields(<NewSalesOrder>recordType);
+            return wrapSalesOrderElements(subElements);
         }
         INVOICE => {
-            subElements = check mapInvoiceRecordFields(<Invoice>recordType); 
-            return wrapInvoiceElementsToBeCreatedWithParentElement(subElements);
+            subElements = check mapNewInvoiceRecordFields(<NewInvoice>recordType); 
+            return wrapInvoiceElements(subElements);
         }
         CLASSIFICATION => {
-            subElements = mapClassificationRecordFields(<Classification>recordType); 
-            return wrapClassificationElementsToBeCreatedWithParentElement(subElements);
+            subElements = mapNewClassificationRecordFields(<NewClassification>recordType); 
+            return wrapClassificationElements(subElements);
         }
         ACCOUNT => {
-            subElements = mapClassificationRecordFields(<Account>recordType); 
-            return wrapAccountElementsToBeCreatedWithParentElement(subElements);
+            subElements = mapNewAccountRecordFields(<NewAccount>recordType); 
+            return wrapAccountElements(subElements);
         }
         _ => {
                 fail error(UNKNOWN_TYPE);
@@ -196,7 +207,7 @@ isolated function getAddOperationElements(RecordType recordType, RecordCoreType 
     }
 }
 
-isolated function buildGetOperationPayload(RecordDetail records, NetSuiteConfiguration config) returns xml|error {
+isolated function buildGetOperationPayload(RecordInfo records, NetSuiteConfiguration config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string elements = prepareElementsForGetOperation(records);
     string body = string `<soapenv:Body><urn:get xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${elements}
@@ -204,7 +215,7 @@ isolated function buildGetOperationPayload(RecordDetail records, NetSuiteConfigu
     return getSoapPayload(header, body);
 }
 
-isolated function prepareElementsForGetOperation(RecordDetail recordDetail) returns string {
+isolated function prepareElementsForGetOperation(RecordInfo recordDetail) returns string {
     string elements = string `<urn:baseRef internalId="${recordDetail.recordInternalId}" type="${recordDetail.recordType}"
     xsi:type="urn1:RecordRef"/>`;
     return elements;
@@ -243,14 +254,13 @@ isolated function getXMLBodyForGetAllOperation(string recordType) returns string
     </soapenv:Envelope>`;
 }
 
-isolated function getXMLBodyForSavedSearchOperation(string recordType) returns string{
-    return string`<soapenv:Body><urn:getSavedSearch><urn:record searchType="${recordType}"/></urn:getSavedSearch>
-    </soapenv:Body></soapenv:Envelope>`;
+isolated function getXMLBodyForGetServerTime() returns string{
+    return string`<soapenv:Body><urn:getServerTime/></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function buildGetSavedSearchPayload(string recordType, NetSuiteConfiguration config) returns xml|error {
+isolated function buildGetServerTime(NetSuiteConfiguration config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
-    string body = getXMLBodyForSavedSearchOperation(recordType);
+    string body = getXMLBodyForGetServerTime();
     return getSoapPayload(header, body);
 }
 

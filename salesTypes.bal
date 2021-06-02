@@ -45,10 +45,29 @@ public type Item record {
 
 # Netsuite Sales Order type record
 #
+# + entity - The customer of the sales Order  
+# + itemList - The list of items
+public type SalesOrder record {
+    RecordRef entity?;
+    Item[] itemList?;
+    *SalesOrderCommon;
+};
+
+# Netsuite Sales Order type record
+# 
+# + entity - The customer of the sales Order   
+# + itemList - The list of items
+public type NewSalesOrder record {
+    RecordInputRef entity;
+    Item[] itemList;
+    *SalesOrderCommon;
+};
+
+# Netsuite Sales Order type record
+#
 # + internalId - InternalId of the salesOrder record in Netsuite   
 # + createdDate - created date of the  salesOrder record in Netsuite  
-# + customForm - References the customized a sales order form  
-# + entity - The customer of the sales Order  
+# + customForm - References the customized a sales order form    
 # + currency - The currency of the sales Order   
 # + drAccount - Deferred revenue reclassification account   
 # + fxAccount - Foreign currency adjustment revenue account  
@@ -83,26 +102,13 @@ public type Item record {
 # + balance - The balance owed by this customer    
 # + status - Status of the sales Order  
 # + subsidiary - Subsidiary of the Sales Order  
-# + itemList - The list of items
-public type SalesOrder record {
+public type SalesOrderCommon record {
     string internalId?;
     string createdDate?;
-    RecordRef customForm?;
-    RecordRef entity?;
-    RecordRef currency?;
-    RecordRef drAccount?;
-    RecordRef fxAccount?;
     string tranDate?;
     string tranId?;
-    RecordRef entityTaxRegNum?;
-    RecordRef createdFrom?;
     SalesOrderStatus|string orderStatus?;
     string nextBill?;
-    RecordRef opportunity?;
-    RecordRef salesRep?;
-    RecordRef partner?;
-    RecordRef salesGroup?;
-    RecordRef leadSource?;
     string startDate?;
     string endDate?;
     string memo?;
@@ -114,19 +120,55 @@ public type SalesOrder record {
     string currencyName?;
     boolean isTaxable?;
     string email?;
-    Address billingAddress?;
-    Address shippingAddress?;
     string shipDate?;
     decimal subTotal?;
     decimal discountTotal?;
     decimal total?;
     decimal balance?;
     string status?;
+    Address billingAddress?;
+    Address shippingAddress?;
     RecordRef subsidiary?;
-    Item[] itemList?;
+    RecordRef customForm?;
+    RecordRef currency?;
+    RecordRef drAccount?;
+    RecordRef fxAccount?;
+    RecordRef opportunity?;
+    RecordRef salesRep?;
+    RecordRef partner?;
+    RecordRef salesGroup?;
+    RecordRef leadSource?;
+    RecordRef entityTaxRegNum?;
+    RecordRef createdFrom?;
 };
 
-# Description
+# Represents a NetSuite Invoice record
+#
+# + entity - The customer of the invoice  
+# + invoiceId - The Id of the invoice    
+# + internalId - The internalId of the invoice  
+# + itemList - The item list for the invoice  
+public type Invoice record {
+    RecordRef entity?;
+    Item[] itemList?;
+    string invoiceId?;
+    string internalId?;
+    *InvoiceCommon;
+};
+
+
+# Represents a NetSuite Invoice record
+#
+# + entity - The customer of the invoice  
+# + itemList - The item list for the invoice  
+public type NewInvoice record {
+    RecordInputRef entity;
+    Item[] itemList;
+    *InvoiceCommon;
+};
+
+
+# Represents a NetSuite Invoice record
 #
 # + recognizedRevenue - Recognized Revenue: cumulative amount of revenue recognized for this transaction 
 # + discountTotal - The amount discounted on this invoice  
@@ -135,32 +177,25 @@ public type SalesOrder record {
 # + department - A department to associate with this invoice 
 # + createdDate - Created date of the invoice  
 # + currency - The currency of the invoice  
-# + email - Refereces an email for the invoice  
+# + email - References an email for the invoice  
 # + lastModifiedDate - The last modified Date of the invoice  
-# + status - The status of the Invoice
-# + entity - The customer of the invoice  
-# + invoiceId - The ID of the invoice  
+# + status - The status of the Invoice  
 # + classification - The classification of the invoice  
-# + subsidiary - The subsidiary of the invoice   
-# + internalId - The internalId of the invoice  
-# + 'class - The class of the invoice  
-# + itemList - The item list for the invoice  
-public type Invoice record {
+# + subsidiary - The subsidiary of the invoice    
+# + 'class - The class of the invoice   
+public type InvoiceCommon record {
     decimal recognizedRevenue?;
     decimal discountTotal?;
     decimal deferredRevenue?;
     decimal total?;
-    RecordRef department?;
-    string createdDate?;
-    RecordRef currency?;
     string email?;
+    string createdDate?;
     string lastModifiedDate?;
     string status?;
-    RecordRef entity?;
-    string invoiceId?;
     Classification classification?;
-    RecordRef subsidiary?;
-    string internalId?;
+    RecordRef currency?;
     RecordRef 'class?;
-    Item[] itemList?;
+    RecordRef department?;
+    RecordRef subsidiary?;
 };
+

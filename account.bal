@@ -23,7 +23,7 @@ isolated function mapAccountRecordFields(Account account) returns string {
     if (accountMap is map<anydata>) {
         string[] keys = accountMap.keys();
         int position = 0;
-        foreach var item in accountMap {
+        foreach var item in account {
             if (item is string|boolean|decimal) {
                 finalResult += setSimpleType(keys[position], item, LIST_ACCT);
             } else if (item is RecordRef) {
@@ -35,7 +35,27 @@ isolated function mapAccountRecordFields(Account account) returns string {
     return finalResult;
 }
 
-isolated function wrapAccountElementsToBeCreatedWithParentElement(string subElements) returns string {
+isolated function mapNewAccountRecordFields(NewAccount account) returns string {
+    string finalResult = EMPTY_STRING;
+    map<anydata>|error accountMap = account.cloneWithType(MapAnyData);
+    if (accountMap is map<anydata>) {
+        string[] keys = accountMap.keys();
+        int position = 0;
+        foreach var item in account {
+            if (item is string|boolean|decimal) {
+                finalResult += setSimpleType(keys[position], item, LIST_ACCT);
+            } else if (item is RecordInputRef) {
+                finalResult += getXMLRecordInputRef(<RecordInputRef>item);
+            } else if (item is RecordRef) {
+                finalResult += getXMLRecordRef(<RecordRef>item);
+            }
+            position += 1;
+        }
+    }
+    return finalResult;
+}
+
+isolated function wrapAccountElements(string subElements) returns string {
     return string `<urn:record xsi:type="listAcct:Account" 
     xmlns:listAcct="urn:accounting_2020_2.lists.webservices.netsuite.com">
             ${subElements}

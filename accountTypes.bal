@@ -19,32 +19,76 @@
 # + name - Name of the classification  
 # + includeChildren - Checks for child classifications  
 # + parent - References parent classifications 
-# + isInactive - shows whether classification is active or not  
-# + subsidiaryList - Subsidiary List  
-# + internalId - Internal ID  
-# + externalId - external ID  
+# + internalId - Internal Id
 public type Classification record {
+    string internalId;
+    string name?;
+    RecordRef parent?;
+    boolean includeChildren?;
+    *ClassificationCommon;
+};
+
+# Netsuite Classification type record
+#
+# + name - Name of the classification   
+# + parent - References parent classifications 
+public type NewClassification record {
+    string name;
+    RecordInputRef parent?;
+    *ClassificationCommon;
+};
+
+# Netsuite Classification type record for common fields.
+#
+# + name - Name of the classification  
+# + includeChildren - Checks for child classifications  
+# + isInactive - shows whether classification is active or not  
+# + subsidiaryList - Subsidiary List   
+# + externalId - external Id  
+type ClassificationCommon record {
     string name?;
     boolean includeChildren?;
-    RecordRef parent?;
     boolean isInactive?;
     RecordRef subsidiaryList?;
-    string internalId?;
     string externalId?;
 };
 
-# Netsutie Account type record
+# NetSuite Account type record
 #
-# + internalId - Internal ID  
-# + externalId - External ID  
+# + internalId - Internal Id  
+# + externalId - External Id   
+# + acctNumber - Account Number  
+# + acctName - Account Name  
+# + legalName - Legal Name of the Account   
+# + currency - Account currency  
+public type Account record {
+    string internalId?;
+    string externalId?;   
+    string acctNumber?;
+    string acctName?;
+    string legalName?;
+    RecordRef currency?;
+    *AccountCommon;
+};
+
+# NetSuite Account type record
+#  
+# + acctNumber - Account Number  
+# + acctName - Account Name  
+# + currency - Account currency  
+public type NewAccount record {
+    string acctNumber?;
+    string acctName?;
+    RecordInputRef currency?;
+    *AccountCommon;
+};
+
+# NetSuite Account type record for common fields
+#
 # + acctType - Account type  
 # + unitsType - Units type  
 # + unit -  Displays the base unit assigned to the unitsType   
-# + acctNumber - Account Number  
-# + acctName - Account Name  
-# + legalName - Legal Name of the Account  
-# + includeChildren - checks for children  
-# + currency - Account currency  
+# + includeChildren - checks for children   
 # + exchangeRate - Exchange rate 
 # + generalRate - General Rate of the Account  
 # + cashFlowRate -  The type of exchange rate that is used to translate foreign currency amounts for this account  
@@ -61,17 +105,11 @@ public type Classification record {
 # + openingBalance - Opening Balance of the account  
 # + revalue - Revalue Open Balance for Foreign Currency Transactions
 # + subsidiary - A subsidiary of the account  
-public type Account record {
-    string internalId?;
-    string externalId?;   
+type AccountCommon record {   
     string acctType?;
     RecordRef unitsType?;
     RecordRef unit?;
-    string acctNumber?;
-    string acctName?;
-    string legalName?;
     boolean includeChildren?;
-    RecordRef currency?;
     string exchangeRate?;
     string generalRate?;
     ConsolidatedRate|string cashFlowRate?;

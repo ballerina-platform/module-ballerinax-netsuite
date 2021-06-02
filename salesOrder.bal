@@ -40,6 +40,32 @@ isolated function mapSalesOrderRecordFields(SalesOrder salesOrder) returns strin
     return finalResult;
 }
 
+isolated function mapNewSalesOrderRecordFields(NewSalesOrder salesOrder) returns string {
+    string finalResult = EMPTY_STRING;
+    map<anydata>|error salesOrderMap = salesOrder.cloneWithType(MapAnyData);
+    if (salesOrderMap is map<anydata>) {
+        string[] keys = salesOrderMap.keys();
+        int position = 0;
+        foreach var item in salesOrder {
+            if (item is string|boolean|decimal|int|SalesOrderStatus) {
+                finalResult += setSimpleType(keys[position], item, TRAN_SALES);
+            }else if (item is RecordInputRef) {
+                finalResult += getXMLRecordInputRef(<RecordInputRef>item); 
+            } else if (item is RecordRef) {
+                finalResult += getXMLRecordRef(<RecordRef>item);
+            } else if (item is Address) {
+                string addressBook = prepareSalesOrderXMLAddressElement(item);
+                finalResult += string `<billingAddress>${addressBook}</billingAddress>`;        
+            } else if (item is Item[]) {
+                string itemList = prepareSalesOrderItemListElement(item);
+                finalResult +=string `<itemList>${itemList}</itemList>`;
+            }       
+            position += 1;
+        }
+    }
+    return finalResult;
+}
+
 isolated function prepareSalesOrderXMLAddressElement(Address address) returns string {
     map<anydata>|error AddressMap = address.cloneWithType(MapAnyData);
     int index = 0;
@@ -76,7 +102,7 @@ isolated function prepareSalesOrderItemListElement(Item[] items) returns string{
     return itemList;
 }
 
-isolated function wrapSalesOrderElementsToBeCreatedWithParentElement(string subElements) returns string{
+isolated function wrapSalesOrderElements(string subElements) returns string{
     return string `<urn:record xsi:type="tranSales:SalesOrder" 
         xmlns:tranSales="urn:sales_2020_2.transactions.webservices.netsuite.com">
             ${subElements}

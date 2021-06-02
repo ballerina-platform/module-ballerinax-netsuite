@@ -46,7 +46,39 @@ isolated function mapContactRecordFields(Contact contact) returns string {
     return finalResult;
 }
 
-isolated function wrapContactElementsToBeCreatedWithParentElement(string subElements) returns string{
+isolated function mapNewContactRecordFields(NewContact contact) returns string {
+    string finalResult = EMPTY_STRING;
+    map<anydata>|error contactMap = contact.cloneWithType(MapAnyData);
+    if (contactMap is map<anydata>) {
+        string[] keys = contactMap.keys();
+        int position = 0;
+        foreach var item in contact {
+            if (item is string|boolean) {
+                finalResult += setSimpleType(keys[position], item, LIST_REL);
+            } else if (item is RecordRef) {
+                finalResult += getXMLRecordRef(<RecordRef>item);
+            } else if (item is RecordInputRef) {
+                finalResult += getXMLRecordRef(<RecordInputRef>item);
+            } else if (item is Category[]) {
+                string categoryList = EMPTY_STRING;
+                foreach RecordRef category in item {
+                    categoryList += getXMLRecordRef(category);
+                }
+                finalResult += string `<listRel:categoryList>${categoryList}</listRel:categoryList>`;
+            } else if (item is GlobalSubscriptionStatusType) {
+                finalResult += string `<listRel:globalSubscriptionStatus>${item.toString()}
+                </listRel:globalSubscriptionStatus>`;
+            } else if (item is ContactAddressBook[]) {
+                string addressList = prepareAddressList(item);
+                finalResult += string`<listRel:addressbookList>${addressList}</listRel:addressbookList>`;
+            } 
+            position += 1;
+        }
+    }
+    return finalResult;
+}
+
+isolated function wrapContactElements(string subElements) returns string{
     return string `<urn:record xsi:type="listRel:Contact" 
         xmlns:listRel="urn:relationships_2020_2.lists.webservices.netsuite.com">
             ${subElements}

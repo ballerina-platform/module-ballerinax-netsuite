@@ -14,15 +14,37 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Reference to NetSuite Records
+# Represents record reference base to NetSuite Records
 #
 # + name - Name of the Record  
-# + internalId - NetSuite Internal ID 
-# + externalId - NetSuite external ID
-# + 'type - Type of the Record  
-public type RecordRef record {
-    string name?;
+# + internalId - NetSuite Internal Id 
+# + externalId - NetSuite external Id
+@display{label: "Record Base type"}
+public type RecordBaseRef record {
+    @display{label: "Record Internal Id"}
     string internalId;
+    @display{label: "Record external Id"}
     string externalId?;
+    @display{label: "Record name"}
+    string name?;
+};
+
+# References to NetSuite Records
+#
+# + 'type - Type of the Record 
+@display{label: "Record reference"} 
+public type RecordRef record {
+    *RecordBaseRef;
+    @display{label: "Record type"}
     string 'type?;
+};
+
+# References to NetSuite Records for Input operations
+# 
+# + 'type - Type of the Record Eg: "currency" or netsuite:CURRENCY
+@display{label: "Record reference"}
+public type RecordInputRef record {
+    *RecordBaseRef;
+    @display{label: "Record type"}
+    string 'type;
 };
