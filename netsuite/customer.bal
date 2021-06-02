@@ -42,7 +42,33 @@ isolated function mapCustomerRecordFields(Customer customer) returns string {
     return finalResult;
 }
 
-isolated function wrapCustomerElementsToBeCreatedWithParentElement(string subElements) returns string{
+isolated function mapNewCustomerRecordFields(NewCustomer customer) returns string {
+    string finalResult = EMPTY_STRING;
+    map<anydata>|error customerMap = customer.cloneWithType(MapAnyData);
+    if (customerMap is map<anydata>) {
+        string[] keys = customerMap.keys();
+        int position = 0;
+        foreach var item in customer {
+            if (item is string|boolean) {
+                finalResult += setSimpleType(keys[position], item, "listRel");
+            } else if (item is RecordRef) {
+                finalResult += getXMLRecordRef(<RecordRef>item);
+            } else if (item is RecordInputRef) {
+                finalResult += getXMLRecordInputRef(<RecordInputRef>item);
+            } else if (item is CustomerAddressbook[]) {
+                string addressList = prepareAddressList(item);
+                finalResult += string`<listRel:addressbookList>${addressList}</listRel:addressbookList>`;
+            } else if (item is CustomerCurrency[]) {
+                string currencyList = prepareCurrencyList(item);
+                finalResult += string`<listRel:currencyList>${currencyList}</listRel:currencyList>`;
+            }
+            position += 1;
+        }
+    }
+    return finalResult;
+}
+
+isolated function wrapCustomerElements(string subElements) returns string{
     return string `<urn:record xsi:type="listRel:Customer" xmlns:listRel="urn:relationships_2020_2.lists.webservices.netsuite.com">
             ${subElements}
         </urn:record>`;
