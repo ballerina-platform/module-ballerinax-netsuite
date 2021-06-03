@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/http;
-import ballerina/time;
 
 # HTTP Client for NetSuite SOAP web service
 #
@@ -216,6 +215,7 @@ public client class Client {
     # Retrieves all currency types instances from NetSuite
     #
     # + return - If success returns an array of Currencies otherwise the relevant error
+    @display{label: "Get all currency types"} 
     isolated remote function getAllCurrencyRecords() returns Currency[]|error {
         xml payload = check buildGetAllPayload(CURRENCY_All_TYPES, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_ALL_SOAP_ACTION, payload);
@@ -229,9 +229,9 @@ public client class Client {
 
     # Returns the NetSuite server time in GMT, regardless of a user's time zone 
     #
-    # + return - If success returns the server time in Ballerina time:Civil format otherwise the relevant error
+    # + return - If success returns the server time otherwise the relevant error
     @display{label: "Get saved search"} 
-    isolated remote function getNetSuiteServerTime() returns @tainted @display{label: "Response"} time:Civil|error {
+    isolated remote function getNetSuiteServerTime() returns @tainted @display{label: "Response"} string|error {
         xml payload = check buildGetServerTime(self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SERVER_TIME_ACTION, payload);
         return getServerTimeResponse(response);

@@ -17,7 +17,6 @@
 import ballerina/test;
 import ballerina/log;
 import ballerina/os;
-import ballerina/time;
 
 configurable string accountId = os:getEnv("NS_ACCOUNTID");
 configurable string consumerId = os:getEnv("NS_CLIENT_ID");
@@ -643,8 +642,8 @@ function testGetAllCurrencyRecords() {
 @test:Config {enable: true}
 function testGetServerTime() {
     log:printInfo("testGetNetSuiteServerTime");
-    time:Civil|error output = netsuiteClient->getNetSuiteServerTime();
-    if (output is time:Civil) {
+    string|error output = netsuiteClient->getNetSuiteServerTime();
+    if (output is string) {
         log:printInfo(output.toString());
     } else {
         test:assertFalse(true, output.message());
