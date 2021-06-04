@@ -86,7 +86,7 @@ isolated function mapClassificationRecord(xml response) returns Classification|e
     return 'class;
 }
 
-isolated function getClassificationResult(http:Response response, RecordCoreType recordType) returns 
+isolated function getClassificationResult(http:Response response) returns 
                                         @tainted Classification|error{
     xml xmlValue = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) { 

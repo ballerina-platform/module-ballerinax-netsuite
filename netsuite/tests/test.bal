@@ -234,7 +234,7 @@ function testAddInvoiceRecord() {
 
 @test:Config {enable: true}
 function testAddSalesOrderOperation() {
-    log:printInfo("testSalesOrderRecordOperation");
+    log:printInfo("testAddSalesOrderOperation");
     RecordInputRef entity = {
         internalId : "4045",
         'type: "entity"
@@ -315,7 +315,7 @@ function testAddAccountRecord() {
     RecordAddResponse|error output = netsuiteClient->addNewAccount(account);
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
-        customerAccountId = <@untainted>output.internalId;
+       customerAccountId = <@untainted>output.internalId;
     } else {
         test:assertFail(output.message());
     }
@@ -458,6 +458,22 @@ function testUpdateInvoiceRecord() {
     }
 }
 
+@test:Config {enable: true, dependsOn: [testAddContactRecordOperation]}
+function testUpdateContactRecord() {
+    log:printInfo("testUpdateContactRecord");
+    Contact contact = {
+        internalId: contactId,
+        email: "test@ecosystem.com"
+    };
+    RecordUpdateResponse|error output = netsuiteClient->updateContactRecord(contact);
+    if (output is RecordAddResponse) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.message());
+    }
+}
+
+
 @test:Config {enable: true, dependsOn: [testAddNewCustomerRecord]}
 function testCustomerSearchOperation() {
     log:printInfo("testCustomerSearchOperation");
@@ -510,7 +526,7 @@ function testTransactionSearchOperation() {
         fieldName: "lastModifiedDate",
         searchType: SEARCH_DATE_FIELD,
         operator: "within",
-        value1 : "2020-12-23T10:20:15",
+        value1 : "2021-01-23T10:20:15",
         value2 : "2021-03-23T10:20:15"
     };
     SearchElement[] searchElements = [searchRecord2];
@@ -538,7 +554,7 @@ function testCustomerDeleteRecord() {
         test:assertFail(output.toString());
     }
 }
-@test:Config {enable: true, dependsOn:[testAddContactRecordOperation, testContactGetOperation]}
+@test:Config {enable: true, dependsOn:[testUpdateContactRecord, testContactGetOperation]}
 function testContactDeleteOperation() {
     log:printInfo("testContactDeleteRecord");
     RecordDetail recordDeletionInfo = {
@@ -568,7 +584,7 @@ function testCurrencyDeleteOperation() {
     }
 }   
     
-@test:Config {enable: true, dependsOn:[testUpdateClassificationRecord]}
+@test:Config {enable: true, dependsOn:[testGetClassificationRecordOperation]}
 function testDeleteClassificationRecord() {
     log:printInfo("testDeleteClassificationRecord");
     RecordDetail recordDeletionInfo = {
@@ -680,9 +696,9 @@ function testCurrencyRecordGetOperation() {
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddClassificationRecord]} 
-function testClassificationRecordGetOperation() {
-    log:printInfo("testClassificationRecordGetOperation");
+@test:Config {enable: true, dependsOn: [testUpdateClassificationRecord]} 
+function testGetClassificationRecordOperation() {
+    log:printInfo("testGetClassificationRecordOperation");
     RecordInfo recordDetail = {
         recordInternalId: classificationId,
         recordType: "classification"
@@ -709,6 +725,7 @@ function testInvoiceRecordGetOperation() {
        log:printInfo(output.toString()); 
     }
 }
+
 @test:Config {enable: true, dependsOn: [testAddSalesOrderOperation]}
 function testSalesOrderGetOperation() {
     log:printInfo("testSalesOrderGetOperation");
@@ -723,6 +740,7 @@ function testSalesOrderGetOperation() {
        log:printInfo(output.toString()); 
     }
 }
+
 @test:Config {enable: true, dependsOn: [testAddContactRecordOperation]}
 function testContactGetOperation() {
     log:printInfo("testContactGetOperation");
@@ -734,6 +752,21 @@ function testContactGetOperation() {
     if (output is error) {
         test:assertFalse(true, output.message());
     } else {
-       log:printInfo(output?.firstName.toString()); 
+       log:printInfo(output.toString()); 
+    }
+}
+
+@test:Config {enable: true, dependsOn: [testUpdateAccountRecord] }
+function testAccountGetOperation() {
+    log:printInfo("testAccountGetOperation");
+    RecordInfo recordDetail = {
+        recordInternalId: customerAccountId,
+        recordType: ACCOUNT
+    };
+    Account|error output = netsuiteClient->getAccountRecord(recordDetail);
+    if (output is error) {
+        test:assertFalse(true, output.message());
+    } else {
+       log:printInfo(output.toString()); 
     }
 }

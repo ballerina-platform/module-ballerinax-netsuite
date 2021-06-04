@@ -149,7 +149,7 @@ isolated function mapSalesOrderRecord(xml response) returns SalesOrder|error {
     return salesOrder;
 }
 
-isolated function getSalesOrderResult(http:Response response, RecordCoreType recordType) returns @tainted SalesOrder|error{
+isolated function getSalesOrderResult(http:Response response) returns @tainted SalesOrder|error {
     xml xmlValue = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) { 
         xml output  = xmlValue/**/<status>;
@@ -157,9 +157,9 @@ isolated function getSalesOrderResult(http:Response response, RecordCoreType rec
         if(isSuccess) {
             return mapSalesOrderRecord(xmlValue);
         } else {
-            fail error("No any record found");
+            fail error(NO_RECORD_CHECK);
         }
     } else {
-        fail error("No any record found");
+        fail error(NO_RECORD_CHECK);
     }
 }
