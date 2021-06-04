@@ -106,3 +106,54 @@ isolated function mapAccountFields(json accountTypeJson, Account account) return
     account.generalRate = getValidJson(valueList.generalRate).toString();
     account.cashFlowRate = getValidJson(valueList.cashFlowRate).toString();   
 }
+
+isolated function getAccountResult(http:Response response) returns @tainted Account|error {
+    xml xmlValue = check formatPayload(response);
+    if (response.statusCode == http:STATUS_OK) { 
+        xml output  = xmlValue/**/<status>;
+        boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess);
+        if(isSuccess) {
+            return mapAccountRecord(xmlValue);
+        } else {
+            fail error(NO_RECORD_CHECK);
+        }
+    } else {
+        fail error(NO_RECORD_CHECK);
+    }
+}
+
+isolated function mapAccountRecord(xml response) returns Account|error {
+    xmlns "urn:accounting_2020_2.lists.webservices.netsuite.com" as listAcct;
+    Account account = {
+        internalId: extractRecordInternalIdFromXMLAttribute(response/**/<'record>),
+        acctType: extractStringFromXML(response/**/<listAcct:acctType>/*),
+        acctNumber: extractStringFromXML(response/**/<listAcct:acctNumber>/*),
+        acctName: extractStringFromXML(response/**/<listAcct:acctName>/*),
+        generalRate : extractStringFromXML(response/**/<listAcct:generalRate>/*),
+        cashFlowRate: extractStringFromXML(response/**/<listAcct:cashFlowRate>/*),
+        currency:extractRecordRefFromXML(response/**/<listAcct:currency>)   
+    };
+
+    boolean|error value = extractBooleanValueFromXMLOrText(response/**/<listAcct:includeChildren>/*);
+    if (value is boolean) {
+        account.includeChildren = value;
+    }
+
+    value = extractBooleanValueFromXMLOrText(response/**/<listAcct:isInactive>/*);
+    if(value is boolean) {
+        account.isInactive = value;
+    }
+    value = extractBooleanValueFromXMLOrText(response/**/<listAcct:inventory>/*);
+    if (value is boolean) {
+        account.inventory = value;
+    }
+    value = extractBooleanValueFromXMLOrText(response/**/<listAcct:revalue>/*);
+    if (value is boolean) {
+        account.revalue = value;
+    }
+    value = extractBooleanValueFromXMLOrText(response/**/<listAcct:eliminate>/*);
+    if (value is boolean) {
+        account.eliminate = value;
+    }
+    return account;
+}

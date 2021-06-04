@@ -18,7 +18,6 @@ import ballerina/http;
 import ballerina/lang.'xml as xmlLib;
 import ballerina/regex;
 import ballerina/xmldata;
-import ballerina/time;
 
 xmlns "urn:core_2020_2.platform.webservices.netsuite.com" as platformCore;
 
@@ -169,14 +168,14 @@ isolated function formatPayload(http:Response response) returns @tainted xml|err
     return check xmlLib:fromString(formattedXMLResponse);
 }
 
-isolated function getServerTimeResponse(http:Response response) returns @tainted time:Civil|error {
+isolated function getServerTimeResponse(http:Response response) returns @tainted string|error {
     xml payload = check response.getXmlPayload();
     if (response.statusCode == http:STATUS_OK) {
         string isSuccessInText = check payload/**/<platformCore:status>.isSuccess;
         boolean isSuccess = check extractBooleanValueFromXMLOrText(isSuccessInText);
         if (isSuccess) {
             xml serverTimeInText =  payload/**/<platformCore:serverTime>/*;  
-            return check time:civilFromString(serverTimeInText.toString());
+            return serverTimeInText.toString();
         } else {
             json errorMessage= check xmldata:toJson(payload/**/<statusDetail>/*);
             fail error(errorMessage.toString());

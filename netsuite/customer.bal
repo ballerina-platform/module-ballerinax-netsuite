@@ -264,8 +264,7 @@ isolated function mapCustomerRecord(xml response) returns Customer|error {
     return customer;   
 }
 
-isolated function getCustomerResult(http:Response response, RecordCoreType recordType) returns 
-                                    @tainted Customer|error{
+isolated function getCustomerResult(http:Response response) returns @tainted Customer|error {
     xml xmlValue = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) { 
         xml output  = xmlValue/**/<status>;

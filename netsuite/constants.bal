@@ -26,11 +26,11 @@ public const string & readonly SOAP_ACTION_HEADER = "SOAPAction";
 public const string & readonly GET_SERVER_TIME_ACTION = "getServerTime";
 
 //Error Messages
-public const string & readonly UNKNOWN_TYPE = "Unknown record type provided";
+public const string & readonly UNKNOWN_TYPE = "Unknown record type provided!";
 public const string & readonly NO_RECORD_FOUND = "No record found!";
-public const string & readonly NO_RECORD_CHECK = "No any record found, Check the record detail";
-public const string & readonly NOT_SUCCESS = "Search was not successful in Netsuite";
-public const string & readonly ERROR_IN_RESULTS = "Error in search results";
+public const string & readonly NO_RECORD_CHECK = "No record found, Check the record detail!";
+public const string & readonly NOT_SUCCESS = "Sorry, Search was not successful in Netsuite!";
+public const string & readonly ERROR_IN_RESULTS = "An error occurred when retrieving the search results!";
 
 //XSD types
 public const string & readonly LIST_ACCT = "listAcct";

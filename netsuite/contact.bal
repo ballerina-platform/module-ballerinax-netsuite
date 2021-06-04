@@ -151,6 +151,7 @@ isolated function getContactResult(http:Response response) returns @tainted Cont
 isolated function mapContactRecord(xml response) returns Contact|error {
     xmlns "urn:relationships_2020_2.lists.webservices.netsuite.com" as listRel;
     Contact contact  = {
+        internalId: extractRecordInternalIdFromXMLAttribute(response/**/<'record>),
         customForm: extractRecordRefFromXML(response/**/<listRel:customForm>),
         entityId: extractStringFromXML(response/**/<listRel:entityId>/*),
         contactSource: extractRecordRefFromXML(response/**/<listRel:contactSource>),

@@ -45,9 +45,11 @@ public type Item record {
 
 # Netsuite Sales Order type record
 #
-# + entity - The customer of the sales Order  
+# + internalId - Internal Id of the SalesOrder record
+# + entity - The customer of the sales Order    
 # + itemList - The list of items
 public type SalesOrder record {
+    string internalId;
     RecordRef entity?;
     Item[] itemList?;
     *SalesOrderCommon;
@@ -149,10 +151,10 @@ public type SalesOrderCommon record {
 # + internalId - The internalId of the invoice  
 # + itemList - The item list for the invoice  
 public type Invoice record {
+    string internalId;
     RecordRef entity?;
     Item[] itemList?;
     string invoiceId?;
-    string internalId?;
     *InvoiceCommon;
 };
 
