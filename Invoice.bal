@@ -119,7 +119,7 @@ isolated function mapInvoiceRecord(xml response) returns Invoice|error {
     return invoice;
 }
 
-isolated function getInvoiceResult(http:Response response, RecordCoreType recordType) returns @tainted Invoice|error {
+isolated function getInvoiceResult(http:Response response) returns @tainted Invoice|error {
     xml xmlValue = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) { 
         xml output  = xmlValue/**/<status>;
