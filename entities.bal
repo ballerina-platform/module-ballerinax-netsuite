@@ -16,10 +16,12 @@
 
 # Netsuite Contact type record
 #
-# + salutation - The contact's salutation  
-# + firstName - First name of the contact    
+# + internalId - internal Id  of the record
+# + salutation - The contact's salutation    
+# + firstName - First name of the contact      
 # + subsidiary - The subsidiary to associate with this contact
 public type Contact record {
+    string internalId;
     string salutation?;
     string firstName?;
     *ContactCommon;
@@ -98,10 +100,11 @@ type ContactCommon record {
 };
 
 # Netsuite Customer type record 
-#
+# + internalId - Internal Id of the customer record
 # + companyName - Company name  
 # + subsidiary - Selects the subsidiary to associate with this entity or job   
 public type Customer record {
+    string internalId;
     *CustomerCommon;
     string companyName?;
     RecordRef subsidiary?;
@@ -119,8 +122,7 @@ public type NewCustomer record {
 
 # Netsuite Customer type record 
 #
-# + internalId - Internal ID  
-# + entityId - Entity ID
+# + entityId - Entity Id
 # + isPerson - This is set to True which specifies the type 
 # + salutation - The title of this person  
 # + firstName - First name  
@@ -151,7 +153,6 @@ type CustomerCommon record {
     string homePhone?;
     string mobilePhone?;
     string accountNumber?;
-    string internalId?;
     string entityId?;
     boolean isInactive?;
     boolean isPerson?;
@@ -181,10 +182,12 @@ public type Subsidiary record {
 
 # Netsuite Currency type record
 #
-# + name - Name of the record
-# + symbol - Symbol of the record 
+# + internalId - Internal Id of the currency record  
+# + name - Name of the record  
+# + symbol - Symbol of the record   
 # + exchangeRate - The exchange rate of the currency
 public type Currency record {
+    string internalId;
     string name?;
     string symbol?;
     decimal exchangeRate?;

@@ -12,7 +12,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: ballerina-platform/ballerina-action/@master
+              uses: ballerina-platform/ballerina-action/@slalpha5
               with:
                   args:
                       build -c
@@ -24,7 +24,7 @@ jobs:
                   NS_CLIENT_SECRET: ${{ secrets.CONSUMERSECRET }}
                   NS_ACCOUNTID: ${{secrets.ACCOUNTID}}
             - name: Ballerina Push
-              uses: ballerina-platform/ballerina-action/@master
+              uses: ballerina-platform/ballerina-action/@slalpha5
               with:
                   args:
                       push

@@ -72,6 +72,7 @@ isolated function wrapCurrencyElementsToBeUpdatedWithParentElement(string subEle
 isolated function mapCurrencyRecord(xml response) returns Currency|error {
     xmlns "urn:accounting_2020_2.lists.webservices.netsuite.com" as listAcct;
     Currency currency  = {
+        internalId: extractRecordInternalIdFromXMLAttribute(response/**/<'record>), 
         name: extractStringFromXML(response/**/<listAcct:name>/*),
         symbol: extractStringFromXML(response/**/<listAcct:symbol>/*),
         currencyPrecision: extractStringFromXML(response/**/<listAcct:currencyPrecision>/*)
@@ -87,8 +88,7 @@ isolated function mapCurrencyRecord(xml response) returns Currency|error {
     return currency;
 }
 
-isolated function getCurrencyResult(http:Response response, RecordCoreType recordType) returns
-                                    @tainted Currency|error{
+isolated function getCurrencyResult(http:Response response) returns @tainted Currency|error{
     xml xmlValue = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) { 
         xml output  = xmlValue/**/<status>;

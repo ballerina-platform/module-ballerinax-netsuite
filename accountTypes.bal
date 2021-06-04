@@ -62,7 +62,7 @@ type ClassificationCommon record {
 # + legalName - Legal Name of the Account   
 # + currency - Account currency  
 public type Account record {
-    string internalId?;
+    string internalId;
     string externalId?;   
     string acctNumber?;
     string acctName?;
