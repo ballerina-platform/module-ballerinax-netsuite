@@ -16,7 +16,7 @@
 
 # Description
 #
-# + internalId - Netsuite Internal Id  
+# + internalId - Netsuite Internal ID  
 # + country - Country from NetSuite country List
 # + attention - Field Description  
 # + addressee - addressee of this record  

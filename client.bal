@@ -232,7 +232,7 @@ public client class Client {
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
     # + return - If success returns a json otherwise the relevant error
     @display{label: "Search Customer"} 
-    isolated remote function searchCustomerRecord(@display{label: "Search elements"} SearchElement[] searchElements) 
+    isolated remote function searchCustomerRecord(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                   returns @tainted @display{label: "Response"} Customer|error {
         xml payload = check buildCustomerSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
@@ -245,7 +245,7 @@ public client class Client {
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
     # + return - If success returns a json otherwise the relevant error
     @display{label: "Search Transaction"}
-    isolated remote function searchTransactionRecord(@display{label: "Search elements"} SearchElement[] searchElements) 
+    isolated remote function searchTransactionRecord(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                      returns @tainted @display{label: "Response"} RecordList|error {
         xml payload = check buildTransactionSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
@@ -265,12 +265,12 @@ public client class Client {
         return getAccountSearchResult(response);
     }
 
-    # Gets a customer record from Netsuite by using internal Id
+    # Gets a customer record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Customer type record otherwise the relevant error
     @display{label: "Get Customer"}
-    isolated remote function getCustomerRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getCustomerRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                @tainted @display{label: "Response"} Customer|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -278,12 +278,12 @@ public client class Client {
         return getCustomerResult(response);
     }
 
-    # Gets a contact record from Netsuite by using internal Id
+    # Gets a contact record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Contact type record otherwise the relevant error
     @display{label: "Get Contact"}  
-    isolated remote function getContactRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getContactRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                               @tainted @display{label: "Response"} Contact|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -291,12 +291,12 @@ public client class Client {
         return getContactResult(response);
     }
 
-    # Gets a currency record from Netsuite by using internal Id
+    # Gets a currency record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Currency type record otherwise the relevant error
     @display{label: "Get Currency"}
-    isolated remote function getCurrencyRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getCurrencyRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                @tainted @display{label: "Response"} Currency|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -304,12 +304,12 @@ public client class Client {
         return getCurrencyResult(response);
     }
 
-    # Gets a currency record from Netsuite by using internal Id
+    # Gets a currency record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Classification type record otherwise the relevant error
     @display{label: "Get Classification"}
-    isolated remote function getClassificationRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getClassificationRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                      @tainted @display{label: "Response"} Classification|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -317,12 +317,12 @@ public client class Client {
         return getClassificationResult(response);
     }
 
-    # Gets a invoice record from Netsuite by using internal Id
+    # Gets a invoice record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a invoice type record otherwise the relevant error
     @display{label: "Get Invoice"}
-    isolated remote function getInvoiceRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getInvoiceRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                               @tainted @display{label: "Response"} Invoice|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -330,12 +330,12 @@ public client class Client {
         return getInvoiceResult(response);
     }
 
-    # Gets a salesOrder record from Netsuite by using internal Id
+    # Gets a salesOrder record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a SalesOrder type record otherwise the relevant error
     @display{label: "Get Sales Order"}
-    isolated remote function getSalesOrderRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getSalesOrderRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                  @tainted @display{label: "Response"} SalesOrder|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -343,12 +343,12 @@ public client class Client {
         return getSalesOrderResult(response);
     }
 
-    # Gets a account record from Netsuite by using internal Id
+    # Gets a account record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns an account type record otherwise the relevant error
     @display{label: "Get Account"}
-    isolated remote function getAccountRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getAccountRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                  @tainted @display{label: "Response"} Account|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -369,17 +369,17 @@ public client class Client {
 
 # Configuration record for NetSuite
 #
-# + accountId - NetSuite account Id  
+# + accountId - NetSuite account ID  
 # + consumerSecret - Netsuite Integration App consumer secret
 # + baseURL - Netsuite baseURL for web services and this "/services/NetSuitePort_2020_2" should be added to the link.   
-# + consumerId - Netsuite Integration App consumer Id   
+# + consumerId - Netsuite Integration App consumer ID   
 # + tokenSecret - Netsuite user role access secret 
 # + token - Netsuite user role access token
 @display{label: "Connection Config"}  
 public type NetSuiteConfiguration record {
-    @display{label: "Account Id"}
+    @display{label: "Account ID"}
     string accountId;
-    @display{label: "Consumer Id"}
+    @display{label: "Consumer ID"}
     string consumerId;
     @display{label: "Consumer Secret"}
     string consumerSecret;

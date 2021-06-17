@@ -17,13 +17,13 @@
 # Represents record reference base to NetSuite Records
 #
 # + name - Name of the Record  
-# + internalId - NetSuite Internal Id 
-# + externalId - NetSuite external Id
+# + internalId - NetSuite Internal ID 
+# + externalId - NetSuite external ID
 @display{label: "Record Base type"}
 public type RecordBaseRef record {
-    @display{label: "Record Internal Id"}
+    @display{label: "Record Internal ID"}
     string internalId;
-    @display{label: "Record external Id"}
+    @display{label: "Record external ID"}
     string externalId?;
     @display{label: "Record name"}
     string name?;
