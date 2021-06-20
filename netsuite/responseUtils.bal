@@ -15,7 +15,8 @@
 // under the License.
 
 import ballerina/http;
-import ballerina/lang.'xml as xmlLib;
+import ballerina/lang.'xml;
+import ballerina/lang.'int;
 import ballerina/regex;
 import ballerina/xmldata;
 
@@ -34,9 +35,9 @@ isolated function getCreateResponse(http:Response response) returns @tainted Rec
         if(isAfterSubmitFailed is boolean) {
             xml output  = formattedPayload/**/<status>; 
             boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess);
-            if(isSuccess == true && <boolean>isAfterSubmitFailed == false ) { 
+            if(isSuccess == true &&  <boolean>isAfterSubmitFailed == false ) { 
                 return  prepareResponseAfterSubmitPassed(formattedPayload);
-            } else if(isSuccess == false && <boolean>isAfterSubmitFailed == true) {
+            } else if(isSuccess == false &&  <boolean>isAfterSubmitFailed == true) {
                 return prepareResponseAfterSubmitFailed(formattedPayload);
             }else {
                 xml errorMessage= formattedPayload/**/<statusDetail>/*;
@@ -125,7 +126,7 @@ isolated function formatGetAllResponse(http:Response response) returns @tainted 
         boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess);
         if(isSuccess == true) {
             xml:Element records = <xml:Element> xmlValure/**/<recordList>;
-            xml baseRef  = xmlLib:getChildren(records);
+            xml baseRef  = 'xml:getChildren(records);
             return categorizeGetALLResponse(baseRef);
         } else {
             json errorMessage= check xmldata:toJson(xmlValure/**/<platformCore_statusDetail>/*);
@@ -153,19 +154,19 @@ isolated function categorizeGetALLResponse(xml baseRef) returns @tainted Currenc
 
 isolated function replaceRegexInXML(xml value, string regex, string replacement = EMPTY_STRING) returns xml|error {
     string formattedXMLResponse = regex:replaceAll(value.toString(), regex, replacement);
-    return check xmlLib:fromString(formattedXMLResponse);
+    return check 'xml:fromString(formattedXMLResponse);
 } 
 
 isolated function formatPayload(http:Response response) returns @tainted xml|error {
-    xml xmlValure  = check response.getXmlPayload();
-    string formattedXMLResponse = regex:replaceAll(xmlValure.toString(), SOAP_ENV, SOAP_ENV_);
+    xml elements  = check response.getXmlPayload();
+    string formattedXMLResponse = regex:replaceAll(elements.toString(), SOAP_ENV, SOAP_ENV_);
     formattedXMLResponse = regex:replaceAll(formattedXMLResponse, XSI, XSI_);
     formattedXMLResponse = regex:replaceAll(formattedXMLResponse, PLATFORM_CORE, EMPTY_STRING);
     formattedXMLResponse = regex:replaceAll(formattedXMLResponse, PLATFORM_MSGS, PLATFORM_MSGS_);
     formattedXMLResponse = regex:replaceAll(formattedXMLResponse, MESSAGES_NS, EMPTY_STRING);
     formattedXMLResponse = regex:replaceAll(formattedXMLResponse, CORE_NS, EMPTY_STRING);
     formattedXMLResponse = regex:replaceAll(formattedXMLResponse, XSI_NS, EMPTY_STRING);
-    return check xmlLib:fromString(formattedXMLResponse);
+    return check 'xml:fromString(formattedXMLResponse);
 }
 
 isolated function getServerTimeResponse(http:Response response) returns @tainted string|error {
@@ -185,24 +186,34 @@ isolated function getServerTimeResponse(http:Response response) returns @tainted
     }
 }
 
-isolated function getXMLRecordListFromSearchResult(http:Response response) returns @tainted xml|error {
-    xml xmlValue = check formatPayload(response);
+isolated function getXMLRecordListFromSearchResult(http:Response response) returns @tainted SearchResultStatus|error {
+    xml payload = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) {
-        xml output  = xmlValue/**/<status>;
-        boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess);
+        xml output  = payload/**/<status>;
+        boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess); 
         if(isSuccess == true) {
-            xml:Element records = <xml:Element> xmlValue/**/<recordList>;
-            xml baseRef  = xmlLib:getChildren(records); 
-            if(baseRef.length() == 0) {
+            int pageIndex = let var value = 'int:fromString((payload/**/<pageIndex>/*).toString()) in value is int ? value : 0; 
+            int totalPages = check 'int:fromString((payload/**/<totalPages>/*).toString());
+            int totalRecords = check 'int:fromString((payload/**/<totalRecords>/*).toString());
+            string searchId = (payload/**/<searchId>/*).toString();
+            xml:Element records = <xml:Element> payload/**/<recordList>;
+            xml children  = 'xml:getChildren(records); 
+            if(children.length() == 0) {
                 fail error(NO_RECORD_FOUND);
             }    
-            return baseRef;
+            SearchResultStatus searchResultStatus = {
+                recordList: children,
+                pageIndex: pageIndex,
+                totalPages: totalPages,
+                searchId: searchId
+            };
+            return searchResultStatus;
         } else {
-            json errorMessage= check xmldata:toJson(xmlValue/**/<statusDetail>);
-            errorMessage= check xmldata:toJson(xmlValue/**/<soapenv_Fault>/<faultstring>);
+            json errorMessage= check xmldata:toJson(payload/**/<statusDetail>);
+            errorMessage= check xmldata:toJson(payload/**/<soapenv_Fault>/<faultstring>);
             fail error(errorMessage.toString());
         }    
     } else {
-        fail error(xmlValue.toString());
+        fail error(payload.toString());
     }
 }

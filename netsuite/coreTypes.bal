@@ -17,34 +17,34 @@
 # Represents record reference base to NetSuite Records
 #
 # + name - Name of the Record  
-# + internalId - NetSuite Internal Id 
-# + externalId - NetSuite external Id
+# + internalId - NetSuite Internal ID
+# + externalId - NetSuite external ID
 @display{label: "Record Base type"}
 public type RecordBaseRef record {
-    @display{label: "Record Internal Id"}
+    @display{label: "Record Internal ID"}
     string internalId;
-    @display{label: "Record external Id"}
-    string externalId?;
-    @display{label: "Record name"}
+    @display{label: "Record Name"}
     string name?;
+    @display{label: "Record External ID"}
+    string externalId?;
 };
 
 # References to NetSuite Records
 #
 # + 'type - Type of the Record 
-@display{label: "Record reference"} 
+@display{label: "Record Reference"} 
 public type RecordRef record {
     *RecordBaseRef;
-    @display{label: "Record type"}
-    string 'type?;
+    @display{label: "Record Type"}
+    string 'type;
 };
 
 # References to NetSuite Records for Input operations
 # 
 # + 'type - Type of the Record Eg: "currency" or netsuite:CURRENCY
-@display{label: "Record reference"}
+@display{label: "Record Reference"}
 public type RecordInputRef record {
     *RecordBaseRef;
-    @display{label: "Record type"}
+    @display{label: "Record Type"}
     string 'type;
 };

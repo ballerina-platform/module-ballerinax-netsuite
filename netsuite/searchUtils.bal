@@ -26,20 +26,53 @@ isolated  function getSearchElement(SearchElement[] searchElements) returns stri
 
 isolated  function getXMLSearchElement(SearchElement element) returns string {
     return string `<ns1:${element.fieldName} 
-        operator="${element.operator}" 
+        ${getSearchElementOperator(element).toString()}
         xsi:type="urn1:${element.searchType.toString()}">
         <urn1:searchValue>${element.value1}</urn1:searchValue>
         ${getOptionalSearchValue(element).toString()}
         </ns1:${element.fieldName}>`;
 }
 
-isolated  function getOptionalSearchValue(SearchElement searchElement) returns string?{
-    if(searchElement?.value2 is string) {
-        return string `<urn1:searchValue2>${searchElement?.value2.toString()}</urn1:searchValue2>`;
+isolated function getSearchElementOperator(SearchElement element) returns string? {
+    if (element.searchType != SEARCH_BOOLEAN_FIELD) {
+        return string `operator="${element.operator.toString()}"`;
+    } 
+}
+
+isolated  function getOptionalSearchValue(SearchElement element) returns string? {
+    if (element?.value2 is string) {
+        if (element.searchType == SEARCH_BOOLEAN_FIELD) {
+            return;
+        } else if (element.searchType == SEARCH_ENUM_MULTI_SELECT_FIELD) {
+            string multiValues =  string `<urn1:searchValue>${element?.value2.toString()}</urn1:searchValue>`;
+            string[] moreMultiValues = let var valuesArray = element?.multiValues in valuesArray is string[] ? valuesArray : [];
+            if(moreMultiValues.length() > 0) {
+                foreach string value in moreMultiValues {
+                    multiValues += string `<urn1:searchValue>${value}</urn1:searchValue>`;
+                }
+            }
+            return multiValues;
+        } else {
+            return string `<urn1:searchValue2>${element?.value2.toString()}</urn1:searchValue2>`;
+        }
     }
 }
 
 isolated  function getSoapPayload(string header, string body) returns xml|error {
     string requestPayload = header + body;
     return check xmlLib:fromString(requestPayload);
+}
+
+isolated function getNextPageRequestElement(int pageIndex, string searchId) returns string {
+    return string `<soapenv:Body><urn:searchMoreWithId>
+            <searchId>${searchId}</searchId>
+            <pageIndex>${pageIndex}</pageIndex>
+        </urn:searchMoreWithId></soapenv:Body></soapenv:Envelope>`;
+}
+
+isolated function buildSearchMoreWithIdPayload(NetSuiteConfiguration config, int pageIndex, string searchId) returns 
+                                                xml|error {
+    string requestHeader = check buildXMLPayloadHeader(config);
+    string requestBody = getNextPageRequestElement(pageIndex, searchId);
+    return check getSoapPayload(requestHeader, requestBody); 
 }

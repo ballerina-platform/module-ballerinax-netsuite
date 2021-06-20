@@ -14,7 +14,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/xmldata;
 import ballerina/http;
 
 isolated function mapAccountRecordFields(Account account) returns string {
@@ -84,18 +83,28 @@ isolated function buildAccountSearchPayload(NetSuiteConfiguration config,SearchE
     return check getSoapPayload(requestHeader, requestBody);   
 }
 
-isolated function getAccountSearchResult(http:Response response) returns @tainted Account|error {
-    xml xmlValue = check getXMLRecordListFromSearchResult(response);
-    xmlValue = check replaceRegexInXML(xmlValue, "listAcct:");
-    string|error instanceType =  xmlValue.xsi_type;
-    string internalId = checkStringValidity(xmlValue.internalId).toString();
-    Account account = {
-        internalId: internalId
-    };
-    json validatedJson = getValidJson(xmldata:toJson(xmlValue));
-    check mapAccountFields(validatedJson, account);
-    return account;
+isolated function getAccountsFromSearchResults(xml accountData) returns Account[]|error{
+    int size = accountData.length();
+    Account[] accounts =[];
+    foreach int i in 0 ..< size {
+        xml recordItem = 'xml:get(accountData, i);
+        accounts.push(check mapAccountRecord(recordItem));  
+    }
+    return accounts;
 }
+
+isolated function getAccountsNextPageResult(http:Response response) returns @tainted record {|Account[] accounts; SearchResultStatus status;|}|error {
+    SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
+    return {accounts :check getAccountsFromSearchResults(resultStatus.recordList), status: resultStatus};
+}
+
+isolated function getAccountSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Account, error>|error {
+    SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
+    AccountStream objectInstance = check new (httpClient,resultStatus,config);
+    stream<Account, error> finalStream = new (objectInstance);
+    return finalStream;
+}
+
 
 isolated function mapAccountFields(json accountTypeJson, Account account) returns error? {
     json valueList = getValidJson(accountTypeJson.'record.'record);

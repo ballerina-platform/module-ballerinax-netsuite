@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/http;
-import ballerina/lang.'xml as xmlLib;
 
 isolated function mapInvoiceRecordFields(Invoice invoice) returns string|error {
     string finalResult = EMPTY_STRING;
@@ -151,41 +150,32 @@ isolated function getTranscationSearchRequestBody(SearchElement[] SearchElements
     </soapenv:Envelope>`;
 }
 
-isolated function getTransactionSearchResult(http:Response response) returns @tainted RecordList|error {
-    xmlns "urn:sales_2020_2.transactions.webservices.netsuite.com" as tranSales;
-    xml xmlValue = check response.getXmlPayload();
-    if(response.statusCode == http:STATUS_OK) {
-        xmlValue = check formatPayload(response);
-        string|error successStatus = xmlValue/**/<status>.isSuccess;
-        if(successStatus is error) {
-            fail error(xmlValue.toString());
-        }
-        boolean|error isSuccess = extractBooleanValueFromXMLOrText(successStatus);
-        if(isSuccess is error) {
-            fail error(ERROR_IN_RESULTS);
-        } else {
-            if(isSuccess == true) {
-                xml recordList = xmlValue/**/<recordList>/*;
-                int size = recordList.length();
-                RecordRef[] recordRefList =[];
-                foreach int i in 0 ..< size {
-                    xml recordItem = xmlLib:get(recordList, i);
-                    RecordRef recordRef = {
-                        internalId: check recordItem/**/<'record>.internalId,
-                        'type: check recordItem/**/<'record>.xsi_type
-                    };
-                    recordRefList.push(recordRef);  
-                }
-                RecordList recordSet = {
-                        records: recordRefList
-                };
-                return recordSet;
-            } else {
-                fail error(NOT_SUCCESS);
-            }
-        }
-    } else {
-        fail error(xmlValue.toString());
+isolated function mapTransactionRecords(xml transactionRecord) returns RecordRef|error {
+    RecordRef recordRef = {
+        internalId: check transactionRecord/**/<'record>.internalId,
+        'type: check transactionRecord/**/<'record>.xsi_type
+    };
+    return recordRef;
+}
+
+isolated function getTransactionsFromSearchResults(xml TransactionData) returns RecordRef[]|error{
+    int size = TransactionData.length();
+    RecordRef[] recordRefs =[];
+    foreach int i in 0 ..< size {
+        xml recordItem = 'xml:get(TransactionData, i);
+        recordRefs.push(check mapTransactionRecords(recordItem));  
     }
-    
+    return recordRefs;
+}
+
+isolated function getTransactionsNextPageResult(http:Response response) returns @tainted record {|RecordRef[] recordRefs; SearchResultStatus status;|}|error {
+    SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
+    return {recordRefs :check getTransactionsFromSearchResults(resultStatus.recordList), status: resultStatus};
+}
+
+isolated function getTransactionSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<RecordRef, error>|error {
+    SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
+    TransactionStream objectInstance = check new (httpClient, resultStatus, config);
+    stream<RecordRef, error> finalStream = new (objectInstance);
+    return finalStream;
 }

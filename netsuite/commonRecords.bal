@@ -103,21 +103,31 @@ public type RecordList record {|
 
 # Ballerina records for search operation
 #
-# + fieldName - Name of the search field  
-# + operator - Searching operator 
-# + searchType - Netsuite Search field type  
-# + value1 - Primary Search value 
-# + value2 - Secondary Search value
+# + fieldName - Name of the search field (Eg: name, type)   
+# + operator - Searching operator (optional for boolean searches)  
+# + searchType - Netsuite search field type    
+# + value1 - Primary search value   
+# + value2 - Secondary search value  
+# + multiValues - An array of strings for multi values in case there are more values excepts primary and secondary
 @display{label: "Search Element"}
 public type SearchElement record {
     @display{label: "Search Field Name"}
     string fieldName;
     @display{label: "Search Operator"}
-    string operator;
+    string|BasicSearchOperator operator;
     @display{label: "Search Type"}
     SearchType searchType;
     @display{label: "First Search Value"}
     string value1;
     @display{label: "Second Search Value"}
     string value2?;
+    @display{label: "More Search Values"}
+    string[] multiValues?;
+};
+
+type SearchResultStatus record {
+    xml recordList;
+    int pageIndex;
+    int totalPages;
+    string searchId;
 };

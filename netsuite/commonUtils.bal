@@ -299,7 +299,8 @@ isolated function getRecordRef(json element, json elementRecordType) returns Rec
     RecordRef recordRef = {
         name: getValidJson(elementRecordType.name).toString(),
         internalId: getValidJson(element.\@internalId).toString(),
-        externalId: getValidJson(element.\@externalId).toString()
+        externalId: getValidJson(element.\@externalId).toString(),
+        'type: let var recordType = getValidJson(element.\'type) in recordType is () ? EMPTY_STRING : (recordType.toString())
     };
     return recordRef;
 }
@@ -322,28 +323,13 @@ isolated function extractStringFromXML(xml|string|error element) returns string 
 }
 
 isolated function extractRecordRefFromXML(xml element) returns RecordRef {
-    string|error internalId = element.internalId;
-    string name = extractStringFromXML(element/<name>/*);
-    if(internalId is string) {
-        RecordRef recordRef = {
-            internalId: internalId,
-            name: name
-        };
-        return recordRef;
-    } else {
-        RecordRef recordRef = {
-            internalId: EMPTY_STRING,
-            name: name
-        };
-        return recordRef;
-    }  
+    return {
+        internalId: let var  internalId = element.internalId in internalId is error ? EMPTY_STRING : (internalId.toString()),
+        name: extractStringFromXML(element/<name>/*),
+        'type: let var recordType = element.\'type in recordType is error ? EMPTY_STRING : (recordType.toString())
+    }; 
 }
 
 isolated function extractRecordInternalIdFromXMLAttribute(xml element) returns string {
-    string|error internal = element.internalId;
-    if(internal is string) {
-        return internal;
-    } else {
-        return EMPTY_STRING;
-    }
+    return let var internalId = element.internalId in internalId is error ? EMPTY_STRING : internalId;
 }

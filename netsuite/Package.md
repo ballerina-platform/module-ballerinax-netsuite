@@ -15,7 +15,7 @@ and search operations to perform business processing on NetSuite records and to 
 
 |                             |           Version                    |
 |:---------------------------:|:------------------------------------:|
-| Ballerina Language          |     Swan Lake Beta 1                 |
+| Ballerina Language          |     Swan Lake Alpha5                 |
 | NetSuite SOAP API           |     SOAP 1.1                         |
 | WSDL version                |     2020.2.0                         |
 
@@ -31,12 +31,12 @@ and search operations to perform business processing on NetSuite records and to 
     
     2. Create an integration application (Setup->Integration->New), enable TBA code grant and scope, and obtain the 
     following credentials: 
-        * Client Id
+        * Client ID
         * Client Secret
-3. If you have Client Id, Client Secret from your administrator, Obtain the below credentials by following the token based authorization in the [NetSuite documentation](https://system.na0.netsuite.com/app/help/helpcenter.nl?fid=book_1559132836.html&vid=_BLm3ruuApc_9HXr&chrole=17&ck=9Ie2K7uuApI_9PHO&cktime=175797&promocode=&promocodeaction=overwrite&sj=7bfNB5rzdVQdIKGhDJFE6knJf%3B1590725099%3B165665000). 
+3. If you have Client ID, Client Secret from your administrator, Obtain the below credentials by following the token based authorization in the [NetSuite documentation](https://system.na0.netsuite.com/app/help/helpcenter.nl?fid=book_1559132836.html&vid=_BLm3ruuApc_9HXr&chrole=17&ck=9Ie2K7uuApI_9PHO&cktime=175797&promocode=&promocodeaction=overwrite&sj=7bfNB5rzdVQdIKGhDJFE6knJf%3B1590725099%3B165665000). 
     * Access Token
     * Access Token Secret
-4. Obtain the SuiteTalk Base URL, which contains the account Id under the company URLs (Setup->Company->Company
+4. Obtain the SuiteTalk Base URL, which contains the account ID under the company URLs (Setup->Company->Company
     Information).
 
         E.g:  https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
@@ -85,6 +85,6 @@ public function main() returns error? {
 
 Instantiate the connector by giving authentication details in the HTTP client config, which has built-in support for 
 TBA . NetSuite uses TBA to authenticate and authorize requests. The NetSuite connector can be instantiated 
-in the HTTP client config using the client Id, client secret, access token and access token secret. You may use Ballerina [Configuration variable](https://ballerina.io/learn/by-example/configurable.html) to store your credentials.
+in the HTTP client config using the client ID, client secret, access token and access token secret. You may use Ballerina [Configuration variable](https://ballerina.io/learn/by-example/configurable.html) to store your credentials.
 
 **More samples are available [here](samples).**
