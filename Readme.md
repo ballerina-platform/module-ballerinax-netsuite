@@ -31,12 +31,12 @@ and search operations to perform business processing on NetSuite records and to 
     
     2. Create an integration application (Setup->Integration->New), enable TBA code grant and scope, and obtain the 
     following credentials: 
-        * Client Id
+        * Client ID
         * Client Secret
-3. If you have Client Id, Client Secret from your administrator, Obtain the below credentials by following the token based authorization in the [NetSuite documentation](https://system.na0.netsuite.com/app/help/helpcenter.nl?fid=book_1559132836.html&vid=_BLm3ruuApc_9HXr&chrole=17&ck=9Ie2K7uuApI_9PHO&cktime=175797&promocode=&promocodeaction=overwrite&sj=7bfNB5rzdVQdIKGhDJFE6knJf%3B1590725099%3B165665000). 
+3. If you have Client ID, Client Secret from your administrator, Obtain the below credentials by following the token based authorization in the [NetSuite documentation](https://system.na0.netsuite.com/app/help/helpcenter.nl?fid=book_1559132836.html&vid=_BLm3ruuApc_9HXr&chrole=17&ck=9Ie2K7uuApI_9PHO&cktime=175797&promocode=&promocodeaction=overwrite&sj=7bfNB5rzdVQdIKGhDJFE6knJf%3B1590725099%3B165665000). 
     * Access Token
     * Access Token Secret
-4. Obtain the SuiteTalk Base URL, which contains the account Id under the company URLs (Setup->Company->Company
+4. Obtain the SuiteTalk Base URL, which contains the account ID under the company URLs (Setup->Company->Company
     Information).
 
         E.g:  https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
@@ -51,11 +51,11 @@ import ballerinax/netsuite;
 ```ballerina
 public function main() returns error? {
     netsuite:NetsuiteConfiguration nsConfig = {
-        accountId: <accountId>,
-        consumerId: <consumerId>,
-        consumerSecret: <consumerSecret>,
-        token: <token>,
-        tokenSecret: <tokenSecret>,
+        accountId: "<accountId>",
+        consumerId: "<consumerId>",
+        consumerSecret: "<consumerSecret>",
+        token: "<token>",
+        tokenSecret: "<tokenSecret>",
         baseURL: "<webServiceURL>/services/NetSuitePort_2020_2"
     };
     netsuite:Client netsuiteClient = check new(nsConfig);
@@ -85,12 +85,6 @@ public function main() returns error? {
 
 Instantiate the connector by giving authentication details in the HTTP client config, which has built-in support for 
 TBA . NetSuite uses TBA to authenticate and authorize requests. The NetSuite connector can be instantiated 
-in the HTTP client config using the client Id, client secret, access token and access token secret. You may use Ballerina [Configuration variable](https://ballerina.io/learn/by-example/configurable.html) to store your credentials.
+in the HTTP client config using the client ID, client secret, access token and access token secret. You may use Ballerina [Configuration variable](https://ballerina.io/learn/by-example/configurable.html) to store your credentials.
 
 **More samples are available [here](samples).**
-## Building from the source
-1. Clone the [NetSuite repository](https://github.com/ballerina-platform/module-ballerinax-netsuite.git) from GitHub.
-2. Switch to branch with the Ballerina Version (Eg: slAlpha5).
-3. Add configuration variable values, if you want to run tests.
-4. Run this `bal build` from the root directory of the ballerina package.
-    (To skip tests, use `bal build --skip-tests`)

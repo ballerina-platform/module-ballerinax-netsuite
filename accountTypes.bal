@@ -75,10 +75,14 @@ public type Account record {
 #  
 # + acctNumber - Account Number  
 # + acctName - Account Name  
-# + currency - Account currency  
+# + currency - Account Currency Detail(Type: netsuite:CURRENCY)
+@display{label: "New Account Details"}
 public type NewAccount record {
-    string acctNumber?;
-    string acctName?;
+    @display{label: "New Account Number"}
+    string acctNumber;
+    @display{label: "New Account Name"}
+    string acctName;
+    @display{label: "Currency Detail"}
     RecordInputRef currency?;
     *AccountCommon;
 };
@@ -106,7 +110,7 @@ public type NewAccount record {
 # + revalue - Revalue Open Balance for Foreign Currency Transactions
 # + subsidiary - A subsidiary of the account  
 type AccountCommon record {   
-    string acctType?;
+    AccountType|string acctType?;
     RecordRef unitsType?;
     RecordRef unit?;
     boolean includeChildren?;
