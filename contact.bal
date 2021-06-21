@@ -193,3 +193,41 @@ isolated function mapContactRecord(xml response) returns Contact|error {
     }
     return contact;
 }
+
+
+isolated function getContactsFromSearchResults(xml contactData) returns Contact[]|error{
+    int size = contactData.length();
+    Contact[] contacts =[];
+    foreach int i in 0 ..< size {
+        xml recordItem = 'xml:get(contactData, i);
+        contacts.push(check mapContactRecord(recordItem));  
+    }
+    return contacts;
+}
+
+isolated function getContactsNextPageResult(http:Response response) returns @tainted record {|Contact[] contacts; SearchResultStatus status;|}|error {
+    SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
+    return {contacts :check getContactsFromSearchResults(resultStatus.recordList), status: resultStatus};
+}
+
+isolated function getContactsSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Contact, error>|error {
+    SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
+    ContactStream objectInstance = check new (httpClient,resultStatus,config);
+    stream<Contact, error> finalStream = new (objectInstance);
+    return finalStream;
+}
+
+isolated function getContactSearchRequestBody(SearchElement[] searchElements) returns string {
+    return string `<soapenv:Body> <urn:search xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> 
+    <urn:searchRecord xsi:type="listRel:ContactSearch" 
+    xmlns:listRel="urn:relationships_2020_2.lists.webservices.netsuite.com">
+    <basic xsi:type="ns1:ContactSearchBasic" 
+    xmlns:ns1="urn:common_2020_2.platform.webservices.netsuite.com">${getSearchElement(searchElements)}</basic>
+    </urn:searchRecord></urn:search></soapenv:Body></soapenv:Envelope>`;
+}
+
+isolated function BuildContactSearchPayload(NetSuiteConfiguration config,SearchElement[] searchElement) returns xml|error {
+    string requestHeader = check buildXMLPayloadHeader(config);
+    string requestBody = getContactSearchRequestBody(searchElement);
+    return check getSoapPayload(requestHeader, requestBody);   
+}

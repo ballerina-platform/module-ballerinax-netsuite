@@ -311,6 +311,7 @@ function testAddAccountRecord() {
         acctNumber: "67425630",
         acctName: "Ballerina test account",
         currency: currency
+        //acctType: ACCOUNTS_PAYABLE
     };
     RecordAddResponse|error output = netsuiteClient->addNewAccount(account);
     if (output is RecordAddResponse) {
@@ -321,7 +322,7 @@ function testAddAccountRecord() {
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddNewCustomerRecord, testCustomerSearchOperation]}
+@test:Config {enable: true, dependsOn: [testAddNewCustomerRecord]}
 function testUpdateCustomerRecord() {
     log:printInfo("testUpdateCustomerRecord");
     RecordRef subsidiary = {
@@ -474,40 +475,70 @@ function testUpdateContactRecord() {
 }
 
 
-@test:Config {enable: true, dependsOn: [testAddNewCustomerRecord]}
+@test:Config {enable: true}
 function testCustomerSearchOperation() {
     log:printInfo("testCustomerSearchOperation");
     SearchElement searchRecord = {
-        fieldName: "lastName",
-        searchType: SEARCH_STRING_FIELD,
-        operator: "is",
-        value1: "TestLastName"
+        fieldName: "isInactive",
+        operator:"is",
+        searchType: SEARCH_BOOLEAN_FIELD ,
+        value1: "false"
     };
     SearchElement[] searchData = [];
     searchData.push(searchRecord);
-    Customer|error output = netsuiteClient->searchCustomerRecord(searchData);
-    if (output is Customer) {
-        log:printInfo(output?.entityId.toString());     
+    var output = netsuiteClient->searchCustomerRecords(searchData);
+    if (output is stream<Customer, error>) {
+        int index = 0;
+        error? e = output.forEach(function (Customer queryResult) {
+            index = index + 1;
+        });
+        log:printInfo("Total count of records : " +  index.toString());        
     } else {
-        test:assertFalse(true, output.message());
+        test:assertFail(msg = output.message());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testUpdateAccountRecord]}
+@test:Config {enable: true}
 function testAccountSearchOperation() {
     log:printInfo("testAccountSearchOperation");
     SearchElement searchRecord = {
         fieldName: "name",
         searchType: SEARCH_STRING_FIELD,
-        operator: "is",
-        value1: "Ballerina test account_updated"
+        operator: "contains",
+        value1: "Ballerina"
     };
     SearchElement[] searchElements = [searchRecord];
-    Account|error output = netsuiteClient->searchAccountRecord(searchElements);
-    if (output is Account) {
-        log:printInfo(output.toString());     
+    var output = netsuiteClient->searchAccountRecords(searchElements);
+     if (output is stream<Account, error>) {
+        int index = 0;
+        error? e = output.forEach(function (Account account) {
+            index = index + 1;
+        });
+        log:printInfo("Total count of records : " +  index.toString());     
     } else {
-        test:assertFalse(true, output.message());
+        test:assertFail(msg = output.message());
+    }
+}
+
+@test:Config {enable: true}
+function testContactSearchOperation() {
+    log:printInfo("testContactSearchOperation");
+    SearchElement searchRecord = {
+        fieldName: "firstName",
+        searchType: SEARCH_STRING_FIELD,
+        operator: OP_DOES_NOT_CONTAIN,
+        value1: "Wso2"
+    };
+    SearchElement[] searchElements = [searchRecord];
+    var output = netsuiteClient->searchContactRecords(searchElements);
+     if (output is stream<Contact, error>) {
+        int index = 0;
+        error? e = output.forEach(function (Contact contact) {
+            index = index + 1;
+        });
+        log:printInfo("Total count of records : " +  index.toString());     
+    } else {
+        test:assertFail(msg = output.message());
     }
 }
 
@@ -522,6 +553,15 @@ function testTransactionSearchOperation() {
         value2: "2000000"
     };
 
+    SearchElement searchRecord3 = {
+        fieldName: "type",
+        searchType: SEARCH_ENUM_MULTI_SELECT_FIELD,
+        operator: "anyOf",
+        value1: "_salesOrder",
+        value2: "_invoice",
+        multiValues: [TRANS_VENDOR_BILL,TRANS_VENDOR_PAYMENT,TRANS_INVENTORY_TRANSFER]
+    };
+
     SearchElement searchRecord2 = {
         fieldName: "lastModifiedDate",
         searchType: SEARCH_DATE_FIELD,
@@ -530,11 +570,15 @@ function testTransactionSearchOperation() {
         value2 : "2021-03-23T10:20:15"
     };
     SearchElement[] searchElements = [searchRecord2];
-    RecordList|error output = netsuiteClient->searchTransactionRecord(searchElements);
-    if (output is RecordList) {
-        log:printInfo(output.toString());     
+    var output = netsuiteClient->searchTransactionRecords(searchElements);
+     if (output is stream<RecordRef, error>) {
+        int index = 0;
+        error? e = output.forEach(function (RecordRef recordRef) {
+            index = index + 1;
+        });
+        log:printInfo("Total count of records : " +  index.toString());     
     } else {
-        test:assertFalse(true, output.message());
+        test:assertFail(msg = output.message());
     }
 }
 
@@ -616,7 +660,7 @@ function testDeleteAccountRecord() {
 
 @test:Config {enable: true, dependsOn:[testSalesOrderGetOperation, testSalesOrderUpdateOperation]}
 function testDeleteSalesOrderRecord() {
-    log:printInfo("testDeleteAccountRecord");
+    log:printInfo("testDeleteSalesOrderRecord");
     RecordDetail recordDeletionInfo = {
         recordInternalId : salesOrderId,
         recordType: SALES_ORDER
