@@ -14,13 +14,108 @@
 // specific language governing permissions and limitations
 // under the License.
 
+public enum TransactionType {
+    TRANS_ASSEMBLY_BUILD = "_assemblyBuild",
+    TRANS_ASSEMBLY_UNBUILD = "_assemblyUnbuild",
+    TRANS_BINTRANSFER = "_binTransfer",
+    TRANS_BINWORK_SHEET = "_binWorksheet",
+    TRANS_CASHRE_FUND = "_cashRefund",
+    TRANS_CASH_SALE = "_cashSale",
+    TRANS_CHECK = "_check",
+    TRANS_CREDIT_MEMO = "_creditMemo",
+    TRANS_CUSTOM = "_custom",
+    TRANS_CUSTOM_PURCHASE = "_customPurchase",
+    TRANS_CUSTOM_SALE = "_customSale",
+    TRANS_CUSTOMER_DEPOSIT = "_customerDeposit",
+    TRANS_CUSTOMER_PAYMENT = "_customerPayment",
+    TRANS_CUSTOMER_REFUND = "_customerRefund",
+    TRANS_DEPOSIT = "_deposit",
+    TRANS_DEPOSIT_APPLICATION = "_depositApplication",
+    TRANS_ESTIMATE = "_estimate",
+    TRANS_EXPENSE_REPORT = "_expenseReport",
+    TRANS_INBOUND_SHIPMENT = "_inboundShipment",
+    TRANS_INVENTORY_ADJUSTMENT = "_inventoryAdjustment",
+    TRANS_INVENTORY_COST_REVALUATION = "_inventoryCostRevaluation",
+    TRANS_INVENTORY_TRANSFER = "_inventoryTransfer",
+    TRANS_INVOICE = "_invoice",
+    TRANS_ITEM_FULFILLMENT = "_itemFulfillment",
+    TRANS_ITEM_RECEIPT = "_itemReceipt",
+    TRANS_JOURNAL = "_journal",
+    TRANS_OPPORTUNITY = "_opportunity",
+    TRANS_PAYCHECK = "_paycheck",
+    TRANS_PAYCHECK_JOURNAL = "_paycheckJournal",
+    TRANS_PERIOD_END_JOURNAL = "_periodEndJournal",
+    TRANS_PURCHASE_ORDER = "_purchaseOrder",
+    TRANS_REQUISITION = "_requisition",
+    TRANS_RETURN_AUTHORIZATION = "_returnAuthorization",
+    TRANS_SALES_ORDER = "_salesOrder",
+    TRANS_TRANSFER_ORDER = "_transferOrder",
+    TRANS_VENDOR_BILL = "_vendorBill",
+    TRANS_VENDOR_CREDIT = "_vendorCredit",
+    TRANS_VENDOR_PAYMENT = "_vendorPayment",
+    TRANS_VENDOR_RETURN_AUTHORIZATION = "_vendorReturnAuthorization",
+    TRANS_WORK_ORDER = "_workOrder",
+    TRANS_WORK_ORDER_CLOSE = "_workOrderClose",
+    TRANS_WORK_ORDER_COMPLETION = "_workOrderCompletion",
+    TRANS_WORK_ORDER_ISSUE = "_workOrderIssue"
+}
+
+public enum AccountType {
+    ACCOUNTS_PAYABLE = "_accountsPayable",
+    ACCOUNTS_RECEIVABLE = "_accountsReceivable",
+    BANK = "_bank",
+    COSTOFGOODSSOLD = "_costOfGoodsSold",
+    CREDITCARD = "_creditCard",
+    DEFERRED_EXPENSE = "_deferredExpense",
+    DEFERRED_REVENUE = "_deferredRevenue",
+    EQUITY = "_equity",
+    EXPENSE = "_expense",
+    FIXED_ASSET = "_fixedAsset",
+    INCOME = "_income",
+    LONGTERMLIABILITY = "_longTermLiability",
+    NON_POSTING = "_nonPosting",
+    OTHER_ASSET = "_otherAsset",
+    OTHERCURRENTASSET = "_otherCurrentAsset",
+    OTHERCURRENTLIABILITY = "_otherCurrentLiability",
+    OTHER_EXPENSE = "_otherExpense",
+    OTHER_INCOME = "_otherIncome",
+    STATISTICAL = "_statistical",
+    UNBILLEDRECEIVABLE = "_unbilledReceivable"
+}
+
 public enum SearchType {
    SEARCH_STRING_FIELD = "SearchStringField",
    SEARCH_BOOLEAN_FIELD = "SearchBooleanField",
    SEARCH_DOUBLE_FIELD = "SearchDoubleField",
    SEARCH_LONG_FIELD = "SearchLongField",
    SEARCH_TEXT_NUMBER_FIELD = "SearchTextNumberField",
-   SEARCH_DATE_FIELD = "SearchDateField" 
+   SEARCH_DATE_FIELD = "SearchDateField",
+   SEARCH_ENUM_MULTI_SELECT_FIELD = "SearchEnumMultiSelectField"
+}
+
+public enum BasicSearchOperator {
+    OP_IS ="is",
+    OP_IS_NOT ="isNot",
+    OP_STARTS_WITH ="startsWith",
+    OP_DOES_NOT_START_WITH ="doesNotStartWith",
+    OP_CONTAINS ="contains",
+    OP_DOES_NOT_CONTAIN ="doesNotContain",
+    OP_ANY_OF ="anyOf",
+    OP_NONE_OF ="noneOf",
+    OP_ON ="on",
+    OP_BEFORE ="before",
+    OP_AFTER ="after",
+    OP_ON_OR_BEFORE ="onOrBefore",
+    OP_ON_OR_AFTER ="onOrAfter",
+    OP_WITHIN ="within",
+    OP_EMPTY ="empty",
+    OP_NOT_ON ="notOn",
+    OP_NOT_BEFORE ="notBefore",
+    OP_NOT_AFTER ="notAfter",
+    OP_NOT_ON_OR_BEFORE ="notOnOrBefore",
+    OP_NOT_ON_OR_AFTER ="notOnOrAfter",
+    OP_NOT_WITHIN ="notWithin",
+    OP_NO_TEMPTY ="notEmpty"
 }
 
 public enum RecordCoreType {
@@ -602,7 +697,3 @@ public enum RecordSaveSearchType {
     VENDOR_CATEGORY_SAVED_SEARCH = "vendorCategory",
     VENDOR_SUBSIDIARY_RELATIONSHIP__SAVED_SEARCH = "vendorSubsidiaryRelationship"
 }
-
-// public enum RecordSearchType {
-//     CUSTOMER_TYPE
-// }

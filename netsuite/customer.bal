@@ -14,8 +14,8 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import ballerina/xmldata;
 import ballerina/http;
+import ballerina/lang.'xml;
 xmlns "urn:relationships_2020_2.lists.webservices.netsuite.com" as listRel;
 
 isolated function mapCustomerRecordFields(Customer customer) returns string {
@@ -155,19 +155,27 @@ isolated function buildCustomerSearchPayload(NetSuiteConfiguration config,Search
     return check getSoapPayload(requestHeader, requestBody); 
 }
 
-isolated function getCustomerSearchResult(http:Response response) returns @tainted Customer|error {
-    xml xmlValue = check getXMLRecordListFromSearchResult(response);
-    xmlValue = check replaceRegexInXML(xmlValue, LIST_REL_WITH_COLON);
-    string|error instanceType =  xmlValue.xsi_type;
-    string internalId = checkStringValidity(xmlValue.internalId).toString();
-    Customer customer = {
-        internalId: internalId
-    };
-    json validatedJson = getValidJson(xmldata:toJson(xmlValue));
-    check mapCustomerFields(validatedJson, customer);
-    return customer;
+isolated function getCustomersNextPageResult(http:Response response) returns @tainted record {|Customer[] customers; SearchResultStatus status;|}|error {
+    SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
+    return {customers :check getCustomersFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
+isolated function getCustomerSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Customer, error>|error {
+    SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
+    CustomerStream objectInstance = check new (httpClient,resultStatus,config);
+    stream<Customer, error> finalStream = new (objectInstance);
+    return finalStream;
+}
+
+isolated function getCustomersFromSearchResults(xml customerData) returns Customer[]|error{
+    int size = customerData.length();
+    Customer[] customers =[];
+    foreach int i in 0 ..< size {
+        xml recordItem = 'xml:get(customerData, i);
+        customers.push(check mapCustomerRecord(recordItem));  
+    }
+    return customers;
+}
 
 isolated function mapCustomerFields(json customerTypeJson, Customer customer) returns error? {
     json[] valueList = <json[]>getValidJson(customerTypeJson.'record.'record);

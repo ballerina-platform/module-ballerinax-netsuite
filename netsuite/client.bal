@@ -215,7 +215,7 @@ public client class Client {
     #
     # + return - If success returns an array of currency records otherwise the relevant error
     @display{label: "Get All Currency Types"} 
-    isolated remote function getAllCurrencyRecords() returns Currency[]|error {
+    isolated remote function getAllCurrencyRecords() returns @display{label: "Response"} @tainted Currency[]|error {
         xml payload = check buildGetAllPayload(CURRENCY_All_TYPES, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_ALL_SOAP_ACTION, payload);
         var output = formatGetAllResponse(response);
@@ -231,12 +231,12 @@ public client class Client {
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
     # + return - If success returns a json otherwise the relevant error
-    @display{label: "Search Customer"} 
-    isolated remote function searchCustomerRecord(@display{label: "Search elements"} SearchElement[] searchElements) 
-                                                  returns @tainted @display{label: "Response"} Customer|error {
+    @display{label: "Search Customers"} 
+    isolated remote function searchCustomerRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
+                                                  returns @tainted @display{label: "Response"} stream<Customer, error>|error {
         xml payload = check buildCustomerSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
-        return getCustomerSearchResult(response);
+        return getCustomerSearchResult(response,self.basicClient, self.config);
     }
 
     # Retrieves NetSuite transaction instances from NetSuite according to the given detail 
@@ -244,25 +244,39 @@ public client class Client {
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
     # + return - If success returns a json otherwise the relevant error
-    @display{label: "Search Transaction"}
-    isolated remote function searchTransactionRecord(@display{label: "Search elements"} SearchElement[] searchElements) 
-                                                     returns @tainted @display{label: "Response"} RecordList|error {
+    @display{label: "Search Transactions"}
+    isolated remote function searchTransactionRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
+                                                     returns @tainted @display{label: "Response"} stream<RecordRef, 
+                                                     error>|error {
         xml payload = check buildTransactionSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
-        return getTransactionSearchResult(response);
+        return getTransactionSearchResult(response,self.basicClient, self.config);
     }
 
     # Retrieves NetSuite account record instances from NetSuite according to the given detail 
-    # if they are valid
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
-    # + return - If success returns a json otherwise the relevant error
-    @display{label: "Search Account"}
-    isolated remote function searchAccountRecord(@display{label: "Search elements"} SearchElement[] searchElements) 
-                                                 returns @tainted @display{label: "Response"} Account|error {
+    # + return - If success returns a account stream otherwise the relevant error
+    @display{label: "Search Accounts"}
+    isolated remote function searchAccountRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
+                                                 returns @tainted @display{label: "Response"} stream<Account, 
+                                                 error>|error {
         xml payload = check buildAccountSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
-        return getAccountSearchResult(response);
+        return getAccountSearchResult(response, self.basicClient, self.config);
+    }
+
+    # Retrieves NetSuite contact record instances from NetSuite according to the given detail
+    #
+    # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
+    # + return - If success returns a contact stream otherwise the relevant error
+    @display{label: "Search Contacts"}
+    isolated remote function searchContactRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
+                                                 returns @tainted @display{label: "Response"} stream<Contact, 
+                                                 error>|error {
+        xml payload = check BuildContactSearchPayload(self.config, searchElements);
+        http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
+        return getContactsSearchResult(response, self.basicClient, self.config);
     }
 
     # Gets a customer record from Netsuite by using internal Id
@@ -270,7 +284,7 @@ public client class Client {
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Customer type record otherwise the relevant error
     @display{label: "Get Customer"}
-    isolated remote function getCustomerRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getCustomerRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                @tainted @display{label: "Response"} Customer|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -283,7 +297,7 @@ public client class Client {
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Contact type record otherwise the relevant error
     @display{label: "Get Contact"}  
-    isolated remote function getContactRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getContactRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                               @tainted @display{label: "Response"} Contact|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -296,7 +310,7 @@ public client class Client {
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Currency type record otherwise the relevant error
     @display{label: "Get Currency"}
-    isolated remote function getCurrencyRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getCurrencyRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                @tainted @display{label: "Response"} Currency|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -309,7 +323,7 @@ public client class Client {
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Classification type record otherwise the relevant error
     @display{label: "Get Classification"}
-    isolated remote function getClassificationRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getClassificationRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                      @tainted @display{label: "Response"} Classification|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -322,7 +336,7 @@ public client class Client {
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a invoice type record otherwise the relevant error
     @display{label: "Get Invoice"}
-    isolated remote function getInvoiceRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getInvoiceRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                               @tainted @display{label: "Response"} Invoice|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -335,7 +349,7 @@ public client class Client {
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a SalesOrder type record otherwise the relevant error
     @display{label: "Get Sales Order"}
-    isolated remote function getSalesOrderRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getSalesOrderRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                  @tainted @display{label: "Response"} SalesOrder|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -348,7 +362,7 @@ public client class Client {
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns an account type record otherwise the relevant error
     @display{label: "Get Account"}
-    isolated remote function getAccountRecord(@display{label: "Record detail"} RecordInfo recordInfo) returns 
+    isolated remote function getAccountRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                  @tainted @display{label: "Response"} Account|error {
         http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
@@ -387,6 +401,6 @@ public type NetSuiteConfiguration record {
     string token;
     @display{label: "Access Secret"}
     string tokenSecret;
-    @display{label: "NetSuite WebServices URL"}
+    @display{label: "NetSuite SOAP WebService URL"}
     string baseURL;
 };
