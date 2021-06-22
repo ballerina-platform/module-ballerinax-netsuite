@@ -15,7 +15,7 @@ and search operations to perform business processing on NetSuite records and to 
 
 |                             |           Version                    |
 |:---------------------------:|:------------------------------------:|
-| Ballerina Language          |     Swan Lake Alpha5                 |
+| Ballerina Language          |     Swan Lake Beta 1                 |
 | NetSuite SOAP API           |     SOAP 1.1                         |
 | WSDL version                |     2020.2.0                         |
 
@@ -56,7 +56,7 @@ public function main() returns error? {
         consumerSecret: "<consumerSecret>",
         token: "<token>",
         tokenSecret: "<tokenSecret>",
-        baseURL: "<webServiceURL>/services/NetSuitePort_2020_2"
+        baseURL: "<webServiceURL>"
     };
     netsuite:Client netsuiteClient = check new(nsConfig);
 ```

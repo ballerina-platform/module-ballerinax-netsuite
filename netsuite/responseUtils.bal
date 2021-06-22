@@ -35,9 +35,9 @@ isolated function getCreateResponse(http:Response response) returns @tainted Rec
         if(isAfterSubmitFailed is boolean) {
             xml output  = formattedPayload/**/<status>; 
             boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess);
-            if(isSuccess == true &&  <boolean>isAfterSubmitFailed == false ) { 
+            if(isSuccess == true && <boolean>isAfterSubmitFailed == false ) { 
                 return  prepareResponseAfterSubmitPassed(formattedPayload);
-            } else if(isSuccess == false &&  <boolean>isAfterSubmitFailed == true) {
+            } else if(isSuccess == false && <boolean>isAfterSubmitFailed == true) {
                 return prepareResponseAfterSubmitFailed(formattedPayload);
             }else {
                 xml errorMessage= formattedPayload/**/<statusDetail>/*;

@@ -26,16 +26,22 @@ type TokenData record {
 
 # Ballerina record for netsuite record creation response
 #
-# + internalId - NetSuite record Id 
+# + internalId - NetSuite record ID 
 # + recordType - Netsuite record type  
 # + afterSubmitFailed - Boolean for checking  After submission NetSuite failures
 # + warning - Netsuite warnings
 # + isSuccess -  Boolean for checking submission NetSuite failures  
+@display{label: "Add Operation Response"} 
 public type RecordAddResponse record {
+    @display{label: "Is Success"}
     boolean isSuccess;
+    @display{label: "Is After-Submission Failed"}
     boolean afterSubmitFailed?;
+    @display{label: "Internal ID"}
     string internalId;
+    @display{label: "Record Type"}
     string recordType;
+    @display{label: "Warning"}
     string warning?;
 };
 
@@ -51,12 +57,12 @@ public type RecordUpdateResponse record {
 
 # Ballerina record for Netsuite record delete response
 #
-# + deletionReasonId - Reason Id for deletion  
+# + deletionReasonId - Reason ID for deletion  
 # + deletionReasonMemo - NetSuite Reason memo for deletion   
 @display{label: "Record Details"}
 public type RecordDetail record {
     *RecordInfo;
-    @display{label: "Record Delete Reason Id"}
+    @display{label: "Record Delete Reason ID"}
     string deletionReasonId?;
     @display{label: "Record Delete Reason Memo"}
     string deletionReasonMemo?;
@@ -65,12 +71,12 @@ public type RecordDetail record {
 # Ballerina record for Netsuite record delete response
 #
 # + recordType - NetSuite Record type Eg: "currency","invoice", netsuite:INVOICE etc. 
-# + recordInternalId - Internal Id of the Netsuite record
+# + recordInternalId - Internal ID of the Netsuite record
 @display{label: "Record Information"}
 public type RecordInfo record {
     @display{label: "Record Type"}
     string recordType;
-    @display{label: "Record Internal Id"}
+    @display{label: "Record Internal ID"}
     string recordInternalId;
 };
 
