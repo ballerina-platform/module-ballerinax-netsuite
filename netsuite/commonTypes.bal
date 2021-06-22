@@ -14,9 +14,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-# Description
+# Represents an address record in NetSuite
 #
-# + internalId - Netsuite Internal Id  
+# + internalId - Netsuite Internal ID  
 # + country - Country from NetSuite country List
 # + attention - Field Description  
 # + addressee - addressee of this record  

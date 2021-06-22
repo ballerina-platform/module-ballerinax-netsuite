@@ -45,12 +45,16 @@ public type Item record {
 
 # Netsuite Sales Order type record
 #
-# + internalId - Internal Id of the SalesOrder record
+# + internalId - Internal ID of the SalesOrder record
 # + entity - The customer of the sales Order    
 # + itemList - The list of items
+@display{label: "Sales Order"}
 public type SalesOrder record {
+    @display{label: "Internal ID"}
     string internalId;
+    @display{label: "Customer"}
     RecordRef entity?;
+    @display{label: "Item List"}
     Item[] itemList?;
     *SalesOrderCommon;
 };
@@ -59,8 +63,11 @@ public type SalesOrder record {
 # 
 # + entity - The customer of the sales Order   
 # + itemList - The list of items
+@display{label: "New Sales Order"}
 public type NewSalesOrder record {
+    @display{label: "Customer"}
     RecordInputRef entity;
+    @display{label: "Item List"}
     Item[] itemList;
     *SalesOrderCommon;
 };
@@ -69,7 +76,7 @@ public type NewSalesOrder record {
 #
 # + internalId - InternalId of the salesOrder record in Netsuite   
 # + createdDate - created date of the  salesOrder record in Netsuite  
-# + customForm - References the customized a sales order form    
+# + customForm - References the customized sales order form    
 # + currency - The currency of the sales Order   
 # + drAccount - Deferred revenue reclassification account   
 # + fxAccount - Foreign currency adjustment revenue account  
@@ -105,70 +112,113 @@ public type NewSalesOrder record {
 # + status - Status of the sales Order  
 # + subsidiary - Subsidiary of the Sales Order  
 public type SalesOrderCommon record {
+    @display{label: "Internal ID"}
     string internalId?;
+    @display{label: "Created Date"}
     string createdDate?;
+    @display{label: "Transaction Date"}
     string tranDate?;
+    @display{label: "Transaction ID"}
     string tranId?;
+    @display{label: "Order Status"}
     SalesOrderStatus|string orderStatus?;
+    @display{label: "Next Billing Date"}
     string nextBill?;
+    @display{label: "Start Date"}
     string startDate?;
+    @display{label: "End Date"}
     string endDate?;
+    @display{label: "Memo"}
     string memo?;
+    @display{label: "Is Exclude Transaction"}
     boolean excludeCommission?;
+    @display{label: "Estimated Cost"}
     decimal totalCostEstimate?;
+    @display{label: "Estimated Gross Profit"}
     decimal estGrossProfit?;
+    @display{label: "Estimated Gross Percentage"}
     decimal estGrossProfitPercent?;
+    @display{label: "Exchange Rate"}
     decimal exchangeRate?;
+    @display{label: "Currency Name"}
     string currencyName?;
+    @display{label: "Is Taxable"}
     boolean isTaxable?;
+    @display{label: "Email"}
     string email?;
+    @display{label: "Shipping Date"}
     string shipDate?;
+    @display{label: "Sub Total"}
     decimal subTotal?;
+    @display{label: "Discount Total"}
     decimal discountTotal?;
+    @display{label: "Total"}
     decimal total?;
+    @display{label: "Balance"}
     decimal balance?;
+    @display{label: "Status"}
     string status?;
+    @display{label: "Billing Address"}
     Address billingAddress?;
+    @display{label: "Shipping Adderess"}
     Address shippingAddress?;
+    @display{label: "Estimated Subsidiary"}
     RecordRef subsidiary?;
+    @display{label: "Customized Sales Order Form"}
     RecordRef customForm?;
+    @display{label: "Currency"}
     RecordRef currency?;
+    @display{label: "DRR Account"}
     RecordRef drAccount?;
+    @display{label: "FCAR Account"}
     RecordRef fxAccount?;
+    @display{label: "Opportunity"}
     RecordRef opportunity?;
+    @display{label: "Sales Representative"}
     RecordRef salesRep?;
+    @display{label: "Partner"}
     RecordRef partner?;
+    @display{label: "Sales Group"}
     RecordRef salesGroup?;
+    @display{label: "Lead Source"}
     RecordRef leadSource?;
+    @display{label: "Tax Registration Number"}
     RecordRef entityTaxRegNum?;
+    @display{label: "Opportunity Estimate"}
     RecordRef createdFrom?;
 };
 
 # Represents a NetSuite Invoice record
 #
 # + entity - The customer of the invoice  
-# + invoiceId - The Id of the invoice    
+# + invoiceId - The ID of the invoice    
 # + internalId - The internalId of the invoice  
 # + itemList - The item list for the invoice  
+@display{label: "Invoice"} 
 public type Invoice record {
+    @display{label: "Internal ID"}
     string internalId;
+    @display{label: "Customer"}
     RecordRef entity?;
+    @display{label: "Item List"}
     Item[] itemList?;
+    @display{label: "Invoice ID"}
     string invoiceId?;
     *InvoiceCommon;
 };
-
 
 # Represents a NetSuite Invoice record
 #
 # + entity - The customer of the invoice  
 # + itemList - The item list for the invoice  
+@display{label: "New Invoice"}
 public type NewInvoice record {
+    @display{label: "Customer"}
     RecordInputRef entity;
+    @display{label: "Item List"}
     Item[] itemList;
     *InvoiceCommon;
 };
-
 
 # Represents a NetSuite Invoice record
 #
@@ -186,17 +236,30 @@ public type NewInvoice record {
 # + subsidiary - The subsidiary of the invoice    
 # + 'class - The class of the invoice   
 public type InvoiceCommon record {
+    @display{label: "Recognized Revenue"}
     decimal recognizedRevenue?;
+    @display{label: "Discount"}
     decimal discountTotal?;
+    @display{label: "Deffered Revenue"}
     decimal deferredRevenue?;
+    @display{label: "Total Items"}
     decimal total?;
+    @display{label: "Email"}
     string email?;
+    @display{label: "Created Date"}
     string createdDate?;
+    @display{label: "Last Modified Date"}
     string lastModifiedDate?;
+    @display{label: "Status"}
     string status?;
+    @display{label: "Classification"}
     Classification classification?;
+    @display{label: "Currency"}
     RecordRef currency?;
+    @display{label: "Class"}
     RecordRef 'class?;
+    @display{label: "Department"}
     RecordRef department?;
+    @display{label: "Subsidiary"}
     RecordRef subsidiary?;
 };

@@ -53,7 +53,8 @@ class CustomerStream {
     isolated function fetchCustomers() returns @tainted Customer[]|error {
         xml payload = check buildSearchMoreWithIdPayload(self.config, self.currentPage + 1, self.searchId);
         http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
-        record {|Customer[] customers; SearchResultStatus status;|} newPage = check getCustomersNextPageResult(response);
+        record {|Customer[] customers; SearchResultStatus status;|} newPage = check getCustomersNextPageResult(
+            response);
         self.currentPage=newPage.status.pageIndex;
         return newPage.customers;
     }
@@ -93,7 +94,7 @@ class AccountStream {
     }
 
     isolated function fetchAccounts() returns @tainted Account[]|error {
-        log:printDebug("Requesting the next page!");
+        log:printDebug(REQUEST_NEXT_PAGE);
         xml payload = check buildSearchMoreWithIdPayload(self.config, self.currentPage + 1, self.searchId);
         http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
         record {|Account[] accounts; SearchResultStatus status;|} newPage = check getAccountsNextPageResult(response);
@@ -136,10 +137,11 @@ class TransactionStream {
     }
 
     isolated function fetchTransactions() returns @tainted RecordRef[]|error {
-        log:printDebug("Requesting the next page!");
+        log:printDebug(REQUEST_NEXT_PAGE);
         xml payload = check buildSearchMoreWithIdPayload(self.config, self.currentPage + 1, self.searchId);
         http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
-        record {|RecordRef[] recordRefs; SearchResultStatus status;|} newPage = check getTransactionsNextPageResult(response);
+        record {|RecordRef[] recordRefs; SearchResultStatus status;|} newPage = check getTransactionsNextPageResult(
+            response);
         self.currentPage=newPage.status.pageIndex;
         return newPage.recordRefs;
     }
@@ -179,7 +181,7 @@ class ContactStream {
     }
 
     isolated function fetchTransactions() returns @tainted Contact[]|error {
-        log:printInfo("Fetching next record set!");
+        log:printInfo(REQUEST_NEXT_PAGE);
         xml payload = check buildSearchMoreWithIdPayload(self.config, self.currentPage + 1, self.searchId);
         http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
         record {|Contact[] contacts; SearchResultStatus status;|} newPage = check getContactsNextPageResult(response);
