@@ -26,7 +26,7 @@ public client class Client {
 
     public isolated function init(NetSuiteConfiguration config)returns error? {
         self.config = config;
-        self.basicClient = check new (config.baseURL, {timeout: 120});
+        self.basicClient = check new (config.baseURL + NETSUITE_ENDPOINT, {timeout: 120});
     }
 
     # Creates a record instance in NetSuite according to the given detail
@@ -279,7 +279,7 @@ public client class Client {
         return getContactsSearchResult(response, self.basicClient, self.config);
     }
 
-    # Gets a customer record from Netsuite by using internal Id
+    # Gets a customer record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Customer type record otherwise the relevant error
@@ -292,7 +292,7 @@ public client class Client {
         return getCustomerResult(response);
     }
 
-    # Gets a contact record from Netsuite by using internal Id
+    # Gets a contact record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Contact type record otherwise the relevant error
@@ -305,7 +305,7 @@ public client class Client {
         return getContactResult(response);
     }
 
-    # Gets a currency record from Netsuite by using internal Id
+    # Gets a currency record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Currency type record otherwise the relevant error
@@ -318,7 +318,7 @@ public client class Client {
         return getCurrencyResult(response);
     }
 
-    # Gets a currency record from Netsuite by using internal Id
+    # Gets a currency record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a Classification type record otherwise the relevant error
@@ -344,7 +344,7 @@ public client class Client {
         return getInvoiceResult(response);
     }
 
-    # Gets a salesOrder record from Netsuite by using internal Id
+    # Gets a salesOrder record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns a SalesOrder type record otherwise the relevant error
@@ -383,15 +383,16 @@ public client class Client {
 
 # Configuration record for NetSuite
 #
-# + accountId - NetSuite account Id  
-# + consumerSecret - Netsuite Integration App consumer secret
-# + baseURL - Netsuite baseURL for web services and this "/services/NetSuitePort_2020_2" should be added to the link.   
-# + consumerId - Netsuite Integration App consumer Id   
+# + accountId - NetSuite Account ID  
+# + consumerSecret - Netsuite Integration application consumer secret
+# + baseURL - Netsuite SuiteTalk URLs for SOAP web services (Available at Setup->Company->Company Information->Company 
+# URLs)
+# + consumerId - Netsuite Integration App consumer ID   
 # + tokenSecret - Netsuite user role access secret 
 # + token - Netsuite user role access token
 @display{label: "Connection Config"}  
 public type NetSuiteConfiguration record {
-    @display{label: "Account Id"}
+    @display{label: "Account ID"}
     string accountId;
     @display{label: "Consumer Id"}
     string consumerId;
@@ -401,6 +402,6 @@ public type NetSuiteConfiguration record {
     string token;
     @display{label: "Access Secret"}
     string tokenSecret;
-    @display{label: "NetSuite SOAP WebService URL"}
+    @display{label: "NetSuite SuiteTalk WebService URL"}
     string baseURL;
 };
