@@ -16,15 +16,20 @@
 
 # Netsuite Contact type record
 #
-# + internalId - internal Id  of the record
+# + internalId - internal ID  of the record
 # + salutation - The contact's salutation    
 # + firstName - First name of the contact      
 # + subsidiary - The subsidiary to associate with this contact
+@display{label: "Contact"}
 public type Contact record {
+    @display{label: "Internal ID"}
     string internalId;
+    @display{label: "Salutation"}
     string salutation?;
+    @display{label: "First Name"}
     string firstName?;
     *ContactCommon;
+    @display{label: "Subsidiary"}
     RecordRef subsidiary?;
 };
 
@@ -32,8 +37,11 @@ public type Contact record {
 # 
 # + firstName - First name of the contact   
 # + subsidiary - The subsidiary to associate with this contact   
+@display{label: "New Contact"}
 public type NewContact record {
+    @display{label: "First Name"}
     string firstName;
+    @display{label: "Subsidiary"}
     RecordInputRef subsidiary;
     *ContactCommon;
 };
@@ -42,7 +50,7 @@ public type NewContact record {
 #
 # + middleName - Middle name of the contact   
 # + lastName - Last name of the contact   
-# + entityId - Entity Id    
+# + entityId - Entity ID    
 # + title - Contact's title at his or her company  
 # + phone - Main phone number    
 # + fax - Fax number    
@@ -69,44 +77,76 @@ public type NewContact record {
 # + company - The company this contact works for 
 # + customForm - NetSuite custom form record reference
 type ContactCommon record {
+    @display{label: "Middle Name"}
     string middleName?;
+    @display{label: "Last Name"}
     string lastName?;
+    @display{label: "Entity ID"}
     string entityId?;
+    @display{label: "Title"}
     string title?;
-    string phone?;
+    @display{label: "Phone Number"}
+    string phone?; 
+    @display{label: "Fax"}
     string fax?;
+    @display{label: "Email"}
     string email?;
+    @display{label: "Address"}
     string defaultAddress?;
+    @display{label: "Is Private"}
     boolean isPrivate?;
+    @display{label: "Is Inactive"}
     boolean isInactive?;
+    @display{label: "Alternative Email Address"}
     string altEmail?;
+    @display{label: "Office Phone Number"}
     string officePhone?;
+    @display{label: "Home Phone Number"}
     string homePhone?;
+    @display{label: "Mobile Phone Number"}
     string mobilePhone?;
+    @display{label: "Supervisor Phone Number"}
     string supervisorPhone?;
+    @display{label: "Assistant Phone Number"}
     string assistantPhone?;
+    @display{label: "Other Information"}
     string comments?;
+    @display{label: "Image"}
     string image?;
+    @display{label: "Billing Value"}
     boolean billPay?;
+    @display{label: "Created Date"}
     string dateCreated?;
+    @display{label: "Last Modified Date"}
     string lastModifiedDate?;
+    @display{label: "Address Book List"}
     ContactAddressBook[] addressBookList?;
+    @display{label: "Subscription List"}
     Subscription[] SubscriptionsList?;
+    @display{label: "Assistant"}
     RecordRef assistant?;
+    @display{label: "Supervisor"}
     RecordRef supervisor?;
+    @display{label: "Contact Source"}
     RecordRef contactSource?;
+    @display{label: "Company"}
     RecordRef company?;
+    @display{label: "Custom Form"}
     RecordRef customForm?;
 };
 
 # Netsuite Customer type record 
-# + internalId - Internal Id of the customer record
+# + internalId - Internal ID of the customer record
 # + companyName - Company name  
 # + subsidiary - Selects the subsidiary to associate with this entity or job   
+@display{label: "Customer"}
 public type Customer record {
+    @display{label: "Internal ID"}
     string internalId;
     *CustomerCommon;
+    @display{label: "Company Name"}
     string companyName?;
+    @display{label: "Subsidiary"}
     RecordRef subsidiary?;
 };
 
@@ -114,15 +154,18 @@ public type Customer record {
 #
 # + companyName - Company name  
 # + subsidiary - Selects the subsidiary to associate with this entity or job  
+@display{label: "New Customer"}
 public type NewCustomer record {
+    @display{label: "Company Name"}
     string companyName;
+    @display{label: "Subsidiary"}
     RecordInputRef subsidiary;
     *CustomerCommon;
 };
 
 # Netsuite Customer type record 
 #
-# + entityId - Entity Id
+# + entityId - Entity ID
 # + isPerson - This is set to True which specifies the type 
 # + salutation - The title of this person  
 # + firstName - First name  
@@ -135,29 +178,47 @@ public type NewCustomer record {
 # + isInactive - This field is false by default, shows whether active or not
 # + category - References a value in a user defined list at Setup
 # + title - The job title
-# + homePhone -   
+# + homePhone -  Home phone number 
 # + mobilePhone - Field Description  
 # + accountNumber - Field Description  
 # + addressbookList - Field Description  
 # + currencyList - Field Description  
 type CustomerCommon record {
+    @display{label: "Salutation"}
     string salutation?;
+    @display{label: "First Name"}
     string firstName?;
+    @display{label: "Middle Name"}
     string middleName?;
+    @display{label: "Last Name"}
     string lastName?;
+    @display{label: "Phone Number"}
     string phone?;
+    @display{label: "Fax"}
     string fax?;
+    @display{label: "Email"}
     string email?;
+    @display{label: "Address"}
     string defaultAddress?;
+    @display{label: "Job Title"}
     string title?;
+    @display{label: "Home Phone Number"}
     string homePhone?;
+    @display{label: "Mobile Phone Number"}
     string mobilePhone?;
+    @display{label: "Account Number"}
     string accountNumber?;
+    @display{label: "Entity ID"}
     string entityId?;
+    @display{label: "Is Inactive"}
     boolean isInactive?;
+    @display{label: "Is Person"}
     boolean isPerson?;
+    @display{label: "Category"}
     RecordRef category?;
+    @display{label: "Address Book List"}
     CustomerAddressbook[] addressbookList?;
+    @display{label: "Currency List"}
     CustomerCurrency[] currencyList?;
 };
 
@@ -182,14 +243,19 @@ public type Subsidiary record {
 
 # Netsuite Currency type record
 #
-# + internalId - Internal Id of the currency record  
+# + internalId - Internal ID of the currency record  
 # + name - Name of the record  
 # + symbol - Symbol of the record   
 # + exchangeRate - The exchange rate of the currency
+@display{label: "Currency"}
 public type Currency record {
+    @display{label: "Internal ID"}
     string internalId;
+    @display{label: "Currency Name"}
     string name?;
+    @display{label: "Symbol"}
     string symbol?;
+    @display{label: "Exchange Rate"}
     decimal exchangeRate?;
     *CurrencyCommon;
 };
@@ -199,9 +265,13 @@ public type Currency record {
 # + name - Name of the record
 # + symbol - Symbol of the record 
 # + exchangeRate - The exchange rate of the currency
+@display{label: "New Currency"}
 public type NewCurrency record {
+    @display{label: "Currency Name"}
     string name;
+    @display{label: "Symbol"}
     string symbol;
+    @display{label: "Exchange Rate"}
     decimal exchangeRate;
     *CurrencyCommon;
 };
@@ -213,9 +283,13 @@ public type NewCurrency record {
 # + isInactive - Shows whether the currency type is active or not 
 # + isBaseCurrency - Shows whether the currency type is a NetSuite base currency or not  
 type CurrencyCommon record {
+    @display{label: "Display Symbol"}
     string displaySymbol?;
+    @display{label: "Precision Symbol"}
     string currencyPrecision?;
+    @display{label: "Is Inactive"}
     boolean isInactive?;
+    @display{label: "Is Base Currency"}
     boolean isBaseCurrency?;
 };
 

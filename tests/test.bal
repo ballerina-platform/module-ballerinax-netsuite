@@ -106,7 +106,7 @@ function testAddContactRecordOperation() {
         log:printInfo(output.toString());
         contactId = <@untainted>output.internalId;
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -174,7 +174,7 @@ function testAddNewCustomerRecord() {
         log:printInfo(output.toString());
         customerId = <@untainted>output.internalId;
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 
 }
@@ -194,7 +194,7 @@ function testAddCurrencyRecord() {
         log:printInfo(output.toString());
         currencyId = <@untainted>output.internalId;
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -228,7 +228,7 @@ function testAddInvoiceRecord() {
         log:printInfo(output.toString());
         invoiceId = <@untainted>output.internalId;
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -275,7 +275,7 @@ function testAddSalesOrderOperation() {
         log:printInfo(output.toString());
         salesOrderId = <@untainted>output.internalId;
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -296,7 +296,7 @@ function testAddClassificationRecord() {
         log:printInfo(output.toString());
         classificationId = <@untainted>output.internalId;
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -318,7 +318,7 @@ function testAddAccountRecord() {
         log:printInfo(output.toString());
        customerAccountId = <@untainted>output.internalId;
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -410,7 +410,7 @@ function testSalesOrderUpdateOperation() {
         log:printInfo(output.toString());
         salesOrderId = <@untainted>output.internalId;
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -425,7 +425,7 @@ function testUpdateClassificationRecord() {
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -433,14 +433,14 @@ function testUpdateClassificationRecord() {
 function testUpdateAccountRecord() {
     log:printInfo("testUpdateAccountRecord");
     Account account = {
-        acctName: "Ballerina test account_updated",
+        acctName: "Ballerina test account updated",
         internalId: customerAccountId
     };
     RecordUpdateResponse|error output = netsuiteClient->updateAccountRecord(account);
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -455,7 +455,7 @@ function testUpdateInvoiceRecord() {
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -470,7 +470,7 @@ function testUpdateContactRecord() {
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
     } else {
-        test:assertFail(output.message());
+        test:assertFail(output.toString());
     }
 }
 
@@ -494,7 +494,7 @@ function testCustomerSearchOperation() {
         });
         log:printInfo("Total count of records : " +  index.toString());        
     } else {
-        test:assertFail(msg = output.message());
+        test:assertFail(msg = output.toString());
     }
 }
 
@@ -516,7 +516,7 @@ function testAccountSearchOperation() {
         });
         log:printInfo("Total count of records : " +  index.toString());     
     } else {
-        test:assertFail(msg = output.message());
+        test:assertFail(msg = output.toString());
     }
 }
 
@@ -538,7 +538,7 @@ function testContactSearchOperation() {
         });
         log:printInfo("Total count of records : " +  index.toString());     
     } else {
-        test:assertFail(msg = output.message());
+        test:assertFail(msg = output.toString());
     }
 }
 
@@ -578,7 +578,7 @@ function testTransactionSearchOperation() {
         });
         log:printInfo("Total count of records : " +  index.toString());     
     } else {
-        test:assertFail(msg = output.message());
+        test:assertFail(msg = output.toString());
     }
 }
 
@@ -695,7 +695,7 @@ function testGetAllCurrencyRecords() {
     if (output is Currency[]) {
         log:printInfo("Number of records found: " + output.length().toString());
     } else {
-        test:assertFalse(true, output.message());
+        test:assertFalse(true, output.toString());
     }
 }
 
@@ -706,7 +706,7 @@ function testGetServerTime() {
     if (output is string) {
         log:printInfo(output.toString());
     } else {
-        test:assertFalse(true, output.message());
+        test:assertFalse(true, output.toString());
     }
 }
 
@@ -719,7 +719,7 @@ function testCustomerRecordGetOperation() {
     };
     Customer|error output = netsuiteClient->getCustomerRecord(recordDetail);
     if (output is error) {
-        test:assertFalse(true, output.message());
+        test:assertFalse(true, output.toString());
     } else {
        log:printInfo(output.toString()); 
     }
@@ -734,7 +734,7 @@ function testCurrencyRecordGetOperation() {
     };
     Currency|error output = netsuiteClient->getCurrencyRecord(recordDetail);
     if (output is error) {
-        test:assertFalse(true, output.message());
+        test:assertFalse(true, output.toString());
     } else {
        log:printInfo(output.toString()); 
     }
@@ -749,7 +749,7 @@ function testGetClassificationRecordOperation() {
     };
     Classification|error output = netsuiteClient->getClassificationRecord(recordDetail);
     if (output is error) {
-        test:assertFalse(true, output.message());
+        test:assertFalse(true, output.toString());
     } else {
         log:printInfo(output.toString());  
     }
@@ -764,7 +764,7 @@ function testInvoiceRecordGetOperation() {
     };
     Invoice|error output = netsuiteClient->getInvoiceRecord(recordDetail);
     if (output is error) {
-        test:assertFalse(true, output.message());
+        test:assertFalse(true, output.toString());
     } else {
        log:printInfo(output.toString()); 
     }
@@ -779,7 +779,7 @@ function testSalesOrderGetOperation() {
     };
     SalesOrder|error output = netsuiteClient->getSalesOrderRecord(recordDetail);
     if (output is error) {
-        test:assertFalse(true, output.message());
+        test:assertFalse(true, output.toString());
     } else {
        log:printInfo(output.toString()); 
     }
@@ -794,7 +794,7 @@ function testContactGetOperation() {
     };
     Contact|error output = netsuiteClient->getContactRecord(recordDetail);
     if (output is error) {
-        test:assertFalse(true, output.message());
+        test:assertFalse(true, output.toString());
     } else {
        log:printInfo(output.toString()); 
     }
@@ -809,7 +809,7 @@ function testAccountGetOperation() {
     };
     Account|error output = netsuiteClient->getAccountRecord(recordDetail);
     if (output is error) {
-        test:assertFalse(true, output.message());
+        test:assertFalse(true, output.toString());
     } else {
        log:printInfo(output.toString()); 
     }

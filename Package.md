@@ -36,8 +36,7 @@ and search operations to perform business processing on NetSuite records and to 
 3. If you have Client ID, Client Secret from your administrator, Obtain the below credentials by following the token based authorization in the [NetSuite documentation](https://system.na0.netsuite.com/app/help/helpcenter.nl?fid=book_1559132836.html&vid=_BLm3ruuApc_9HXr&chrole=17&ck=9Ie2K7uuApI_9PHO&cktime=175797&promocode=&promocodeaction=overwrite&sj=7bfNB5rzdVQdIKGhDJFE6knJf%3B1590725099%3B165665000). 
     * Access Token
     * Access Token Secret
-4. Obtain the SuiteTalk Base URL, which contains the account ID under the company URLs (Setup->Company->Company
-    Information).
+4. Obtain the SuiteTalk Base URL for webserver, which contains the account ID under the company URLs (Setup->Company->Company Information->Company URLs).
 
         E.g:  https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
 
@@ -56,7 +55,7 @@ public function main() returns error? {
         consumerSecret: "<consumerSecret>",
         token: "<token>",
         tokenSecret: "<tokenSecret>",
-        baseURL: "<webServiceURL>/services/NetSuitePort_2020_2"
+        baseURL: "<webServiceURL>"
     };
     netsuite:Client netsuiteClient = check new(nsConfig);
 ```
