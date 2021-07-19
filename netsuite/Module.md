@@ -10,10 +10,9 @@ and search operations to perform business processing on NetSuite records and to 
 
 This module supports Ballerina SL Beta 2 version.
 
-## Obtaining tokens
+## Configuring connector
 ### Prerequisites
-1. Download and install [Ballerina](https://ballerinalang.org/downloads/).
-2. NetSuite Account
+1.A NetSuite account
 
 ### Obtaining tokens
 
