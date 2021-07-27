@@ -549,8 +549,8 @@ function testTransactionSearchOperation() {
         fieldName: "amount",
         searchType: SEARCH_DOUBLE_FIELD,
         operator: "between",
-        value1: "100000",
-        value2: "2000000"
+        value1: "150000",
+        value2: "200000"
     };
 
     SearchElement searchRecord3 = {
@@ -569,7 +569,7 @@ function testTransactionSearchOperation() {
         value1 : "2021-01-23T10:20:15",
         value2 : "2021-03-23T10:20:15"
     };
-    SearchElement[] searchElements = [searchRecord2];
+    SearchElement[] searchElements = [searchRecord1];
     var output = netsuiteClient->searchTransactionRecords(searchElements);
      if (output is stream<RecordRef, error>) {
         int index = 0;
