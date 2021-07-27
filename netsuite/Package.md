@@ -1,15 +1,17 @@
 Connects to Oracle NetSuite from Ballerina
 
-#### Compatibility
-|                               | Version                              |
-|-------------------------------|--------------------------------------|
-| Ballerina Language Version    | **Swan Lake Beta 2**                 |
-| API Version                   | **SOAP 1.1**                         |
-| WSDL version                  | **2020.2.0**                         |
-
-### Package Overview
+## Package Overview
 The `ballerinax/netsuite` is a [Ballerina Swan Lake Beta 2](https://ballerina.io/) connector for NetSuite.
-This package provides the capability to easily access NetSuite.
+This package provides the capability to access NetSuite and manipulate NetSuite records
+
+### Compatibility
+|                               | Version                   |
+|-------------------------------|---------------------------|
+| Ballerina Language            | Swan Lake Beta 2          |
+| SOAP API                      | SOAP 1.1                  |
+| WSDL                          | 2020.2.0                  |
+
+
 ### Report Issues
 To report bugs, request new features, start new discussions, view project boards, etc., go to the [Ballerina connector repository](https://github.com/ballerina-platform/module-ballerinax-netsuite)
 ### Useful Links

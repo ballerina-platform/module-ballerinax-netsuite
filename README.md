@@ -11,7 +11,7 @@ Ballerina NetSuite Connector
 The NetSuite connector can execute CRUD (create, read, update, delete) and search operations to perform business processing on NetSuite records and to navigate dynamically between records.
  
 For more information, go to the module(s).
-- [ballerinax/netsuite](https://github.com/ballerina-platform/module-ballerinax-netsuite)
+- [netsuite](netsuite/Module.md)
  
 ## Building from the Source
 ### Setting Up the Prerequisites
@@ -24,7 +24,7 @@ For more information, go to the module(s).
        > **Note:** Set the JAVA_HOME environment variable to the path name of the directory into which you installed
        JDK.
  
-2. Download and install [Ballerina](https://ballerina.io/)
+2. Download and install [Ballerina Swan Lake Beta2](https://ballerina.io/)
  
  
 ### Building the Source

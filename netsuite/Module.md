@@ -1,21 +1,15 @@
-# Ballerina NetSuite Connector
-Connects to Oracle NetSuite from Ballerina
-
-# Overview
-
+## Overview
 This module allows you to access the NetSuite's SuiteTalk REST Web services API though Ballerina. NetSuite is used for 
 Enterprise Resource Planning (ERP) and to manage inventory, track their financials, host e-commerce stores, and maintain 
 Customer Relationship Management (CRM) systems. The NetSuite connector can execute CRUD (create, read, update, delete) 
 and search operations to perform business processing on NetSuite records and to navigate dynamically between records.
 
-This module supports Ballerina SL Beta 2 version.
+This module supports Ballerina version.
 
-## Configuring connector
-### Prerequisites
-1.A NetSuite account
-
-### Obtaining tokens
-
+## Prerequisites
+Before using this connector in your Ballerina application, complete the following:
+* A NetSuite account
+* Obtaining tokens
 1. Go to [NetSuite](https://www.netsuite.com) and login to your account.
 2. If you have NetSuite Permission to Create Integration APP, The following steps may be helpful or else go to step 03.
     1. Enable the SuiteTalk Web service features of the account (Setup->Company->Enable Features).
@@ -31,13 +25,17 @@ This module supports Ballerina SL Beta 2 version.
     Information).
 
         E.g:  https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
+* Configure the connector with obtained tokens
 
 
-## Quickstart(s)
-1. Create a Ballerina file and import the following Netsuite module and the others. 
+## Quickstart
+To use the NetSuite connector in your Ballerina application, update the .bal file as follows:
+### Step1: Import the module
+* Create a Ballerina file and import the following Netsuite module and the others. 
 ```ballerina
 import ballerinax/netsuite;
 ```
+### Step2: Provide Client configuration
 2. Create a NetSuite Client by providing credentials. Initialize the connector by giving authentication details in the HTTP client config, which has built-in support for Token Based Authentication(TBA). NetSuite uses TBA to authenticate and authorize requests. The NetSuite connector can be initialized by the HTTP client config using the client ID, client secret, access token and access token secret. You may use Ballerina [Configuration variable](https://ballerina.io/learn/by-example/configurable.html) to store your credentials.
 ```ballerina
 public function main() returns error? {
@@ -49,9 +47,12 @@ public function main() returns error? {
         tokenSecret: "<tokenSecret>",
         baseURL: "<webServiceURL>"
     };
+```
+### Step3: Client initialization
+```ballerina
     netsuite:Client netsuiteClient = check new(nsConfig);
 ```
-3. Use remote functions of the connector to create, read, update, and delete records in NetSuite.
+### Step4: Use remote functions of the connector to create, read, update, and delete records in NetSuite.
 ```ballerina
     netsuite:RecordInputRef currency = {
         internalId: "1",
@@ -70,9 +71,9 @@ public function main() returns error? {
     }
 }
 ```
-4. Open an terminal and change directory to where your file is saved and use `bal run <YOUR_BALLERINA_FILE_NAME>.bal` command to run the ballerina file.
 
-## Snippets
+## Quick reference 
+Code snippets of some frequently used functions: 
 
 * Add a new contact
 ```ballerina
@@ -167,4 +168,4 @@ public function main() returns error? {
         log:printError(output.toString());
     }
 ```
-**More samples are available [here](https://github.com/ballerina-platform/module-ballerinax-netsuite/tree/master/netsuite/samples).**
+**[You can find a list of samples here](https://github.com/ballerina-platform/module-ballerinax-netsuite/tree/master/netsuite/samples).**
