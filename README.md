@@ -6,7 +6,7 @@ Ballerina NetSuite Connector
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
- Oracle NetSuite is used for Enterprise Resource Planning (ERP) and to manage inventory, track their financial, host e-commerce stores, and maintain Customer Relationship Management (CRM) systems.This module allows you to access the NetSuite's SuiteTalk SOAP Web services API though Ballerina. 
+Oracle NetSuite is used for Enterprise Resource Planning (ERP) and to manage inventory, track their financial, host e-commerce stores, and maintain Customer Relationship Management (CRM) systems.This module allows you to access the NetSuite's SuiteTalk SOAP Web services API though Ballerina. 
 
 The NetSuite connector can execute CRUD (create, read, update, delete) and search operations to perform business processing on NetSuite records and to navigate dynamically between records.
  
@@ -31,11 +31,11 @@ For more information, go to the module(s).
  
 Execute the commands below to build from the source.
  
-1. To build the package:
+* To build the package:
    ```   
    bal build -c
    ```
-2. To run the without tests:
+* To build the package the without tests:
    ```
    bal build -c --skip-tests
    ```

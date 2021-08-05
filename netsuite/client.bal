@@ -16,23 +16,33 @@
 
 import ballerina/http;
 
-# HTTP Client for NetSuite SOAP web service
+# NetSuite's [SuiteTalk SOAP API](https://www.netsuite.com/portal/developers/resources/suitetalk-documentation.shtml) provides 
+# capability to access NetSuite operations related different kind of NetSuite records such as Account, Client, Transactions, 
+# Invoice, Classifications etc.
 #
 # + basicClient - NetSuite HTTP Client
 @display{label: "NetSuite Client", iconPath: "logo.svg"} 
-public client class Client {
-    public http:Client basicClient;
-    private NetSuiteConfiguration config;
+public isolated client class Client {
+    final http:Client basicClient;
+    final readonly & NetSuiteConfiguration config;
 
+    # Gets invoked to initialize the `connector`.
+    # The connector initialization requires setting the API credentials. 
+    # This connector supports NetSuite Token Based Authentication. 
+    # Follow [this guide](https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_N3445710.html)
+    # to Obtain token for NetSuite connector configuration.
+    #
+    # + config - NetSuite connection configuration
+    # + return - `http:Error` in case of failure to initialize or `null` if successfully initialized 
     public isolated function init(NetSuiteConfiguration config)returns error? {
-        self.config = config;
+        self.config = config.cloneReadOnly();
         self.basicClient = check new (config.baseURL + NETSUITE_ENDPOINT, {timeout: 120});
     }
 
     # Creates a record instance in NetSuite according to the given detail
     #
     # + customer - Details of NetSuite record instance creation
-    # + return - If success returns a RecordAddResponse type record otherwise the relevant error
+    # + return - RecordAddResponse type record or else the relevant error
     @display{label: "Add New Customer"}
     isolated remote function addNewCustomer(@display{label: "Customer"} NewCustomer customer) returns @tainted 
                                             @display{label: "Response"} RecordAddResponse|error{
@@ -44,7 +54,7 @@ public client class Client {
     # Creates a record instance in NetSuite according to the given detail
     #
     # + contact - Details of NetSuite record instance creation
-    # + return - If success returns a RecordAddResponse type record otherwise the relevant error
+    # + return - RecordAddResponse type record or else the relevant error
     @display{label: "Add New Contact"}
     isolated remote function addNewContact(@display{label: "Contact"} NewContact contact) returns @tainted 
                                            @display{label: "Response"} RecordAddResponse|error{
@@ -56,7 +66,7 @@ public client class Client {
     # Creates a record instance in NetSuite according to the given detail
     #
     # + invoice - Invoice type record with detail
-    # + return - If success returns a RecordAddResponse type record otherwise the relevant error
+    # + return - RecordAddResponse type record otherwise the relevant error
     @display{label: "Add New Invoice"}  
     isolated remote function addNewInvoice(@display{label: "Invoice"} NewInvoice invoice) returns @tainted 
                                            @display{label: "Response"} RecordAddResponse|error{
@@ -68,7 +78,7 @@ public client class Client {
     # Creates a record instance in NetSuite according to the given detail
     #
     # + currency - Currency type record with detail
-    # + return - If success returns a RecordAddResponse type record otherwise the relevant error
+    # + return - RecordAddResponse type record otherwise the relevant error
     @display{label: "Add New Currency Type"} 
     isolated remote function addNewCurrency(@display{label: "Currency"} NewCurrency currency) returns @tainted
                                             @display{label: "Response"} RecordAddResponse|error{
@@ -80,7 +90,7 @@ public client class Client {
     # Creates a record instance in NetSuite according to the given detail
     #
     # + salesOrder - SalesOrder type record with detail
-    # + return - If success returns a RecordAddResponse type record otherwise the relevant error
+    # + return - RecordAddResponse type record otherwise the relevant error
     @display{label: "Add New Sales Order"} 
     isolated remote function addNewSalesOrder(@display{label: "Sales Order"} NewSalesOrder salesOrder) returns @tainted
                                               @display{label: "Response"} RecordAddResponse|error{
@@ -92,7 +102,7 @@ public client class Client {
     # Creates a record instance in NetSuite according to the given detail
     #
     # + classification - Classification type record with detail
-    # + return - If success returns a RecordAddResponse type record otherwise the relevant error
+    # + return - RecordAddResponse type record otherwise the relevant error
     @display{label: "Add New Classification"}
     isolated remote function addNewClassification(@display{label: "Classification"} NewClassification classification) 
                                                   returns @tainted @display{label: "Response"} RecordAddResponse|error {
@@ -104,7 +114,7 @@ public client class Client {
     # Creates a record instance in NetSuite according to the given detail
     #
     # + account - Account type record with detail
-    # + return - If success returns a RecordAddResponse type record otherwise the relevant error
+    # + return - RecordAddResponse type record otherwise the relevant error
     @display{label: "Add New Account"}
     isolated remote function addNewAccount(@display{label: "Account"} NewAccount account) returns @tainted
                                            @display{label: "Response"} RecordAddResponse|error {
@@ -116,7 +126,7 @@ public client class Client {
     # Deletes a record instance from NetSuite according to the given detail if they are valid.
     #
     # + info - Details of NetSuite record instance to be deleted
-    # + return - If success returns a RecordDeletionResponse type record otherwise the relevant error
+    # + return - RecordDeletionResponse type record otherwise the relevant error
     @display{label: "Delete Record"}
     isolated remote function deleteRecord(@display{label: "Record Detail"} RecordDetail info) returns @tainted
                                           @display{label: "Response"} RecordDeletionResponse|error{
@@ -126,10 +136,10 @@ public client class Client {
         return getDeleteResponse(response); 
     }
     
-    # Updates a NetSuite customer instance by internalId
+    # Updates a NetSuite customer instance by internal ID
     #
-    # + customer - Customer record with details and internalId
-    # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
+    # + customer - Customer record with details and internal ID
+    # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Customer"}   
     isolated remote function updateCustomerRecord(@display{label: "Customer"} Customer customer) returns @tainted
                                                   @display{label: "Response"} RecordUpdateResponse|error {
@@ -138,10 +148,10 @@ public client class Client {
         return getUpdateResponse(response); 
     }
 
-    # Updates a NetSuite contact instance by internalId
+    # Updates a NetSuite contact instance by internal ID
     #
-    # + contact - Contact record with details and internalId
-    # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
+    # + contact - Contact record with details and internal ID
+    # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Contact"} 
     isolated remote function updateContactRecord(@display{label: "Contact"} Contact contact) returns @tainted
                                                  @display{label: "Response"} RecordUpdateResponse|error {
@@ -150,10 +160,10 @@ public client class Client {
         return getUpdateResponse(response); 
     }
     
-    # Updates a NetSuite currency instance by internalId
+    # Updates a NetSuite currency instance by internal ID
     #
-    # + currency - Currency record with details and internalId
-    # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
+    # + currency - Currency record with details and internal ID
+    # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Currency"} 
     isolated remote function updateCurrencyRecord(@display{label: "Currency"} Currency currency) returns @tainted
                                                   @display{label: "Response"} RecordUpdateResponse|error {
@@ -162,10 +172,10 @@ public client class Client {
         return getUpdateResponse(response); 
     }
 
-    # Updates a NetSuite invoice instance by internalId
+    # Updates a NetSuite invoice instance by internal ID
     #
     # + invoice - Invoice record with details and internalId
-    # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error 
+    # + return - RecordUpdateResponse type record otherwise the relevant error 
     @display{label: "Update Invoice"}
     isolated remote function updateInvoiceRecord(@display{label: "Invoice"} Invoice invoice) returns @tainted
                                                  @display{label: "Response"} RecordUpdateResponse|error {
@@ -174,10 +184,10 @@ public client class Client {
         return getUpdateResponse(response); 
     }
 
-    # Updates a NetSuite salesOrder instance by internalId
+    # Updates a NetSuite salesOrder instance by internal ID
     #
     # + salesOrder - SalesOrder record with details and internalId
-    # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
+    # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Sales Order"} 
     isolated remote function updateSalesOrderRecord(@display{label: "Sales Order"} SalesOrder salesOrder) returns 
                                                     @tainted @display{label: "Response"} RecordUpdateResponse|error {
@@ -186,10 +196,10 @@ public client class Client {
         return getUpdateResponse(response); 
     }
 
-    # Updates a NetSuite classification instance by internalId
+    # Updates a NetSuite classification instance by internal ID
     #
     # + classification - Classification record with details and internalId
-    # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
+    # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Classification"} 
     isolated remote function updateClassificationRecord(@display{label: "Classification"} Classification classification) 
                                                         returns @tainted @display{label: "Response"} 
@@ -199,10 +209,10 @@ public client class Client {
         return getUpdateResponse(response); 
     }
 
-    # Updates a NetSuite account instance by internalId
+    # Updates a NetSuite account instance by internal ID
     #
-    # + account - Account record with details and internalId
-    # + return - If success returns a RecordUpdateResponse type record otherwise the relevant error
+    # + account - Account record with details and internal ID
+    # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Account"} 
     isolated remote function updateAccountRecord(@display{label: "Account"} Account account) returns @tainted @display 
                                                 {label: "Response"} RecordUpdateResponse|error {
@@ -211,7 +221,7 @@ public client class Client {
         return getUpdateResponse(response); 
     }
 
-    # Retrieves all currency types instances from NetSuite
+    # Retrieves all currency types instances from NetSuite.
     #
     # + return - If success returns an array of currency records otherwise the relevant error
     @display{label: "Get All Currency Types"} 
@@ -227,10 +237,10 @@ public client class Client {
     }
 
     # Retrieves NetSuite client instances from NetSuite according to the given detail 
-    # if they are valid
+    # if they are valid.
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
-    # + return - If success returns a json otherwise the relevant error
+    # + return - json otherwise the relevant error
     @display{label: "Search Customers"} 
     isolated remote function searchCustomerRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                   returns @tainted @display{label: "Response"} stream<Customer, error>|error {
@@ -240,10 +250,10 @@ public client class Client {
     }
 
     # Retrieves NetSuite transaction instances from NetSuite according to the given detail 
-    # if they are valid
+    # if they are valid.
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
-    # + return - If success returns a json otherwise the relevant error
+    # + return - json otherwise the relevant error
     @display{label: "Search Transactions"}
     isolated remote function searchTransactionRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                      returns @tainted @display{label: "Response"} stream<RecordRef, 
@@ -253,10 +263,10 @@ public client class Client {
         return getTransactionSearchResult(response,self.basicClient, self.config);
     }
 
-    # Retrieves NetSuite account record instances from NetSuite according to the given detail 
+    # Retrieves NetSuite account record instances from NetSuite according to the given detail.
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
-    # + return - If success returns a account stream otherwise the relevant error
+    # + return - account stream otherwise the relevant error
     @display{label: "Search Accounts"}
     isolated remote function searchAccountRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                  returns @tainted @display{label: "Response"} stream<Account, 
@@ -269,7 +279,7 @@ public client class Client {
     # Retrieves NetSuite contact record instances from NetSuite according to the given detail
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
-    # + return - If success returns a contact stream otherwise the relevant error
+    # + return - contact stream otherwise the relevant error
     @display{label: "Search Contacts"}
     isolated remote function searchContactRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                  returns @tainted @display{label: "Response"} stream<Contact, 
@@ -279,10 +289,10 @@ public client class Client {
         return getContactsSearchResult(response, self.basicClient, self.config);
     }
 
-    # Gets a customer record from Netsuite by using internal ID
+    # Gets a customer record from Netsuite by using internal ID.
     #
     # + recordInfo - Ballerina record for Netsuite record information
-    # + return - If success returns a Customer type record otherwise the relevant error
+    # + return - Customer type record otherwise the relevant error
     @display{label: "Get Customer"}
     isolated remote function getCustomerRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                @tainted @display{label: "Response"} Customer|error {
@@ -292,10 +302,10 @@ public client class Client {
         return getCustomerResult(response);
     }
 
-    # Gets a contact record from Netsuite by using internal ID
+    # Gets a contact record from Netsuite by using internal ID.
     #
     # + recordInfo - Ballerina record for Netsuite record information
-    # + return - If success returns a Contact type record otherwise the relevant error
+    # + return - Contact type record otherwise the relevant error
     @display{label: "Get Contact"}  
     isolated remote function getContactRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                               @tainted @display{label: "Response"} Contact|error {
@@ -305,10 +315,10 @@ public client class Client {
         return getContactResult(response);
     }
 
-    # Gets a currency record from Netsuite by using internal ID
+    # Gets a currency record from Netsuite by using internal ID.
     #
     # + recordInfo - Ballerina record for Netsuite record information
-    # + return - If success returns a Currency type record otherwise the relevant error
+    # + return - Currency type record otherwise the relevant error
     @display{label: "Get Currency"}
     isolated remote function getCurrencyRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                @tainted @display{label: "Response"} Currency|error {
@@ -318,10 +328,10 @@ public client class Client {
         return getCurrencyResult(response);
     }
 
-    # Gets a currency record from Netsuite by using internal ID
+    # Gets a currency record from Netsuite by using internal ID.
     #
     # + recordInfo - Ballerina record for Netsuite record information
-    # + return - If success returns a Classification type record otherwise the relevant error
+    # + return - Classification type record otherwise the relevant error
     @display{label: "Get Classification"}
     isolated remote function getClassificationRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                      @tainted @display{label: "Response"} Classification|error {
@@ -331,10 +341,10 @@ public client class Client {
         return getClassificationResult(response);
     }
 
-    # Gets a invoice record from Netsuite by using internal Id
+    # Gets a invoice record from Netsuite by using internal ID.
     #
     # + recordInfo - Ballerina record for Netsuite record information
-    # + return - If success returns a invoice type record otherwise the relevant error
+    # + return - invoice type record otherwise the relevant error
     @display{label: "Get Invoice"}
     isolated remote function getInvoiceRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                               @tainted @display{label: "Response"} Invoice|error {
@@ -344,10 +354,10 @@ public client class Client {
         return getInvoiceResult(response);
     }
 
-    # Gets a salesOrder record from Netsuite by using internal ID
+    # Gets a salesOrder record from Netsuite by using internal ID.
     #
     # + recordInfo - Ballerina record for Netsuite record information
-    # + return - If success returns a SalesOrder type record otherwise the relevant error
+    # + return - SalesOrder type record otherwise the relevant error
     @display{label: "Get Sales Order"}
     isolated remote function getSalesOrderRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                  @tainted @display{label: "Response"} SalesOrder|error {
@@ -357,7 +367,7 @@ public client class Client {
         return getSalesOrderResult(response);
     }
 
-    # Gets a account record from Netsuite by using internal Id
+    # Gets a account record from Netsuite by using internal Id.
     #
     # + recordInfo - Ballerina record for Netsuite record information
     # + return - If success returns an account type record otherwise the relevant error
@@ -370,7 +380,7 @@ public client class Client {
         return getAccountResult(response);
     }
 
-    # Returns the NetSuite server time in GMT, regardless of a user's time zone 
+    # Returns the NetSuite server time in GMT, regardless of a user's time zone.
     #
     # + return - If success returns the server time otherwise the relevant error
     @display{label: "Get Netsuite Server Time"} 
@@ -381,7 +391,7 @@ public client class Client {
     }
  }
 
-# Configuration record for NetSuite
+# Configuration record for NetSuite.
 #
 # + accountId - NetSuite Account ID  
 # + consumerSecret - Netsuite Integration application consumer secret
