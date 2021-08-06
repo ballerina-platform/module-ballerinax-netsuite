@@ -6,16 +6,15 @@ Ballerina NetSuite Connector
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
-Oracle NetSuite is used for Enterprise Resource Planning (ERP) and to manage inventory, track their financial, host e-commerce stores, and maintain Customer Relationship Management (CRM) systems.This module allows you to access the NetSuite's SuiteTalk SOAP Web services API though Ballerina. 
+Oracle NetSuite is a cloud business software suite for Enterprise Resource Planning (ERP), managing inventory, tracking financial transactions, hosting e-commerce stores, and maintaining Customer Relationship Management (CRM) systems. This module allows you to access the NetSuite's SuiteTalk SOAP Web services API through Ballerina. 
 
 The NetSuite connector can execute CRUD (create, read, update, delete) and search operations to perform business processing on NetSuite records and to navigate dynamically between records.
  
-For more information, go to the module(s).
-- [netsuite](netsuite/Module.md)
+For more information, see [Ballerina Documentation - ballerinax/netsuite](https://central.ballerina.io/ballerinax/netsuite/latest).
  
 ## Building from the Source
 ### Setting Up the Prerequisites
-1. Download and install Java SE Development Kit (JDK) version 11 (from one of the following locations).
+1. Download and install Java SE Development Kit (JDK) version 11 from one of the following locations.
  
   * [Oracle](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
  
@@ -43,7 +42,7 @@ Execute the commands below to build from the source.
  
 As an open source project, Ballerina welcomes contributions from the community.
  
-For more information, go to the [contribution guidelines](https://github.com/ballerina-platform/ballerina-lang/blob/master/CONTRIBUTING.md).
+For more information, see [contribution guidelines](https://github.com/ballerina-platform/ballerina-lang/blob/master/CONTRIBUTING.md).
  
 ## Code of Conduct
  
@@ -51,6 +50,6 @@ All contributors are encouraged to read the [Ballerina Code of Conduct](https://
  
 ## Useful Links
  
-* Discuss code changes of the Ballerina project in [ballerina-dev@googlegroups.com](mailto:ballerina-dev@googlegroups.com).
+* Discuss code changes of the Ballerina project via [ballerina-dev@googlegroups.com](mailto:ballerina-dev@googlegroups.com).
 * Chat live with us via our [Slack channel](https://ballerina.io/community/slack/).
 * Post all technical questions on Stack Overflow with the [#ballerina](https://stackoverflow.com/questions/tagged/ballerina) tag.

@@ -1,39 +1,37 @@
 ## Overview
 
-NetSuite's [SuiteTalk SOAP API](https://www.netsuite.com/portal/developers/resources/suitetalk-documentation.shtml) provides capability to access NetSuite operations related different kind of NetSuite records
-such as Account, Client, Transactions, Invoice, Classifications etc.
+NetSuite's [SuiteTalk SOAP API](https://www.netsuite.com/portal/developers/resources/suitetalk-documentation.shtml) provides the capability to access NetSuite operations related to different kinds of NetSuite records such as Account, Client, Transactions, Invoice, Classifications etc.
 
 This module supports [NetSuite WSDL 2020.2.0](https://system.netsuite.com/help/helpcenter/en_US/srbrowser/Browser2020_2/schema/record/account.html) version.
 
 ## Prerequisites
 Before using this connector in your Ballerina application, complete the following:
-* A NetSuite account
-* Obtaining tokens
-1. Go to [NetSuite](https://www.netsuite.com) and login to your account.
-2. If you have NetSuite Permission to Create Integration APP, The following steps may be helpful or else go to step 03.
-    1. Enable the SuiteTalk Web service features of the account (Setup->Company->Enable Features).
+* Create a [NetSuite account](https://www.netsuite.com/portal/home.shtml)
+* Obtain tokens tokens
+    1. Go to [NetSuite](https://www.netsuite.com) and sign in to your account.
+    2. If you have NetSuite permission to create an integration application, the following steps may be helpful. If not, proceed to step 3.
+        1. Enable the SuiteTalk Web service features of the account (**Setup->Company->Enable Features**).
     
-    2. Create an integration application (Setup->Integration->New), enable TBA code grant and scope, and obtain the 
-    following credentials: 
+        2. Create an integration application (**Setup->Integration->New**), enable TBA code grant and scope, and obtain the following credentials: 
         * Client ID
-        * Client Secret
-3. If you have Client ID, Client Secret from your administrator, Obtain the below credentials by following the token based authorization in the [NetSuite documentation](https://www.netsuite.com/portal/developers/resources/suitetalk-documentation.shtml). 
-    * Access Token
-    * Access Token Secret
-4. Obtain the SuiteTalk Base URL, which contains the account ID under the company URLs (Setup->Company->Company
-    Information).
+        * Client secret
+    3. If you have client ID, client secret from your administrator, obtain the credentials below by following the token based authorization in the [NetSuite documentation](https://www.netsuite.com/portal/developers/resources/suitetalk-documentation.shtml). 
+        * Access token
+        * Access token Secret
+    4. Obtain the SuitTalk Base URL that contains the account ID under the company URLs (**Setup->Company->Company
+    Information**).
 
-        E.g:  https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
+        e.g., https://<ACCOUNT_ID>.suitetalk.api.netsuite.com
 
 ## Quickstart
 To use the NetSuite connector in your Ballerina application, update the .bal file as follows:
 ### Step 1 - Import connector
-* Create a Ballerina file and import the following Netsuite module and the others. 
+* Create a Ballerina file and import the following Netsuite module.
 ```ballerina
 import ballerinax/netsuite;
 ```
 ### Step 2 - Create a new connector instance
-2. Create a NetSuite Client by providing credentials. Initialize the connector by giving authentication details in the HTTP client config, which has built-in support for Token Based Authentication(TBA). NetSuite uses TBA to authenticate and authorize requests. The NetSuite connector can be initialized by the HTTP client config using the client ID, client secret, access token and access token secret. You may use Ballerina [Configuration variable](https://ballerina.io/learn/by-example/configurable.html) to store your credentials.
+* Create a NetSuite client by providing credentials. Initialize the connector by giving authentication details in the HTTP client configuration, which has built-in support for Token Based Authentication(TBA). The NetSuite connector can be initialized by the HTTP client configuration using the client ID, client secret, access token, and the access token secret. You can use the Ballerina [Configuration variable](https://ballerina.io/learn/by-example/configurable.html) to store your credentials.
 ```ballerina
 public function main() returns error? {
     netsuite:NetsuiteConfiguration nsConfig = {
@@ -48,7 +46,7 @@ public function main() returns error? {
     netsuite:Client netsuiteClient = check new(nsConfig);
 ```
 ### Step 3 - Invoke connector operation
-1. Invoke connector operation using the client
+1. Invoke the connector operation using the client.
 ```ballerina
     netsuite:RecordInputRef currency = {
         internalId: "1",
