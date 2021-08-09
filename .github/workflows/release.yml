@@ -6,13 +6,11 @@ on:
 
 jobs:
     build:
-
         runs-on: ubuntu-latest
-
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: ballerina-platform/ballerina-action/@master
+              uses: ballerina-platform/ballerina-action@slbeta2
               with:
                   args:
                       build -c ./netsuite
@@ -24,9 +22,10 @@ jobs:
                   NS_CLIENT_SECRET: ${{ secrets.CONSUMERSECRET }}
                   NS_ACCOUNTID: ${{secrets.ACCOUNTID}}
             - name: Ballerina Push
-              uses: ballerina-platform/ballerina-action/@master
+              uses: ballerina-platform/ballerina-action@slbeta2
               with:
                   args:
                       push
               env:
+                  WORKING_DIR: ./netsuite
                   BALLERINA_CENTRAL_ACCESS_TOKEN: ${{ secrets.BALLERINA_CENTRAL_ACCESS_TOKEN }}
