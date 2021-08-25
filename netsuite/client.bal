@@ -243,7 +243,7 @@ public isolated client class Client {
     # + return - json otherwise the relevant error
     @display{label: "Search Customers"} 
     isolated remote function searchCustomerRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
-                                                  returns @tainted @display{label: "Response"} stream<Customer, error>|error {
+                                                  returns @tainted @display{label: "Response"} stream<Customer, error?>|error {
         xml payload = check buildCustomerSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getCustomerSearchResult(response,self.basicClient, self.config);
@@ -257,7 +257,7 @@ public isolated client class Client {
     @display{label: "Search Transactions"}
     isolated remote function searchTransactionRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                      returns @tainted @display{label: "Response"} stream<RecordRef, 
-                                                     error>|error {
+                                                     error?>|error {
         xml payload = check buildTransactionSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getTransactionSearchResult(response,self.basicClient, self.config);
@@ -270,7 +270,7 @@ public isolated client class Client {
     @display{label: "Search Accounts"}
     isolated remote function searchAccountRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                  returns @tainted @display{label: "Response"} stream<Account, 
-                                                 error>|error {
+                                                 error?>|error {
         xml payload = check buildAccountSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getAccountSearchResult(response, self.basicClient, self.config);
@@ -283,7 +283,7 @@ public isolated client class Client {
     @display{label: "Search Contacts"}
     isolated remote function searchContactRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                  returns @tainted @display{label: "Response"} stream<Contact, 
-                                                 error>|error {
+                                                 error?>|error {
         xml payload = check BuildContactSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getContactsSearchResult(response, self.basicClient, self.config);
