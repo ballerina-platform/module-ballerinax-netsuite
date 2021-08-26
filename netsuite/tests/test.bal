@@ -487,7 +487,7 @@ function testCustomerSearchOperation() {
     SearchElement[] searchData = [];
     searchData.push(searchRecord);
     var output = netsuiteClient->searchCustomerRecords(searchData);
-    if (output is stream<Customer, error>) {
+    if (output is stream<Customer, error?>) {
         int index = 0;
         error? e = output.forEach(function (Customer queryResult) {
             index = index + 1;
@@ -509,7 +509,7 @@ function testAccountSearchOperation() {
     };
     SearchElement[] searchElements = [searchRecord];
     var output = netsuiteClient->searchAccountRecords(searchElements);
-     if (output is stream<Account, error>) {
+    if (output is stream<Account, error?>) {
         int index = 0;
         error? e = output.forEach(function (Account account) {
             index = index + 1;
@@ -531,7 +531,7 @@ function testContactSearchOperation() {
     };
     SearchElement[] searchElements = [searchRecord];
     var output = netsuiteClient->searchContactRecords(searchElements);
-     if (output is stream<Contact, error>) {
+    if (output is stream<Contact, error?>) {
         int index = 0;
         error? e = output.forEach(function (Contact contact) {
             index = index + 1;
@@ -571,7 +571,7 @@ function testTransactionSearchOperation() {
     };
     SearchElement[] searchElements = [searchRecord1];
     var output = netsuiteClient->searchTransactionRecords(searchElements);
-     if (output is stream<RecordRef, error>) {
+    if (output is stream<RecordRef, error?>) {
         int index = 0;
         error? e = output.forEach(function (RecordRef recordRef) {
             index = index + 1;

@@ -210,10 +210,10 @@ isolated function getContactsNextPageResult(http:Response response) returns @tai
     return {contacts :check getContactsFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getContactsSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Contact, error>|error {
+isolated function getContactsSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Contact, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     ContactStream objectInstance = check new (httpClient,resultStatus,config);
-    stream<Contact, error> finalStream = new (objectInstance);
+    stream<Contact, error?> finalStream = new (objectInstance);
     return finalStream;
 }
 

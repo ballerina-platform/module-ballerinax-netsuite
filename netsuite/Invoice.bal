@@ -173,9 +173,9 @@ isolated function getTransactionsNextPageResult(http:Response response) returns 
     return {recordRefs :check getTransactionsFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getTransactionSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<RecordRef, error>|error {
+isolated function getTransactionSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<RecordRef, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     TransactionStream objectInstance = check new (httpClient, resultStatus, config);
-    stream<RecordRef, error> finalStream = new (objectInstance);
+    stream<RecordRef, error?> finalStream = new (objectInstance);
     return finalStream;
 }
