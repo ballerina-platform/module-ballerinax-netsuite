@@ -230,24 +230,47 @@ public client class Client {
     # if they are valid
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
-    # + return - If success returns a json otherwise the relevant error
+    # + return - If success returns a ballerina stream of customer records otherwise the relevant error
     @display{label: "Search Customers"} 
     isolated remote function searchCustomerRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
-                                                  returns @tainted @display{label: "Response"} stream<Customer, error>|error {
+                                                  returns @tainted @display{label: "Response"} 
+                                                  stream<Customer, error?>|error {
         xml payload = check buildCustomerSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getCustomerSearchResult(response,self.basicClient, self.config);
+    }
+
+    # Perform a saved search search operation using the saved search ID.
+    #
+    # + savedSearchId - Saved search ID
+    # + advancedSearchType - Type of the saved search from the list given here: [CalendarEventSearchAdvanced,
+    # PhoneCallSearchAdvanced, FileSearchAdvanced, FolderSearchAdvanced, NoteSearchAdvanced, MessageSearchAdvanced, 
+    # BinSearchAdvanced, ClassificationSearchAdvanced, DepartmentSearchAdvanced, LocationSearchAdvanced,
+    # SalesTaxItemSearchAdvanced, SubsidiarySearchAdvanced, EmployeeSearchAdvanced, CampaignSearchAdvanced,
+    # ContactSearchAdvanced, CustomerSearchAdvanced, PartnerSearchAdvanced, VendorSearchAdvanced, EntityGroupSearchAdvanced,
+    # JobSearchAdvanced, SiteCategorySearchAdvanced, SupportCaseSearchAdvanced, SolutionSearchAdvanced, TopicSearchAdvanced,
+    # IssueSearchAdvanced,CustomRecordSearchAdvanced, TimeBillSearchAdvanced, BudgetSearchAdvanced, AccountSearchAdvanced,
+    # AccountingTransactionSearchAdvanced, OpportunitySearchAdvanced, TransactionSearchAdvanced, TaskSearchAdvanced,
+    # ItemSearchAdvanced, GiftCertificateSearchAdvanced, PromotionCodeSearchAdvanced,]
+    # + return - If success returns a ballerina stream of json type otherwise the relevant error
+    @display{label: "Perform saved search by ID"}
+    isolated remote function performSavedSearchById(@display{label: "Saved Search ID"} string savedSearchId, 
+                                                    @display{label: "Advanced Search type"} string advancedSearchType) 
+                                                    returns @tainted stream<json, error?>|error {
+        xml payload = check buildSavedSearchByIDPayload(self.config, savedSearchId, advancedSearchType);
+        http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
+        return getSavedSearchResult(response,self.basicClient, self.config);
     }
 
     # Retrieves NetSuite transaction instances from NetSuite according to the given detail 
     # if they are valid
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
-    # + return - If success returns a json otherwise the relevant error
+    # + return - If success returns a ballerina stream of transaction records otherwise the relevant error
     @display{label: "Search Transactions"}
     isolated remote function searchTransactionRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                      returns @tainted @display{label: "Response"} stream<RecordRef, 
-                                                     error>|error {
+                                                     error?>|error {
         xml payload = check buildTransactionSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getTransactionSearchResult(response,self.basicClient, self.config);
@@ -256,11 +279,11 @@ public client class Client {
     # Retrieves NetSuite account record instances from NetSuite according to the given detail 
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
-    # + return - If success returns a account stream otherwise the relevant error
+    # + return - If success returns a ballerina stream of account records otherwise the relevant error
     @display{label: "Search Accounts"}
     isolated remote function searchAccountRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                  returns @tainted @display{label: "Response"} stream<Account, 
-                                                 error>|error {
+                                                 error?>|error {
         xml payload = check buildAccountSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getAccountSearchResult(response, self.basicClient, self.config);
@@ -269,11 +292,11 @@ public client class Client {
     # Retrieves NetSuite contact record instances from NetSuite according to the given detail
     #
     # + searchElements - Details of a NetSuite record to be retrieved from NetSuite
-    # + return - If success returns a contact stream otherwise the relevant error
+    # + return - If success returns a ballerina stream of contacts records otherwise the relevant error
     @display{label: "Search Contacts"}
     isolated remote function searchContactRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                  returns @tainted @display{label: "Response"} stream<Contact, 
-                                                 error>|error {
+                                                 error?>|error {
         xml payload = check BuildContactSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getContactsSearchResult(response, self.basicClient, self.config);
@@ -282,7 +305,7 @@ public client class Client {
     # Gets a customer record from Netsuite by using internal ID
     #
     # + recordInfo - Ballerina record for Netsuite record information
-    # + return - If success returns a Customer type record otherwise the relevant error
+    # + return - If success returns a customer type record otherwise the relevant error
     @display{label: "Get Customer"}
     isolated remote function getCustomerRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                @tainted @display{label: "Response"} Customer|error {
@@ -378,6 +401,18 @@ public client class Client {
         xml payload = check buildGetServerTime(self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SERVER_TIME_ACTION, payload);
         return getServerTimeResponse(response);
+    }
+
+    # Retrieve a list of existing saved search IDs on a per-record-type basis
+    #
+    # + searchType - Netsuite saved search types
+    # + return - If success returns the list of saved search references otherwise the relevant error
+    @display{label: "Get saved search IDs by record type"} 
+    isolated remote function getSavedSearchIDs(@display{label: "Record type"} string searchType) returns @tainted @display{label: "Response"} 
+                                               SavedSearchResponse|error {
+        xml payload = check BuildSavedSearchRequestPayload(self.config, searchType);
+        http:Response response = check sendRequest(self.basicClient, GET_SAVED_SEARCH_ACTION, payload);
+        return getSavedSearchIDsResponse(response);
     }
  }
 
