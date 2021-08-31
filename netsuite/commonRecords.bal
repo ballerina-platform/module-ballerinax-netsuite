@@ -45,6 +45,30 @@ public type RecordAddResponse record {
     string warning?;
 };
 
+
+# Netsuite saveSearch list response record
+#
+# + recordRefList - Netsuite record reference list
+# + totalReferences - The total number of records for this search. Depending on the pageSize value, some or all the 
+# records may be returned in this response
+# + status - Boolean for checking submission NetSuite failures
+public type SavedSearchResponse record {
+    boolean status;
+    int totalReferences;
+    SavedSearchReference[] recordRefList;
+};
+
+# Saved search reference
+#
+# + internalId - Internal Id of the saved search record
+# + scriptId - ScriptId of the saved search  
+# + name - Name of the Saved search  
+public type SavedSearchReference record {
+    string internalId;
+    string scriptId;
+    string name;
+};
+
 # Ballerina record for Netsuite record deletion response  
 public type RecordDeletionResponse record {
     *RecordAddResponse;
@@ -78,17 +102,6 @@ public type RecordInfo record {
     string recordType;
     @display{label: "Record Internal ID"}
     string recordInternalId;
-};
-
-# Netsuite saveSearch list response record
-#
-# + recordRefList - Netsuite record reference list
-# + numberOfRecords - Number of records  
-# + isSuccess - Boolean for checking submission NetSuite failures
-public type SavedSearchResponse record {
-    int numberOfRecords?;
-    boolean isSuccess;
-    RecordRef[] recordRefList = [];
 };
 
 # RecordType Connector supports for creation operation for now.  
@@ -132,7 +145,16 @@ public type SearchElement record {
 };
 
 type SearchResultStatus record {
+    *CommonSearchResult;
     xml recordList;
+};
+
+type SavedSearchResult record {
+    *CommonSearchResult;
+    json[] recordList;
+};
+
+type CommonSearchResult record {
     int pageIndex;
     int totalPages;
     string searchId;

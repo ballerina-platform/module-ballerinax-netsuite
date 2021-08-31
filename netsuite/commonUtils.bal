@@ -125,15 +125,16 @@ isolated function buildDeletePayload(RecordDetail recordType, NetSuiteConfigurat
     return getSoapPayload(header, body);
 }
 
-isolated function buildUpdateRecord(ExistingRecordType recordType, RecordCoreType recordCoreType, NetSuiteConfiguration config) 
-                                    returns xml|error {
+isolated function buildUpdateRecord(ExistingRecordType recordType, RecordCoreType recordCoreType, NetSuiteConfiguration 
+                                    config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string elements = check getUpdateOperationElements(recordType, recordCoreType);
     string body = getUpdateXMLBodyWithParentElement(elements);
     return getSoapPayload(header, body);    
 }
 
-isolated function getUpdateOperationElements(ExistingRecordType recordType, RecordCoreType recordCoreType) returns string|error {
+isolated function getUpdateOperationElements(ExistingRecordType recordType, RecordCoreType recordCoreType) returns 
+                                             string|error {
     string subElements = EMPTY_STRING;   
     match recordCoreType {
         CUSTOMER => {
@@ -211,13 +212,13 @@ isolated function buildGetOperationPayload(RecordInfo records, NetSuiteConfigura
     string header = check buildXMLPayloadHeader(config);
     string elements = prepareElementsForGetOperation(records);
     string body = string `<soapenv:Body><urn:get xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${elements}
-    </urn:get></soapenv:Body></soapenv:Envelope>`;
+        </urn:get></soapenv:Body></soapenv:Envelope>`;
     return getSoapPayload(header, body);
 }
 
 isolated function prepareElementsForGetOperation(RecordInfo recordDetail) returns string {
     string elements = string `<urn:baseRef internalId="${recordDetail.recordInternalId}" type="${recordDetail.recordType}"
-    xsi:type="urn1:RecordRef"/>`;
+        xsi:type="urn1:RecordRef"/>`;
     return elements;
 }
 
@@ -231,7 +232,7 @@ isolated function getDeletePayload(RecordDetail recordDetail) returns string{
 
 isolated function getXMLElementForDeletion(RecordDetail recordDetail) returns string {
     return string `<urn:baseRef type="${recordDetail.recordType}" internalId="${recordDetail.recordInternalId}" 
-    xsi:type="urn1:RecordRef"/>`;
+        xsi:type="urn1:RecordRef"/>`;
 }
 
 isolated function getXMLElementForDeletionWithDeleteReason(RecordDetail recordDetail) returns string {
@@ -251,7 +252,7 @@ isolated function buildGetAllPayload(string recordType, NetSuiteConfiguration co
 
 isolated function getXMLBodyForGetAllOperation(string recordType) returns string{
     return string `<soapenv:Body><urn:getAll><record recordType="${recordType}"/></urn:getAll></soapenv:Body>
-    </soapenv:Envelope>`;
+        </soapenv:Envelope>`;
 }
 
 isolated function getXMLBodyForGetServerTime() returns string{
@@ -332,4 +333,15 @@ isolated function extractRecordRefFromXML(xml element) returns RecordRef {
 
 isolated function extractRecordInternalIdFromXMLAttribute(xml element) returns string {
     return let var internalId = element.internalId in internalId is error ? EMPTY_STRING : internalId;
+}
+
+isolated function BuildSavedSearchRequestPayload(NetSuiteConfiguration config, string searchType) returns xml|error {
+    string header = check buildXMLPayloadHeader(config);
+    string body = getXMLBodyForGetSavedSearchIDs(searchType);
+    return getSoapPayload(header, body);
+}
+
+isolated function getXMLBodyForGetSavedSearchIDs(string searchType) returns string{
+    return string `<soapenv:Body><urn:getSavedSearch><record searchType="${searchType}"/></urn:getSavedSearch>
+        </soapenv:Body></soapenv:Envelope>`;
 }
