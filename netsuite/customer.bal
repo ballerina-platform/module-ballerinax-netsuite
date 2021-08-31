@@ -148,7 +148,7 @@ isolated function getCustomerSearchRequestBody(SearchElement[] searchElements) r
     </urn:searchRecord></urn:search></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function buildCustomerSearchPayload(NetSuiteConfiguration config,SearchElement[] searchElement) returns 
+isolated function buildCustomerSearchPayload(NetSuiteConfiguration config, SearchElement[] searchElement) returns 
                                             xml|error {
     string requestHeader = check buildXMLPayloadHeader(config);
     string requestBody = getCustomerSearchRequestBody(searchElement);
@@ -162,7 +162,7 @@ isolated function getCustomersNextPageResult(http:Response response) returns @ta
 
 isolated function getCustomerSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Customer, error>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
-    CustomerStream objectInstance = check new (httpClient,resultStatus,config);
+    CustomerStream objectInstance = check new (httpClient, resultStatus,config);
     stream<Customer, error> finalStream = new (objectInstance);
     return finalStream;
 }

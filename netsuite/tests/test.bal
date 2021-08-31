@@ -487,7 +487,7 @@ function testCustomerSearchOperation() {
     SearchElement[] searchData = [];
     searchData.push(searchRecord);
     var output = netsuiteClient->searchCustomerRecords(searchData);
-    if (output is stream<Customer, error>) {
+    if (output is stream<Customer, error?>) {
         int index = 0;
         error? e = output.forEach(function (Customer queryResult) {
             index = index + 1;
@@ -509,7 +509,7 @@ function testAccountSearchOperation() {
     };
     SearchElement[] searchElements = [searchRecord];
     var output = netsuiteClient->searchAccountRecords(searchElements);
-     if (output is stream<Account, error>) {
+     if (output is stream<Account, error?>) {
         int index = 0;
         error? e = output.forEach(function (Account account) {
             index = index + 1;
@@ -531,7 +531,7 @@ function testContactSearchOperation() {
     };
     SearchElement[] searchElements = [searchRecord];
     var output = netsuiteClient->searchContactRecords(searchElements);
-     if (output is stream<Contact, error>) {
+     if (output is stream<Contact, error?>) {
         int index = 0;
         error? e = output.forEach(function (Contact contact) {
             index = index + 1;
@@ -571,7 +571,7 @@ function testTransactionSearchOperation() {
     };
     SearchElement[] searchElements = [searchRecord1];
     var output = netsuiteClient->searchTransactionRecords(searchElements);
-     if (output is stream<RecordRef, error>) {
+     if (output is stream<RecordRef, error?>) {
         int index = 0;
         error? e = output.forEach(function (RecordRef recordRef) {
             index = index + 1;
@@ -812,5 +812,35 @@ function testAccountGetOperation() {
         test:assertFalse(true, output.toString());
     } else {
        log:printInfo(output.toString()); 
+    }
+}
+
+string savedSearchID = "";
+@test:Config {enable: true}
+function testGetSavedSearchIds() {
+    log:printInfo("testGetSavedSearchIds");
+    SavedSearchResponse|error output = netsuiteClient->getSavedSearchIDs("vendor");
+    if (output is SavedSearchResponse) {
+        savedSearchID = output.recordRefList[0].internalId;
+    } else {
+        test:assertFalse(true, output.toString());
+    }
+}
+
+@test:Config {enable: true, dependsOn: [testGetSavedSearchIds]}
+function testPerformSavedSearchById() {
+    log:printInfo("testPerformSavedSearchById");
+    var output = netsuiteClient->performSavedSearchById(savedSearchID, "VendorSearchAdvanced");
+    if (output is stream<json, error?>) {
+        int index = 0;
+        error? e = output.forEach(function (json queryResult) {
+            index = index + 1;
+            if(index == 1) {
+                log:printInfo(queryResult.toString());
+            }
+        });
+        log:printInfo("Total count of records in SavedSearchResults : " +  index.toString()); 
+    } else {
+         test:assertFalse(true, output.toString());
     }
 }

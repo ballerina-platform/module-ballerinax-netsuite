@@ -14,6 +14,45 @@
 // specific language governing permissions and limitations
 // under the License.
 
+public enum AdvancedSearchTypes {
+    CALENDAR_EVENT_SEARCH_ADVANCED = "CalendarEventSearchAdvanced",
+    TASK_SEARCH_ADVANCED = "TaskSearchAdvanced",
+    PHONE_CALL_SEARCH_ADVANCED = "PhoneCallSearchAdvanced",
+    FILE_SEARCH_ADVANCED = "FileSearchAdvanced",
+    FOLDER_SEARCH_ADVANCED = "FolderSearchAdvanced",
+    NOTE_SEARCH_ADVANCED = "NoteSearchAdvanced",
+    MESSAGE_SEARCH_ADVANCED = "MessageSearchAdvanced",
+    ITEM_SEARCH_ADVANCED = "ItemSearchAdvanced",
+    ACCOUNT_SEARCH_ADVANCED = "AccountSearchAdvanced",
+    BIN_SEARCH_ADVANCED = "BinSearchAdvanced",
+    CLASSIFICATION_SEARCH_ADVANCED = "ClassificationSearchAdvanced",
+    DEPARTMENT_SEARCH_ADVANCED = "DepartmentSearchAdvanced",
+    LOCATION_SEARCH_ADVANCED = "LocationSearchAdvanced",
+    GIFT_CERTIFICATE_SEARCH_ADVANCED = "GiftCertificateSearchAdvanced",
+    SALES_TAX_ITEM_SEARCH_ADVANCED = "SalesTaxItemSearchAdvanced",
+    SUBSIDIARY_SEARCH_ADVANCED = "SubsidiarySearchAdvanced",
+    EMPLOYEE_SEARCH_ADVANCED = "EmployeeSearchAdvanced",
+    CAMPAIGN_SEARCH_ADVANCED = "CampaignSearchAdvanced",
+    PROMOTION_CODE_SEARCH_ADVANCED = "PromotionCodeSearchAdvanced",
+    CONTACT_SEARCH_ADVANCED = "ContactSearchAdvanced",
+    CUSTOMER_SEARCH_ADVANCED = "CustomerSearchAdvanced",
+    PARTNER_SEARCH_ADVANCED = "PartnerSearchAdvanced",
+    VENDOR_SEARCH_ADVANCED = "VendorSearchAdvanced",
+    ENTITY_GROUP_SEARCH_ADVANCED = "EntityGroupSearchAdvanced",
+    JOB_SEARCH_ADVANCED = "JobSearchAdvanced",
+    SITE_CATEGORY_SEARCH_ADVANCED = "SiteCategorySearchAdvanced",
+    SUPPORT_CASE_SEARCH_ADVANCED = "SupportCaseSearchAdvanced",
+    SOLUTION_SEARCH_ADVANCED = "SolutionSearchAdvanced",
+    TOPIC_SEARCH_ADVANCED = "TopicSearchAdvanced",
+    ISSUE_SEARCH_ADVANCED = "IssueSearchAdvanced",
+    CUSTOM_RECORD_SEARCH_ADVANCED = "CustomRecordSearchAdvanced",
+    TIME_BILL_SEARCH_ADVANCED = "TimeBillSearchAdvanced",
+    BUDGET_SEARCH_ADVANCED = "BudgetSearchAdvanced",
+    ACCOUNTING_TRANSACTION_SEARCH_ADVANCED = "AccountingTransactionSearchAdvanced",
+    OPPORTUNITY_SEARCH_ADVANCED = "OpportunitySearchAdvanced",
+    TRANSACTION_SEARCH_ADVANCED = "TransactionSearchAdvanced"
+}
+
 public enum TransactionType {
     TRANS_ASSEMBLY_BUILD = "_assemblyBuild",
     TRANS_ASSEMBLY_UNBUILD = "_assemblyUnbuild",
