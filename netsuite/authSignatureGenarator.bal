@@ -19,7 +19,7 @@ import ballerina/lang.'array;
 import ballerina/uuid;
 import ballerina/regex;
 
-isolated function getNetsuiteSignature(string timeNow, string UUID, NetSuiteConfiguration config) returns string|error {
+isolated function getNetsuiteSignature(string timeNow, string UUID, ConnectionConfig config) returns string|error {
     TokenData tokenData = {
         accountId: config.accountId,
         consumerId: config.consumerId,

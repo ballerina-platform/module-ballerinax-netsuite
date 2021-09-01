@@ -4,7 +4,7 @@ name = "netsuite"
 version = "0.9.6-SNAPSHOT"
 authors = ["Ballerina"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-netsuite"
-keywords = ["NetSuite", "Finance", "Integration"]
+keywords = ["business management/erp", "cost/paid"]
 license = ["Apache-2.0"]
 
 [build-options]

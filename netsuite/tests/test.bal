@@ -25,7 +25,7 @@ configurable string token = os:getEnv("NS_TOKEN");
 configurable string tokenSecret = os:getEnv("NS_TOKEN_SECRET");
 configurable string baseURL = os:getEnv("NS_BASE_URL");
 
-NetSuiteConfiguration config = {
+ConnectionConfig config = {
     accountId: accountId,
     consumerId: consumerId,
     consumerSecret: consumerSecret,
@@ -707,6 +707,37 @@ function testGetServerTime() {
         log:printInfo(output.toString());
     } else {
         test:assertFalse(true, output.toString());
+    }
+}
+
+string savedSearchID = "";
+@test:Config {enable: true}
+function testGetSavedSearchIds() {
+    log:printInfo("testGetSavedSearchIds");
+    SavedSearchResponse|error output = netsuiteClient->getSavedSearchIDs("vendor");
+    if (output is SavedSearchResponse) {
+        savedSearchID = output.recordRefList[0].internalId;
+    } else {
+        test:assertFalse(true, output.toString());
+    }
+}
+
+
+@test:Config {enable: true, dependsOn: [testGetSavedSearchIds]}
+function testPerformSavedSearchById() {
+    log:printInfo("testPerformSavedSearchById");
+    var output = netsuiteClient->performSavedSearchById(savedSearchID, "VendorSearchAdvanced");
+    if (output is stream<json, error?>) {
+        int index = 0;
+        error? e = output.forEach(function (json queryResult) {
+            index = index + 1;
+            if(index == 1) {
+                log:printInfo(queryResult.toString());
+            }
+        });
+        log:printInfo("Total count of records in SavedSearchResults : " +  index.toString()); 
+    } else {
+         test:assertFalse(true, output.toString());
     }
 }
 

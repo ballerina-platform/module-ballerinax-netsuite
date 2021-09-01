@@ -24,9 +24,9 @@ class CustomerStream {
     int totalPages;
     int currentPage;
     string searchId;
-    NetSuiteConfiguration config;
+    ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, NetSuiteConfiguration config) 
+    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.customerEntries = check getCustomersFromSearchResults(resultStatus.recordList);
@@ -67,9 +67,9 @@ class AccountStream {
     int totalPages;
     int currentPage;
     string searchId;
-    NetSuiteConfiguration config;
+    ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, NetSuiteConfiguration config) 
+    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.accountEntries = check getAccountsFromSearchResults(resultStatus.recordList);
@@ -110,9 +110,9 @@ class TransactionStream {
     int totalPages;
     int currentPage;
     string searchId;
-    NetSuiteConfiguration config;
+    ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, NetSuiteConfiguration config) 
+    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.transactionEntries = check getTransactionsFromSearchResults(resultStatus.recordList);
@@ -154,9 +154,9 @@ class ContactStream {
     int totalPages;
     int currentPage;
     string searchId;
-    NetSuiteConfiguration config;
+    ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, NetSuiteConfiguration config) 
+    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.contactEntries = check getTransactionsFromSearchResults(resultStatus.recordList);
@@ -187,5 +187,47 @@ class ContactStream {
         record {|Contact[] contacts; SearchResultStatus status;|} newPage = check getContactsNextPageResult(response);
         self.currentPage=newPage.status.pageIndex;
         return newPage.contacts;
+    }
+}
+
+class SavedSearchStream {
+    private json[] savedSearchRowEntries = [];
+    int index = 0;
+    private final http:Client httpClient;
+    int totalPages;
+    int currentPage;
+    string searchId;
+    ConnectionConfig config;
+
+    isolated function  init(http:Client httpClient, SavedSearchResult resultStatus, ConnectionConfig config) 
+                            returns @tainted error? {
+        self.httpClient = httpClient;
+        self.savedSearchRowEntries = resultStatus.recordList;
+        self.totalPages = resultStatus.totalPages;
+        self.currentPage = resultStatus.pageIndex;
+        self.searchId = resultStatus.searchId;
+        self.config = config;
+    }
+
+    public isolated function next() returns @tainted record {| json value; |}|error? {
+        if(self.index < self.savedSearchRowEntries.length()) {
+            record {| json value; |} singleRecord = {value: self.savedSearchRowEntries[self.index]};
+            self.index += 1;
+            return singleRecord;
+        }else if (self.totalPages != self.currentPage ) {
+            self.index = 0;
+            self.savedSearchRowEntries = check self.fetchNextSavedSearchResults();
+            record {| json value; |} singleRecord = {value: self.savedSearchRowEntries[self.index]};
+            self.index += 1;
+            return singleRecord;
+        }
+    }
+
+    isolated function fetchNextSavedSearchResults() returns @tainted json[]|error {
+        xml payload = check buildSearchMoreWithIdPayload(self.config, self.currentPage + 1, self.searchId);
+        http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
+        record {|json[] savedSearchRows; SavedSearchResult status;|} newPage = check getSavedSearchNextPageResult(response);
+        self.currentPage=newPage.status.pageIndex;
+        return newPage.savedSearchRows;
     }
 }

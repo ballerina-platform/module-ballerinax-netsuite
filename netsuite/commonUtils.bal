@@ -26,7 +26,7 @@ isolated function sendRequest(http:Client basicClient, string action, xml payloa
     return <http:Response>check basicClient->post(EMPTY_STRING, request);
 }
 
-isolated function buildXMLPayloadHeader(NetSuiteConfiguration config) returns string|error {
+isolated function buildXMLPayloadHeader(ConnectionConfig config) returns string|error {
     time:Utc timeNow = time:utcNow();
     var [timeInUTC, _] = timeNow;
     string timeToSend = timeInUTC.toString();
@@ -110,7 +110,7 @@ isolated function getUpdateXMLBodyWithParentElement(string subElements) returns 
     </soapenv:Envelope>`;
 }
 
-isolated function buildAddRecord(NewRecordType recordType, RecordCoreType recordCoreType, NetSuiteConfiguration config) 
+isolated function buildAddRecord(NewRecordType recordType, RecordCoreType recordCoreType, ConnectionConfig config) 
                                 returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string subElements = check getAddOperationElements(recordType, recordCoreType);
@@ -118,22 +118,23 @@ isolated function buildAddRecord(NewRecordType recordType, RecordCoreType record
     return getSoapPayload(header, body);
 }
 
-isolated function buildDeletePayload(RecordDetail recordType, NetSuiteConfiguration config) returns xml|error {
+isolated function buildDeletePayload(RecordDetail recordType, ConnectionConfig config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string subElements = getDeletePayload(recordType);
     string body = getDeleteXMLBodyWithParentElement(subElements);
     return getSoapPayload(header, body);
 }
 
-isolated function buildUpdateRecord(ExistingRecordType recordType, RecordCoreType recordCoreType, NetSuiteConfiguration config) 
-                                    returns xml|error {
+isolated function buildUpdateRecord(ExistingRecordType recordType, RecordCoreType recordCoreType, ConnectionConfig 
+                                    config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string elements = check getUpdateOperationElements(recordType, recordCoreType);
     string body = getUpdateXMLBodyWithParentElement(elements);
     return getSoapPayload(header, body);    
 }
 
-isolated function getUpdateOperationElements(ExistingRecordType recordType, RecordCoreType recordCoreType) returns string|error {
+isolated function getUpdateOperationElements(ExistingRecordType recordType, RecordCoreType recordCoreType) returns 
+                                             string|error {
     string subElements = EMPTY_STRING;   
     match recordCoreType {
         CUSTOMER => {
@@ -207,17 +208,17 @@ isolated function getAddOperationElements(NewRecordType recordType, RecordCoreTy
     }
 }
 
-isolated function buildGetOperationPayload(RecordInfo records, NetSuiteConfiguration config) returns xml|error {
+isolated function buildGetOperationPayload(RecordInfo records, ConnectionConfig config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string elements = prepareElementsForGetOperation(records);
     string body = string `<soapenv:Body><urn:get xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${elements}
-    </urn:get></soapenv:Body></soapenv:Envelope>`;
+        </urn:get></soapenv:Body></soapenv:Envelope>`;
     return getSoapPayload(header, body);
 }
 
 isolated function prepareElementsForGetOperation(RecordInfo recordDetail) returns string {
     string elements = string `<urn:baseRef internalId="${recordDetail.recordInternalId}" type="${recordDetail.recordType}"
-    xsi:type="urn1:RecordRef"/>`;
+        xsi:type="urn1:RecordRef"/>`;
     return elements;
 }
 
@@ -231,7 +232,7 @@ isolated function getDeletePayload(RecordDetail recordDetail) returns string{
 
 isolated function getXMLElementForDeletion(RecordDetail recordDetail) returns string {
     return string `<urn:baseRef type="${recordDetail.recordType}" internalId="${recordDetail.recordInternalId}" 
-    xsi:type="urn1:RecordRef"/>`;
+        xsi:type="urn1:RecordRef"/>`;
 }
 
 isolated function getXMLElementForDeletionWithDeleteReason(RecordDetail recordDetail) returns string {
@@ -243,7 +244,7 @@ isolated function getXMLElementForDeletionWithDeleteReason(RecordDetail recordDe
         </urn1:deletionReason>`;
 }
 
-isolated function buildGetAllPayload(string recordType, NetSuiteConfiguration config) returns xml|error {
+isolated function buildGetAllPayload(string recordType, ConnectionConfig config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string body = getXMLBodyForGetAllOperation(recordType);
     return getSoapPayload(header, body);
@@ -251,14 +252,14 @@ isolated function buildGetAllPayload(string recordType, NetSuiteConfiguration co
 
 isolated function getXMLBodyForGetAllOperation(string recordType) returns string{
     return string `<soapenv:Body><urn:getAll><record recordType="${recordType}"/></urn:getAll></soapenv:Body>
-    </soapenv:Envelope>`;
+        </soapenv:Envelope>`;
 }
 
 isolated function getXMLBodyForGetServerTime() returns string{
     return string`<soapenv:Body><urn:getServerTime/></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function buildGetServerTime(NetSuiteConfiguration config) returns xml|error {
+isolated function buildGetServerTime(ConnectionConfig config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string body = getXMLBodyForGetServerTime();
     return getSoapPayload(header, body);
@@ -332,4 +333,15 @@ isolated function extractRecordRefFromXML(xml element) returns RecordRef {
 
 isolated function extractRecordInternalIdFromXMLAttribute(xml element) returns string {
     return let var internalId = element.internalId in internalId is error ? EMPTY_STRING : internalId;
+}
+
+isolated function BuildSavedSearchRequestPayload(ConnectionConfig config, string searchType) returns xml|error {
+    string header = check buildXMLPayloadHeader(config);
+    string body = getXMLBodyForGetSavedSearchIDs(searchType);
+    return getSoapPayload(header, body);
+}
+
+isolated function getXMLBodyForGetSavedSearchIDs(string searchType) returns string{
+    return string `<soapenv:Body><urn:getSavedSearch><record searchType="${searchType}"/></urn:getSavedSearch>
+        </soapenv:Body></soapenv:Envelope>`;
 }

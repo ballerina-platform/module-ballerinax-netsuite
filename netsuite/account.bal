@@ -77,7 +77,7 @@ isolated function getAccountSearchRequestBody(SearchElement[] searchElements) re
     </urn:searchRecord></urn:search></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function buildAccountSearchPayload(NetSuiteConfiguration config,SearchElement[] searchElement) returns xml|error {
+isolated function buildAccountSearchPayload(ConnectionConfig config,SearchElement[] searchElement) returns xml|error {
     string requestHeader = check buildXMLPayloadHeader(config);
     string requestBody = getAccountSearchRequestBody(searchElement);
     return check getSoapPayload(requestHeader, requestBody);   
@@ -98,7 +98,7 @@ isolated function getAccountsNextPageResult(http:Response response) returns @tai
     return {accounts :check getAccountsFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getAccountSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Account, error?>|error {
+isolated function getAccountSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) returns @tainted stream<Account, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     AccountStream objectInstance = check new (httpClient,resultStatus,config);
     stream<Account, error?> finalStream = new (objectInstance);
