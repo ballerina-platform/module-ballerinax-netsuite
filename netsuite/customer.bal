@@ -148,7 +148,7 @@ isolated function getCustomerSearchRequestBody(SearchElement[] searchElements) r
     </urn:searchRecord></urn:search></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function buildCustomerSearchPayload(NetSuiteConfiguration config,SearchElement[] searchElement) returns 
+isolated function buildCustomerSearchPayload(NetSuiteConfiguration config, SearchElement[] searchElement) returns 
                                             xml|error {
     string requestHeader = check buildXMLPayloadHeader(config);
     string requestBody = getCustomerSearchRequestBody(searchElement);
