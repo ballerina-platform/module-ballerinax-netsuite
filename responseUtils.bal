@@ -169,6 +169,42 @@ isolated function formatPayload(http:Response response) returns @tainted xml|err
     return check 'xml:fromString(formattedXMLResponse);
 }
 
+isolated function getSavedSearchIDsResponse(http:Response response) returns @tainted SavedSearchResponse|error {
+    xml payload = check response.getXmlPayload();
+    if (response.statusCode == http:STATUS_OK) {
+        string isSuccessInText = check payload/**/<platformCore:status>.isSuccess;
+        boolean isSuccess = check extractBooleanValueFromXMLOrText(isSuccessInText);
+        if (isSuccess) {
+            int totalRecords  = check 'int:fromString((payload/**/<platformCore:totalRecords>/*).toString());
+            xml recordList = payload/**/<platformCore:recordRefList>/*;
+            SavedSearchReference[] searchReferences = []; 
+            foreach int i in 0 ..< totalRecords {
+                xml recordItem = 'xml:get(recordList, i);
+                searchReferences.push(mapSaveSearchRecords(recordItem));  
+            }
+            return {
+                status: isSuccess,
+                totalReferences: totalRecords,
+                recordRefList: searchReferences
+            };
+        } else {
+            json errorMessage= check xmldata:toJson(payload/**/<statusDetail>/*);
+            fail error(errorMessage.toString());
+        }
+    } else {
+        fail error(payload.toString());
+    }
+}
+
+isolated function mapSaveSearchRecords(xml recordElement) returns SavedSearchReference {
+    return {
+        internalId: extractStringFromXML(recordElement.internalId),
+        scriptId: extractStringFromXML(recordElement.scriptId),
+        name: extractStringFromXML(recordElement/**/<platformCore:name>/*)
+    };
+}
+
+
 isolated function getServerTimeResponse(http:Response response) returns @tainted string|error {
     xml payload = check response.getXmlPayload();
     if (response.statusCode == http:STATUS_OK) {
@@ -211,6 +247,37 @@ isolated function getXMLRecordListFromSearchResult(http:Response response) retur
         } else {
             json errorMessage= check xmldata:toJson(payload/**/<statusDetail>);
             errorMessage= check xmldata:toJson(payload/**/<soapenv_Fault>/<faultstring>);
+            fail error(errorMessage.toString());
+        }    
+    } else {
+        fail error(payload.toString());
+    }
+}
+
+isolated function getXMLRecordListFromSavedSearchResult(http:Response response) returns @tainted SavedSearchResult|error {
+    xml payload = check response.getXmlPayload();
+    if (response.statusCode == http:STATUS_OK) {
+        xml output  = payload/**/<platformCore:status>;
+        boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess); 
+        if(isSuccess == true) {
+            int pageIndex = let var value = 'int:fromString((payload/**/<platformCore:pageIndex>/*).toString()) in value is int ? value : 0; 
+            int totalPages = check 'int:fromString((payload/**/<platformCore:totalPages>/*).toString());
+            int totalRecords = check 'int:fromString((payload/**/<platformCore:totalRecords>/*).toString());
+            string searchId = (payload/**/<platformCore:searchId>/*).toString();
+            xml:Element records = <xml:Element> payload/**/<platformCore:searchRowList>;
+            xml children  = 'xml:getChildren(records); 
+            if(children.length() == 0) {
+                fail error(NO_RECORD_FOUND);
+            } 
+            json searchRows = check xmldata:toJson(payload/**/<platformCore:searchRowList>/*, {preserveNamespaces: false});
+            return {
+                recordList: <json[]>searchRows,
+                pageIndex: pageIndex,
+                totalPages: totalPages,
+                searchId: searchId
+            };
+        } else {
+            json errorMessage= check xmldata:toJson(payload/**/<platformCore:statusDetail>/*, {preserveNamespaces: false});
             fail error(errorMessage.toString());
         }    
     } else {

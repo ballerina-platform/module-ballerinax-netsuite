@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/lang.'xml as xmlLib;
+import ballerina/http;
 
 isolated  function getSearchElement(SearchElement[] searchElements) returns string{
     string searchElementInPayloadBody = EMPTY_STRING;
@@ -75,4 +76,145 @@ isolated function buildSearchMoreWithIdPayload(NetSuiteConfiguration config, int
     string requestHeader = check buildXMLPayloadHeader(config);
     string requestBody = getNextPageRequestElement(pageIndex, searchId);
     return check getSoapPayload(requestHeader, requestBody); 
+}
+
+isolated function buildSavedSearchByIDPayload(NetSuiteConfiguration config, string savedSearchID, string advancedSearchType) returns xml|error {
+    string requestHeader = check buildXMLPayloadHeader(config);
+    string requestBody = check getSaveSearchByIDRequestBody(savedSearchID, advancedSearchType);
+    return check getSoapPayload(requestHeader, requestBody);
+}
+
+isolated function getSaveSearchByIDRequestBody(string savedSearchID, string advancedSearchType) returns string|error {
+    return string `<soapenv:Body><urn:search xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <urn:searchRecord xmlns:q1="${check getSearchAdvancedNS(advancedSearchType)}"
+        xsi:type="q1:${advancedSearchType}" savedSearchId="${savedSearchID}" />
+        </urn:search></soapenv:Body></soapenv:Envelope>`;
+}
+
+isolated function getSavedSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns stream<json, error>|error {
+    SavedSearchResult resultStatus = check getXMLRecordListFromSavedSearchResult(response);
+    SavedSearchStream instance = check new (httpClient,resultStatus,config);
+    stream<json, error> finalStream = new (instance);
+    return finalStream;
+}
+
+isolated function getSavedSearchNextPageResult(http:Response response) returns @tainted record {|json[] savedSearchRows; SavedSearchResult status;|}|error {
+    SavedSearchResult resultStatus = check getXMLRecordListFromSavedSearchResult(response);
+    return {savedSearchRows : resultStatus.recordList, status: resultStatus};
+}
+
+isolated function getSearchAdvancedNS(string searchAdvanceType) returns string|error {
+    match searchAdvanceType {
+        CALENDAR_EVENT_SEARCH_ADVANCED => {
+            return SCHEDULING_2020_2;
+        }
+        TASK_SEARCH_ADVANCED => {
+            return SCHEDULING_2020_2;
+        }
+        PHONE_CALL_SEARCH_ADVANCED => {
+            return SCHEDULING_2020_2;
+        }
+        FILE_SEARCH_ADVANCED => {
+            return FILE_CABINET_2020_2;
+        }
+        FOLDER_SEARCH_ADVANCED => {
+            return FILE_CABINET_2020_2;
+        }
+        NOTE_SEARCH_ADVANCED => {
+            return COMMUNICATION_2020_2;
+        }
+        MESSAGE_SEARCH_ADVANCED => {
+            return COMMUNICATION_2020_2;
+        }
+        ITEM_SEARCH_ADVANCED => {
+            return ACCOUNTING_2020_2;
+        }
+        ACCOUNT_SEARCH_ADVANCED => {
+            return ACCOUNTING_2020_2;
+        }
+        BIN_SEARCH_ADVANCED => {
+            return ACCOUNTING_2020_2;
+        }
+        CLASSIFICATION_SEARCH_ADVANCED => {
+            return ACCOUNTING_2020_2;
+        }
+        DEPARTMENT_SEARCH_ADVANCED => {
+            return ACCOUNTING_2020_2;
+        }
+        LOCATION_SEARCH_ADVANCED => {
+            return ACCOUNTING_2020_2;
+        }
+        GIFT_CERTIFICATE_SEARCH_ADVANCED => {
+            return ACCOUNTING_2020_2;
+        }
+        SALES_TAX_ITEM_SEARCH_ADVANCED => {
+            return ACCOUNTING_2020_2;
+        }
+        SUBSIDIARY_SEARCH_ADVANCED => {
+            return ACCOUNTING_2020_2;
+        }
+        EMPLOYEE_SEARCH_ADVANCED => {
+            return EMPLOYEES_2020_2;
+        }
+        CAMPAIGN_SEARCH_ADVANCED => {
+            return MARKETING_2020_2;
+        }
+        PROMOTION_CODE_SEARCH_ADVANCED => {
+            return MARKETING_2020_2;
+        }
+        CONTACT_SEARCH_ADVANCED => {
+            return RELATIONSHIPS_2020_2;
+        }
+        CUSTOMER_SEARCH_ADVANCED => {
+            return RELATIONSHIPS_2020_2;
+        }
+        PARTNER_SEARCH_ADVANCED => {
+            return RELATIONSHIPS_2020_2;
+        }
+        VENDOR_SEARCH_ADVANCED => {
+            return RELATIONSHIPS_2020_2;
+        }
+        ENTITY_GROUP_SEARCH_ADVANCED => {
+            return RELATIONSHIPS_2020_2;
+        }
+        JOB_SEARCH_ADVANCED => {
+            return RELATIONSHIPS_2020_2;
+        }
+        SITE_CATEGORY_SEARCH_ADVANCED => {
+            return WEBSITE_2020_2;
+        }
+        SUPPORT_CASE_SEARCH_ADVANCED => {
+            return SUPPORT_2020_2;
+        }
+        SOLUTION_SEARCH_ADVANCED => {
+            return SUPPORT_2020_2;
+        }
+        TOPIC_SEARCH_ADVANCED => {
+            return SUPPORT_2020_2;
+        }
+        ISSUE_SEARCH_ADVANCED => {
+            return SUPPORT_2020_2;
+        }
+        CUSTOM_RECORD_SEARCH_ADVANCED => {
+            return CUSTOMIZATION_2020_2;
+        }
+        TIME_BILL_SEARCH_ADVANCED => {
+            return EMPLOYEES_2020_2;
+        }
+        BUDGET_SEARCH_ADVANCED => {
+            return FINANCIAL_2020_2;
+        }
+        ACCOUNTING_TRANSACTION_SEARCH_ADVANCED => {
+            return SALES_2020_2;
+        }
+        OPPORTUNITY_SEARCH_ADVANCED => {
+            return SALES_2020_2;
+        }
+        TRANSACTION_SEARCH_ADVANCED => {
+            return SALES_2020_2;
+        }
+        _ => {
+            fail error(NO_TYPE_MATCHED);
+        }
+    }
 }
