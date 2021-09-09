@@ -37,9 +37,7 @@ public isolated client class Client {
     # + return - `http:Error` in case of failure to initialize or `null` if successfully initialized 
     public isolated function init(ConnectionConfig config, http:ClientConfiguration httpClientConfig = {})returns error? {
         self.config = config.cloneReadOnly();
-        http:ClientConfiguration httpConfig = httpClientConfig;
-        httpConfig.timeout = 120;
-        self.basicClient = check new (config.baseURL + NETSUITE_ENDPOINT, httpConfig);
+        self.basicClient = check new (config.baseURL + NETSUITE_ENDPOINT, httpClientConfig);
     }
 
     # Creates a record instance in NetSuite according to the given detail

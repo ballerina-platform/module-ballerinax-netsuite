@@ -14,6 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/http;
 import ballerina/test;
 import ballerina/log;
 import ballerina/os;
@@ -34,7 +35,9 @@ ConnectionConfig config = {
     baseURL: baseURL
 };
 
-Client netsuiteClient = check new (config);
+http:ClientConfiguration httpClientConfig = {timeout: 120};
+
+Client netsuiteClient = check new (config, httpClientConfig);
 string customerId = EMPTY_STRING;
 string contactId =EMPTY_STRING;
 string currencyId = EMPTY_STRING;
