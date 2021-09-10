@@ -21,10 +21,10 @@ import ballerina/http;
 # Invoice, Classifications etc.
 #
 # + basicClient - NetSuite HTTP Client
-@display{label: "NetSuite Client", iconPath: "logo.svg"} 
+@display{label: "NetSuite Client", iconPath: "resources/netsuite.svg"} 
 public isolated client class Client {
     final http:Client basicClient;
-    final readonly & NetSuiteConfiguration config;
+    final readonly & ConnectionConfig config;
 
     # Gets invoked to initialize the `connector`.
     # The connector initialization requires setting the API credentials. 
@@ -33,10 +33,11 @@ public isolated client class Client {
     # to Obtain token for NetSuite connector configuration.
     #
     # + config - NetSuite connection configuration
+    # + httpClientConfig - HTTP configuration
     # + return - `http:Error` in case of failure to initialize or `null` if successfully initialized 
-    public isolated function init(NetSuiteConfiguration config)returns error? {
+    public isolated function init(ConnectionConfig config, http:ClientConfiguration httpClientConfig = {})returns error? {
         self.config = config.cloneReadOnly();
-        self.basicClient = check new (config.baseURL + NETSUITE_ENDPOINT, {timeout: 120});
+        self.basicClient = check new (config.baseURL + NETSUITE_ENDPOINT, httpClientConfig);
     }
 
     # Creates a record instance in NetSuite according to the given detail
@@ -437,7 +438,7 @@ public isolated client class Client {
 # + tokenSecret - Netsuite user role access secret 
 # + token - Netsuite user role access token
 @display{label: "Connection Config"}  
-public type NetSuiteConfiguration record {
+public type ConnectionConfig record {
     @display{label: "Account ID"}
     string accountId;
     @display{label: "Consumer Id"}

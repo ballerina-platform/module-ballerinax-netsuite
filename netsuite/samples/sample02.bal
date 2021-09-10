@@ -32,7 +32,7 @@ configurable string baseURL = os:getEnv("NS_BASE_URL");
 public function main() returns error? {
 
     //Preparing the netsuite configuration with TBA authentication tokens.
-    netsuite:NetSuiteConfiguration config = {
+    netsuite:ConnectionConfig config = {
         accountId: accountId,
         consumerId: consumerId,
         consumerSecret: consumerSecret,

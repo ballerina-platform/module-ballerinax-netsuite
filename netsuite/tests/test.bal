@@ -14,6 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/http;
 import ballerina/test;
 import ballerina/log;
 import ballerina/os;
@@ -25,7 +26,7 @@ configurable string token = os:getEnv("NS_TOKEN");
 configurable string tokenSecret = os:getEnv("NS_TOKEN_SECRET");
 configurable string baseURL = os:getEnv("NS_BASE_URL");
 
-NetSuiteConfiguration config = {
+ConnectionConfig config = {
     accountId: accountId,
     consumerId: consumerId,
     consumerSecret: consumerSecret,
@@ -34,7 +35,9 @@ NetSuiteConfiguration config = {
     baseURL: baseURL
 };
 
-Client netsuiteClient = check new (config);
+http:ClientConfiguration httpClientConfig = {timeout: 120};
+
+Client netsuiteClient = check new (config, httpClientConfig);
 string customerId = EMPTY_STRING;
 string contactId =EMPTY_STRING;
 string currencyId = EMPTY_STRING;

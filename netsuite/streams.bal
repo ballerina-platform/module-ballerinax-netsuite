@@ -24,9 +24,9 @@ class CustomerStream {
     int totalPages;
     int currentPage;
     string searchId;
-    NetSuiteConfiguration config;
+    ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, NetSuiteConfiguration config) 
+    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.customerEntries = check getCustomersFromSearchResults(resultStatus.recordList);
@@ -67,9 +67,9 @@ class AccountStream {
     int totalPages;
     int currentPage;
     string searchId;
-    NetSuiteConfiguration config;
+    ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, NetSuiteConfiguration config) 
+    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.accountEntries = check getAccountsFromSearchResults(resultStatus.recordList);
@@ -110,9 +110,9 @@ class TransactionStream {
     int totalPages;
     int currentPage;
     string searchId;
-    NetSuiteConfiguration config;
+    ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, NetSuiteConfiguration config) 
+    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.transactionEntries = check getTransactionsFromSearchResults(resultStatus.recordList);
@@ -154,9 +154,9 @@ class ContactStream {
     int totalPages;
     int currentPage;
     string searchId;
-    NetSuiteConfiguration config;
+    ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, NetSuiteConfiguration config) 
+    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.contactEntries = check getTransactionsFromSearchResults(resultStatus.recordList);
@@ -197,9 +197,9 @@ class SavedSearchStream {
     int totalPages;
     int currentPage;
     string searchId;
-    NetSuiteConfiguration config;
+    ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SavedSearchResult resultStatus, NetSuiteConfiguration config) 
+    isolated function  init(http:Client httpClient, SavedSearchResult resultStatus, ConnectionConfig config) 
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.savedSearchRowEntries = resultStatus.recordList;

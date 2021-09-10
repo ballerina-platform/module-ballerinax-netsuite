@@ -13,7 +13,8 @@ This package provides the capability to access NetSuite and manipulate NetSuite 
 
 
 ## Report Issues
-To report bugs, request new features, start new discussions, view project boards, etc., go to the [Ballerina connector repository](https://github.com/ballerina-platform/module-ballerinax-netsuite)
+To report bugs, request new features, start new discussions, view project boards, etc., go to the [Ballerina Extended Library repository](https://github.com/ballerina-platform/ballerina-extended-library)
+
 ## Useful Links
 - Discuss code changes of the Ballerina project via [ballerina-dev@googlegroups.com](mailto:ballerina-dev@googlegroups.com).
 - Chat live with us via our [Slack channel](https://ballerina.io/community/slack/).

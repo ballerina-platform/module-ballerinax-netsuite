@@ -133,7 +133,7 @@ isolated function getInvoiceResult(http:Response response) returns @tainted Invo
     }
 }
 
-isolated function buildTransactionSearchPayload(NetSuiteConfiguration config, SearchElement[] searchElement) returns 
+isolated function buildTransactionSearchPayload(ConnectionConfig config, SearchElement[] searchElement) returns 
                                                 xml|error {
     string requestHeader = check buildXMLPayloadHeader(config);
     string requestBody = getTranscationSearchRequestBody(searchElement);
@@ -173,7 +173,7 @@ isolated function getTransactionsNextPageResult(http:Response response) returns 
     return {recordRefs :check getTransactionsFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getTransactionSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<RecordRef, error?>|error {
+isolated function getTransactionSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) returns @tainted stream<RecordRef, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     TransactionStream objectInstance = check new (httpClient, resultStatus, config);
     stream<RecordRef, error?> finalStream = new (objectInstance);

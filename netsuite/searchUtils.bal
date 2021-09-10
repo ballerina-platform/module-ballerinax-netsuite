@@ -71,14 +71,14 @@ isolated function getNextPageRequestElement(int pageIndex, string searchId) retu
         </urn:searchMoreWithId></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function buildSearchMoreWithIdPayload(NetSuiteConfiguration config, int pageIndex, string searchId) returns 
+isolated function buildSearchMoreWithIdPayload(ConnectionConfig config, int pageIndex, string searchId) returns 
                                                 xml|error {
     string requestHeader = check buildXMLPayloadHeader(config);
     string requestBody = getNextPageRequestElement(pageIndex, searchId);
     return check getSoapPayload(requestHeader, requestBody); 
 }
 
-isolated function buildSavedSearchByIDPayload(NetSuiteConfiguration config, string savedSearchID, string advancedSearchType) returns xml|error {
+isolated function buildSavedSearchByIDPayload(ConnectionConfig config, string savedSearchID, string advancedSearchType) returns xml|error {
     string requestHeader = check buildXMLPayloadHeader(config);
     string requestBody = check getSaveSearchByIDRequestBody(savedSearchID, advancedSearchType);
     return check getSoapPayload(requestHeader, requestBody);
@@ -91,7 +91,7 @@ isolated function getSaveSearchByIDRequestBody(string savedSearchID, string adva
         </urn:search></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function getSavedSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns stream<json, error?>|error {
+isolated function getSavedSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) returns stream<json, error?>|error {
     SavedSearchResult resultStatus = check getXMLRecordListFromSavedSearchResult(response);
     SavedSearchStream instance = check new (httpClient,resultStatus,config);
     stream<json, error?> finalStream = new (instance);
