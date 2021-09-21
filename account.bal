@@ -98,10 +98,10 @@ isolated function getAccountsNextPageResult(http:Response response) returns @tai
     return {accounts :check getAccountsFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getAccountSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Account, error>|error {
+isolated function getAccountSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Account, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     AccountStream objectInstance = check new (httpClient,resultStatus,config);
-    stream<Account, error> finalStream = new (objectInstance);
+    stream<Account, error?> finalStream = new (objectInstance);
     return finalStream;
 }
 

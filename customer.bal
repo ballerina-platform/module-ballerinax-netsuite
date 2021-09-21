@@ -160,10 +160,10 @@ isolated function getCustomersNextPageResult(http:Response response) returns @ta
     return {customers :check getCustomersFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getCustomerSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Customer, error>|error {
+isolated function getCustomerSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns @tainted stream<Customer, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     CustomerStream objectInstance = check new (httpClient,resultStatus,config);
-    stream<Customer, error> finalStream = new (objectInstance);
+    stream<Customer, error?> finalStream = new (objectInstance);
     return finalStream;
 }
 
