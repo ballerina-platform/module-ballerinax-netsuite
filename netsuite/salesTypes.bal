@@ -31,14 +31,14 @@
 public type Item record {
     RecordRef subscription?;
     RecordRef item;
-    decimal quantityAvailable?;
-    decimal quantityOnHand?;
-    decimal quantity?;
+    decimal? quantityAvailable?;
+    decimal? quantityOnHand?;
+    decimal? quantity?;
     RecordRef units?;
     string description?;
     RecordRef price?;
     string rate?;
-    decimal amount;
+    decimal? amount;
     boolean isTaxable?;
     RecordRef location?;
 };
@@ -133,13 +133,13 @@ public type SalesOrderCommon record {
     @display{label: "Is Exclude Transaction"}
     boolean excludeCommission?;
     @display{label: "Estimated Cost"}
-    decimal totalCostEstimate?;
+    decimal? totalCostEstimate?;
     @display{label: "Estimated Gross Profit"}
-    decimal estGrossProfit?;
+    decimal? estGrossProfit?;
     @display{label: "Estimated Gross Percentage"}
-    decimal estGrossProfitPercent?;
+    decimal? estGrossProfitPercent?;
     @display{label: "Exchange Rate"}
-    decimal exchangeRate?;
+    decimal? exchangeRate?;
     @display{label: "Currency Name"}
     string currencyName?;
     @display{label: "Is Taxable"}
@@ -149,13 +149,13 @@ public type SalesOrderCommon record {
     @display{label: "Shipping Date"}
     string shipDate?;
     @display{label: "Sub Total"}
-    decimal subTotal?;
+    decimal? subTotal?;
     @display{label: "Discount Total"}
-    decimal discountTotal?;
+    decimal? discountTotal?;
     @display{label: "Total"}
-    decimal total?;
+    decimal? total?;
     @display{label: "Balance"}
-    decimal balance?;
+    decimal? balance?;
     @display{label: "Status"}
     string status?;
     @display{label: "Billing Address"}
@@ -237,13 +237,13 @@ public type NewInvoice record {
 # + 'class - The class of the invoice   
 public type InvoiceCommon record {
     @display{label: "Recognized Revenue"}
-    decimal recognizedRevenue?;
+    decimal? recognizedRevenue?;
     @display{label: "Discount"}
-    decimal discountTotal?;
+    decimal? discountTotal?;
     @display{label: "Deffered Revenue"}
-    decimal deferredRevenue?;
+    decimal? deferredRevenue?;
     @display{label: "Total Items"}
-    decimal total?;
+    decimal? total?;
     @display{label: "Email"}
     string email?;
     @display{label: "Created Date"}

@@ -45,6 +45,8 @@ string salesOrderId = EMPTY_STRING;
 string classificationId = EMPTY_STRING;
 string customerAccountId = EMPTY_STRING;
 string invoiceId = EMPTY_STRING;
+string vendorId = EMPTY_STRING;
+string vendorBillId = EMPTY_STRING;
 
 @test:Config {enable: true}
 function testAddContactRecordOperation() {
@@ -846,5 +848,240 @@ function testAccountGetOperation() {
         test:assertFalse(true, output.toString());
     } else {
        log:printInfo(output.toString()); 
+    }
+}
+
+@test:Config {enable: true}
+function testAddNewVendor() {
+    log:printInfo("testAddNewVendor");
+    LongCustomFieldRef longCustomFieldRef = {
+        internalId: "11",
+        scriptId: "100_lk" ,
+        value : 30
+    };
+
+    StringOrDateCustomFieldRef stringCustomFieldRef = {
+        internalId: "21",
+        scriptId: "100_lk" ,
+        value : "test value"
+    };
+
+    BooleanCustomFieldRef booleanCustomFieldRef = {
+        internalId: "221",
+        scriptId: "bool_lk" ,
+        value : false
+    };
+
+    DoubleCustomFieldRef doubleCustomFieldRef = {
+        internalId: "2342",
+        scriptId: "wso2_script",
+        value: 2.34
+    };
+
+    MultiSelectCustomFieldRef multiSelectCustomFieldRef = {
+        internalId: "2342_multi",
+        scriptId: "wso2_script_2",
+        value: [
+            {recordName: "test_multiSelect1",
+            internalId: "1"},
+            {recordName: "test_multiSelect2",
+            internalId: "2"}
+        ]
+    };
+    
+
+    NewVendor vendor = {
+        subsidiary: {
+            internalId : "11",
+            'type: "subsidiary"
+        },
+        companyName: "Wso2Test",
+        isPerson: true,
+        lastName: "wso2",
+        firstName: "wso2_lanka",
+        customFieldList: {
+            customFields: [
+                booleanCustomFieldRef,
+                longCustomFieldRef,
+                stringCustomFieldRef,
+                doubleCustomFieldRef,
+                multiSelectCustomFieldRef
+            ]
+        }
+    };
+    var output = netsuiteClient->addNewVendor(vendor);
+    if (output is RecordAddResponse) {
+        log:printInfo(output.toString());
+        vendorId = output.internalId;
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {enable: true, dependsOn: [testAddNewVendor]}
+function testUpdateVendor() {
+    log:printInfo("testUpdateVendor");
+    Vendor vendor = {
+        internalId: vendorId,
+        companyName: "Wso2Test_updated"
+    };
+    var output = netsuiteClient->updateVendorRecord(vendor);
+    if (output is RecordAddResponse) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config{ enable: true}
+function testVendorGetOperation() {
+    log:printInfo("testVendorGetOperation");
+    RecordInfo recordInfo = {
+        recordInternalId : vendorId,
+        recordType: "vendor"
+    };
+    Vendor|error output = netsuiteClient->getVendorRecord(recordInfo);
+    if (output is Vendor) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config{ enable: true, dependsOn: [testVendorGetOperation]}
+function testVendorRecordDeleteOperation() {
+    log:printInfo("testVendorDeleteOperation");
+    RecordDetail recordDeletionInfo = {
+        recordInternalId : vendorId,
+        recordType: "vendor"
+    };
+    RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
+    if (output is RecordDeletionResponse) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {enable: true}
+function testAddNewVendorBill() {
+    log:printInfo("testAddNewVendorBill");
+    VendorBillExpenseList vendorBillExpenseList = {
+        expenses: [
+            {
+                line: 1,
+                category: {
+                    internalId: "16",
+                    'type: "category"
+                },
+                account: {
+                    internalId: "68",
+                    'type: "account"
+                },
+                amount: 105.7,
+                isBillable: false
+            }
+        ]
+    };
+    NewVendorBill vendorBill = {
+        subsidiary: {
+            internalId : "1",
+            'type: "subsidiary"
+        },
+        entity: {
+            'type: "entity",
+            internalId: "201"
+        },
+        expenseList: vendorBillExpenseList,
+        accountingBookDetailList : {
+            accountingBookDetail: [
+                {
+                    accountingBook: {
+                        'type: "accountingBook",
+                        internalId: "201"
+                    },
+                    exchangeRate: 1
+                }
+            ]
+        }
+    };
+    var output = netsuiteClient->addNewVendorBill(vendorBill);
+    if (output is RecordAddResponse) {
+        log:printInfo(output.toString());
+        vendorBillId = output.internalId;
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config{ enable: true, dependsOn: [testAddNewVendorBill]}
+function testVendorBillGetOperation() {
+    log:printInfo("testVendorBillGetOperation");
+    RecordInfo recordInfo = {
+        recordInternalId : vendorBillId,
+        recordType: "vendorBill"
+    };
+    VendorBill|error output = netsuiteClient->getVendorBillRecord(recordInfo);
+    if (output is Vendor) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config{ enable: true, dependsOn: [testVendorBillGetOperation]}
+function testVendorBillRecordDeleteOperation() {
+    log:printInfo("testVendorDeleteOperation");
+    RecordDetail recordDeletionInfo = {
+        recordInternalId : vendorBillId,
+        recordType: "vendorBill"
+    };
+    RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
+    if (output is RecordDeletionResponse) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {enable: true}
+function testVendorSearchOperation() {
+    log:printInfo("testVendorSearchOperation");
+    SearchElement searchRecord1 = {
+        fieldName: "isInactive",
+        operator:"is",
+        searchType: SEARCH_BOOLEAN_FIELD ,
+        value1: "true"
+    };
+
+    SearchElement searchRecord2 = {
+        fieldName: "email",
+        operator:"contains",
+        searchType: SEARCH_STRING_FIELD ,
+        value1: "com"
+    };
+
+    SearchElement[] searchData = [ searchRecord2];
+    var output = netsuiteClient->searchVendorRecords(searchData);
+    if (output is stream<Vendor, error?>) {
+        int index = 0;
+        error? e = output.forEach(function (Vendor queryResult) {
+            index = index + 1;
+        });
+        log:printInfo("Total count of records : " +  index.toString());  
+    } else {
+        test:assertFail(msg = output.toString());
+    }
+}
+
+@test:Config{ enable: true}
+function testSendCustomRequest() {
+    log:printInfo("testCustomOperation");
+    string body =  string ` <urn:getServerTime/>`;
+    xml|error output = netsuiteClient->makeCustomRequest(body, "getServerTime");
+    if (output is xml) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
     }
 }

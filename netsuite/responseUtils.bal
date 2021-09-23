@@ -22,7 +22,7 @@ import ballerina/xmldata;
 
 xmlns "urn:core_2020_2.platform.webservices.netsuite.com" as platformCore;
 
-isolated function getCreateResponse(http:Response response) returns @tainted RecordAddResponse|error {
+isolated function getResponseCreationOp(http:Response response) returns @tainted RecordAddResponse|error {
     xml formattedPayload = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) { 
         string|error statusDetail = formattedPayload/**/<statusDetail>.'type;

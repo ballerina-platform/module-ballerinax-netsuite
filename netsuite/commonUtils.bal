@@ -15,9 +15,11 @@
 // under the License.
 
 import ballerina/http;
-import ballerina/lang.'decimal as decimalLib;
 import ballerina/lang.'boolean as booleanLib;
+import ballerina/lang.'decimal as decimalLib;
+import ballerina/lang.'int as intLib;
 import ballerina/time;
+import ballerina/lang.'xml as xmlLib;
 
 isolated function sendRequest(http:Client basicClient, string action, xml payload) returns @tainted http:Response|error {
     http:Request request = new;
@@ -75,12 +77,8 @@ isolated function getXMLRecordInputRef(RecordInputRef recordRef) returns string 
     return xmlRecord;
 }
 
-isolated function setSimpleType(string elementName, string|boolean|decimal|int value, string XSDName) returns string {
-    if (value is string) {
-        return string `<${XSDName}:${elementName}>${value}</${XSDName}:${elementName}>`;
-    } else {
-        return string `<${XSDName}:${elementName}>${value.toString()}</${XSDName}:${elementName}>`;
-    }
+isolated function setSimpleType(string elementName, string|boolean|decimal|int value, string namespace) returns string {
+    return string `<${namespace}:${elementName}>${value.toString()}</${namespace}:${elementName}>`;
 }
 
 isolated function getAddXMLBodyWithParentElement(string subElements) returns string {
@@ -90,6 +88,12 @@ isolated function getAddXMLBodyWithParentElement(string subElements) returns str
     </urn:add>
     </soapenv:Body>
     </soapenv:Envelope>`;
+}
+
+isolated function getCustomXMLBodyWithParentElement(xml|string customBody, ConnectionConfig config) returns xml|error {
+    string header = check buildXMLPayloadHeader(config);
+    string body =  string `<soapenv:Body>${customBody.toString()}</soapenv:Body></soapenv:Envelope>`;
+    return getSoapPayload(header, body);
 }
 
 isolated function getDeleteXMLBodyWithParentElement(string subElements) returns string {
@@ -110,7 +114,7 @@ isolated function getUpdateXMLBodyWithParentElement(string subElements) returns 
     </soapenv:Envelope>`;
 }
 
-isolated function buildAddRecord(NewRecordType recordType, RecordCoreType recordCoreType, ConnectionConfig config) 
+isolated function getPayloadAddOp(NewRecordType recordType, RecordCoreType recordCoreType, ConnectionConfig config) 
                                 returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string subElements = check getAddOperationElements(recordType, recordCoreType);
@@ -140,6 +144,10 @@ isolated function getUpdateOperationElements(ExistingRecordType recordType, Reco
         CUSTOMER => {
              subElements = mapCustomerRecordFields(<Customer>recordType); 
              return wrapCustomerElementsToBeUpdatedWithParentElement(subElements, recordType?.internalId.toString());
+        }
+        VENDOR => {
+            subElements = check mapVendorRecordFields(<Vendor>recordType);
+            return wrapVendorElementsWithParent(subElements, recordType?.internalId.toString());
         }
         CONTACT => {
              subElements = mapContactRecordFields(<Contact>recordType); 
@@ -175,12 +183,20 @@ isolated function getAddOperationElements(NewRecordType recordType, RecordCoreTy
     string subElements = EMPTY_STRING;  
     match recordCoreType {
         CUSTOMER => {
-             subElements = mapNewCustomerRecordFields(<NewCustomer>recordType); 
-             return wrapCustomerElements(subElements);
+            subElements = mapNewCustomerRecordFields(<NewCustomer>recordType); 
+            return wrapCustomerElements(subElements);
+        }
+        VENDOR_BILL => {
+            subElements = check mapNewVendorBillRecordFields(<NewVendorBill>recordType);
+            return wrapVendorBillElements(subElements);
+        }
+        VENDOR => {
+            subElements = check mapNewVendorRecordFields(<NewVendor>recordType);
+            return wrapVendorElements(subElements);
         }
         CONTACT => {
-             subElements = mapNewContactRecordFields(<NewContact>recordType); 
-             return wrapContactElements(subElements);
+            subElements = mapNewContactRecordFields(<NewContact>recordType); 
+            return wrapContactElements(subElements);
         }
         CURRENCY => {
             subElements = mapNewCurrencyRecordFields(<NewCurrency>recordType);
@@ -306,19 +322,24 @@ isolated function getRecordRef(json element, json elementRecordType) returns Rec
     return recordRef;
 }
 
-isolated function extractDecimalFromXML(xml element) returns decimal {
+isolated function extractDecimalFromXML(xml element) returns decimal? {
     decimal|error castedValue = trap decimalLib:fromString((element).toString());
     if(castedValue is decimal) {
          return castedValue;
-    }else {
-        return DEFAULT_ZERO_VALUE;
     }  
+}
+
+isolated function extractIntegerFromXML(xml element) returns int? {
+    int|error castedValue = trap intLib:fromString((element).toString());
+    if (castedValue is int) {
+         return castedValue;
+    }
 }
 
 isolated function extractStringFromXML(xml|string|error element) returns string {
     if(element is xml|string) {
          return element.toString();
-    }else {
+    } else {
         return EMPTY_STRING;
     }  
 }
@@ -345,3 +366,142 @@ isolated function getXMLBodyForGetSavedSearchIDs(string searchType) returns stri
     return string `<soapenv:Body><urn:getSavedSearch><record searchType="${searchType}"/></urn:getSavedSearch>
         </soapenv:Body></soapenv:Envelope>`;
 }
+
+isolated function getCustomElementList(CustomFieldList customFieldList, string namespace) returns string|error {
+    string fieldsWithParentElement = string `<${namespace}:customFieldList xmlns:platformCore="urn:core_2020_2.platform.webservices.netsuite.com">`;
+    foreach var item in customFieldList.customFields {
+        if(item is LongCustomFieldRef) {
+            fieldsWithParentElement += string `<platformCore:customField internalId="${item.internalId}" scriptId="${item?.scriptId.toString()}" xsi:type="platformCore:LongCustomFieldRef">
+            <platformCore:value>${item.value.toString()}</platformCore:value></platformCore:customField>`;
+        } else if(item is StringOrDateCustomFieldRef) {
+            fieldsWithParentElement += string `<platformCore:customField internalId="${item.internalId}" scriptId="${item?.scriptId.toString()}" xsi:type="platformCore:StringCustomFieldRef">
+            <platformCore:value>${item.value}</platformCore:value></platformCore:customField>`;
+        } else if (item is BooleanCustomFieldRef) {
+            fieldsWithParentElement += string `<platformCore:customField internalId="${item.internalId}" scriptId="${item?.scriptId.toString()}" xsi:type="platformCore:BooleanCustomFieldRef">
+            <platformCore:value>${item.value}</platformCore:value></platformCore:customField>`;
+        } else if (item is SelectCustomFieldRef) {
+            fieldsWithParentElement += string `<platformCore:customField internalId="${item.internalId}" scriptId="${item?.scriptId.toString()}" xsi:type="platformCore:SelectCustomFieldRef">
+            <platformCore:value internalId="${item.value.internalId}"><platformCore:name>${item.value.recordName}</platformCore:name></platformCore:value></platformCore:customField>`;
+        } else if (item is MultiSelectCustomFieldRef) {
+            fieldsWithParentElement += string `<platformCore:customField internalId="${item.internalId}" scriptId="${item?.scriptId.toString()}" xsi:type="platformCore:MultiSelectCustomFieldRef">
+            ${getMultiSelectCustomFields(item.value)} </platformCore:customField>`;
+        } else {
+            fieldsWithParentElement += string `<platformCore:customField internalId="${item.internalId}" scriptId="${item?.scriptId.toString()}" xsi:type="platformCore:DoubleCustomFieldRef">
+            <platformCore:value>${item.value.toString()}</platformCore:value></platformCore:customField>`;
+        }
+    }
+    return fieldsWithParentElement + string `</${namespace}:customFieldList>`;
+}
+
+isolated function getMultiSelectCustomFields(ListOrRecordRef[] value) returns string {
+    string multiField = "";
+    foreach ListOrRecordRef item in value {
+        multiField += string  `<platformCore:value internalId="${item.internalId}"><platformCore:name>${item.recordName}</platformCore:name>
+        </platformCore:value>`;
+    }
+    return multiField;
+}
+
+
+isolated function mapLongCustomFieldRef(xml element) returns LongCustomFieldRef{
+    return {
+        internalId: extractStringFromXML(element.internalId),
+        scriptId: extractStringFromXML(element.scriptId),
+        value: extractIntegerFromXML(element/<value>/*)
+    };
+}
+
+isolated function mapDoubleCustomFieldRef(xml element) returns DoubleCustomFieldRef{
+    return {
+        internalId: extractStringFromXML(element.internalId),
+        scriptId: extractStringFromXML(element.scriptId),
+        value: extractDecimalFromXML(element/<value>/*)
+    };
+}
+
+isolated function mapBooleanCustomFieldRef(xml element) returns BooleanCustomFieldRef|error {
+    return {
+        internalId: extractStringFromXML(element.internalId),
+        scriptId: extractStringFromXML(element.scriptId),
+        value: check extractBooleanValueFromXMLOrText(element/<value>/*)
+    };
+}
+
+isolated function mapStringOrDateCustomFieldRef(xml element) returns StringOrDateCustomFieldRef {
+    return {
+        internalId: extractStringFromXML(element.internalId),
+        scriptId: extractStringFromXML(element.scriptId),
+        value: extractStringFromXML(element/<value>/*)
+    };
+}
+
+isolated function mapSelectCustomFieldRef(xml element) returns SelectCustomFieldRef { 
+    return {
+        internalId: extractStringFromXML(element.internalId),
+        scriptId: extractStringFromXML(element.scriptId),
+        value: extractListOrRecordRefFromXML(element/<value>)
+    };
+}
+
+isolated function mapMultiSelectCustomFieldRef(xml element) returns MultiSelectCustomFieldRef {
+    return {
+        internalId: extractStringFromXML(element.internalId),
+        scriptId: extractStringFromXML(element.scriptId),
+        value: extractArrayOfListOrRecordRefFromXML(element/*)
+    };
+}
+
+isolated function extractArrayOfListOrRecordRefFromXML(xml element) returns ListOrRecordRef[] {
+   ListOrRecordRef[] listOrRecordRef = [];
+   foreach xml item in element {
+       listOrRecordRef.push(extractListOrRecordRefFromXML(item));
+   }
+   return listOrRecordRef;
+}
+
+
+isolated function extractListOrRecordRefFromXML(xml element) returns ListOrRecordRef {
+    return {
+        recordName: extractStringFromXML(element/<name>/*),
+        internalId: extractStringFromXML(element.internalId)
+    };
+}
+
+
+
+isolated function extractCustomFiledListFromXML(xml customFieldList) returns CustomFieldList|error {
+    CustomField[] customFields = [];
+    foreach xml element in customFieldList {
+        string? 'type = extractStringFromXML(element.xsi_type);
+        match 'type {
+            "LongCustomFieldRef" => {
+                customFields.push(mapLongCustomFieldRef(element));
+            }
+            "DoubleCustomFieldRef"=> {
+                customFields.push(mapDoubleCustomFieldRef(element));
+            }
+            "BooleanCustomFieldRef" => {
+                customFields.push(check mapBooleanCustomFieldRef(element));
+            }
+            "StringCustomFieldRef" | "DateCustomFieldRef" => {
+                customFields.push(mapStringOrDateCustomFieldRef(element));
+            }
+            "SelectCustomFieldRef"=> {
+                customFields.push(mapSelectCustomFieldRef(element));
+            }
+            "MultiSelectCustomFieldRef" => {
+                customFields.push(mapMultiSelectCustomFieldRef(element));
+            }
+        }
+    }
+    return {
+        customFields: customFields
+    };
+}
+
+isolated  function getSoapPayload(string header, string body) returns xml|error {
+    string requestPayload = header + body;
+    return check xmlLib:fromString(requestPayload);
+}
+
+

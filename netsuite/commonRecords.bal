@@ -105,7 +105,7 @@ public type RecordInfo record {
 };
 
 # RecordType Connector supports for creation operation for now.  
-public type NewRecordType NewCustomer|NewContact|NewCurrency|NewInvoice|NewClassification|NewAccount|NewSalesOrder;
+public type NewRecordType NewCustomer|NewContact|NewVendor|NewVendorBill|NewCurrency|NewInvoice|NewClassification|NewAccount|NewSalesOrder;
 
 # RecordType Connector supports for update operation for now.   
 public type ExistingRecordType Customer|Contact|Currency|Invoice|Classification|Account|SalesOrder;

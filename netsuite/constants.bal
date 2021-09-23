@@ -58,6 +58,7 @@ const string TRAN_SALES = "tranSales";
 
 //Constant values
 public const decimal DEFAULT_ZERO_VALUE = 0.0;
+public const int DEFAULT_INT_VALUE = -1;
 const string REQUEST_NEXT_PAGE = "Requesting the next page!";
 
 //Netsuite SOAP endpoint

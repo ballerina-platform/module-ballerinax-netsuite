@@ -44,3 +44,50 @@ public type Address record {
     string addrText?;
     boolean override?;
 };
+
+public type CustomFieldList record {|
+    CustomField[] customFields;
+|};
+
+public type CustomField LongCustomFieldRef|DoubleCustomFieldRef|BooleanCustomFieldRef|StringOrDateCustomFieldRef|SelectCustomFieldRef|MultiSelectCustomFieldRef;
+public type LongCustomFieldRef record {|
+    string internalId;
+    string scriptId?;
+    int? value;
+|};
+
+public type DoubleCustomFieldRef record {|
+    string internalId;
+    string scriptId?;
+    decimal? value;
+|};
+
+public type BooleanCustomFieldRef record {|
+    string internalId;
+    string scriptId?;
+    boolean value;
+|};
+
+public type StringOrDateCustomFieldRef record {|
+    string internalId;
+    string scriptId?;
+    string value;
+|};
+
+public type SelectCustomFieldRef record {|
+    string internalId;
+    string scriptId?;
+    ListOrRecordRef value;
+|};
+
+public type MultiSelectCustomFieldRef record {|
+    string internalId;
+    string scriptId?;
+    ListOrRecordRef[] value;
+|};
+
+public type ListOrRecordRef record {
+    string recordName;
+    string internalId;
+};
+
