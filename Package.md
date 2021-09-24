@@ -15,7 +15,7 @@ and search operations to perform business processing on NetSuite records and to 
 
 |                             |           Version                    |
 |:---------------------------:|:------------------------------------:|
-| Ballerina Language          |     Swan Lake Alpha5                 |
+| Ballerina Language          |     Swan Lake Beta 3                 |
 | NetSuite SOAP API           |     SOAP 1.1                         |
 | WSDL version                |     2020.2.0                         |
 

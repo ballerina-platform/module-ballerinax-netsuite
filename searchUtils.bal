@@ -91,10 +91,10 @@ isolated function getSaveSearchByIDRequestBody(string savedSearchID, string adva
         </urn:search></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function getSavedSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns stream<json, error>|error {
+isolated function getSavedSearchResult(http:Response response, http:Client httpClient, NetSuiteConfiguration config) returns stream<json, error?>|error {
     SavedSearchResult resultStatus = check getXMLRecordListFromSavedSearchResult(response);
     SavedSearchStream instance = check new (httpClient,resultStatus,config);
-    stream<json, error> finalStream = new (instance);
+    stream<json, error?> finalStream = new (instance);
     return finalStream;
 }
 

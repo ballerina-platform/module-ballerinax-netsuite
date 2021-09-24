@@ -10,7 +10,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: ballerina-platform/ballerina-action/@slalpha5
+              uses: ballerina-platform/ballerina-action/@nightly
               with:
                   args:
                       build -c
