@@ -13,7 +13,6 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 import ballerina/http;
 import ballerina/test;
 import ballerina/log;
@@ -39,44 +38,46 @@ http:ClientConfiguration httpClientConfig = {timeout: 120};
 
 Client netsuiteClient = check new (config, httpClientConfig);
 string customerId = EMPTY_STRING;
-string contactId =EMPTY_STRING;
+string contactId = EMPTY_STRING;
 string currencyId = EMPTY_STRING;
 string salesOrderId = EMPTY_STRING;
 string classificationId = EMPTY_STRING;
 string customerAccountId = EMPTY_STRING;
 string invoiceId = EMPTY_STRING;
+string vendorId = EMPTY_STRING;
+string vendorBillId = EMPTY_STRING;
 
 @test:Config {enable: true}
 function testAddContactRecordOperation() {
     log:printInfo("testAddContactRecord");
     RecordRef cusForm = {
-        internalId : "-40",
+        internalId: "-40",
         'type: "customForm"
     };
 
     RecordInputRef subsidiary = {
-        internalId : "11",
+        internalId: "11",
         'type: "subsidiary"
     };
 
     RecordRef category = {
-        internalId : "12",
+        internalId: "12",
         'type: "category"
     };
 
     Address ad01 = {
         country: "_sriLanka",
         addr1: "address01_1",
-        addr2:"address02_1",
-        city:"Colombo",
+        addr2: "address02_1",
+        city: "Colombo",
         override: true
     };
 
     Address ad02 = {
         country: "_sriLanka",
         addr1: "address01_2",
-        addr2:"address02_2",
-        city:"Colombo07",
+        addr2: "address02_2",
+        city: "Colombo07",
         override: true
     };
 
@@ -86,7 +87,7 @@ function testAddContactRecordOperation() {
         label: "myAddress",
         addressBookAddress: [ad01]
     };
-    
+
     ContactAddressBook contactAddressBook2 = {
         defaultShipping: true,
         defaultBilling: true,
@@ -94,15 +95,14 @@ function testAddContactRecordOperation() {
         addressBookAddress: [ad02]
     };
 
-    NewContact contact= {
-        customForm :cusForm,
+    NewContact contact = {
+        customForm: cusForm,
         firstName: "testContact_01",
         middleName: "sandu",
         isPrivate: false,
         subsidiary: subsidiary,
         //globalSubscriptionStatus: "_confirmedOptIn",
-        addressBookList : [contactAddressBook, contactAddressBook2]
-
+        addressBookList: [contactAddressBook, contactAddressBook2]
     };
     RecordAddResponse|error output = netsuiteClient->addNewContact(contact);
     if (output is RecordAddResponse) {
@@ -113,25 +113,24 @@ function testAddContactRecordOperation() {
     }
 }
 
-
 @test:Config {enable: true}
 function testAddNewCustomerRecord() {
     log:printInfo("testAddCustomerRecord");
     RecordInputRef subsidiary = {
-        internalId : "11",
+        internalId: "11",
         'type: "subsidiary"
     };
 
     Address ad02 = {
         country: "_sriLanka",
         addr1: "RuwanmagaBombuwala",
-        addr2:"Dodangoda",
-        city:"Colombo07",
+        addr2: "Dodangoda",
+        city: "Colombo07",
         override: true
     };
 
     RecordRef currency = {
-        internalId : "1",
+        internalId: "1",
         'type: "currency"
     };
 
@@ -143,15 +142,15 @@ function testAddNewCustomerRecord() {
         addressBookAddress: [ad02]
     };
 
-    CustomerCurrency  cur = {
-        currency:currency,
+    CustomerCurrency cur = {
+        currency: currency,
         balance: 1200.13,
         depositBalance: 10000,
         overdueBalance: 120,
         unbilledOrders: 1000,
         overrideCurrencyFormat: false
     };
-    
+
     NewCustomer customer = {
         entityId: "BallerinaTest01",
         isPerson: true,
@@ -170,7 +169,6 @@ function testAddNewCustomerRecord() {
         mobilePhone: "0123456783",
         accountNumber: "0123456784",
         addressbookList: [customerAddressbook]
-
     };
     RecordAddResponse|error output = netsuiteClient->addNewCustomer(customer);
     if (output is RecordAddResponse) {
@@ -205,21 +203,21 @@ function testAddCurrencyRecord() {
 function testAddInvoiceRecord() {
     log:printInfo("testAddInvoiceRecord");
     RecordInputRef entity = {
-        internalId : "5530",
+        internalId: "5530",
         'type: "entity"
     };
     Item item01 = {
         item: {
             internalId: "560",
             'type: "item"
-         },
+        },
         amount: 1000
     };
     Item item02 = {
         item: {
             internalId: "570",
             'type: "item"
-         },
+        },
         amount: 2000
     };
     NewInvoice invoice = {
@@ -239,27 +237,27 @@ function testAddInvoiceRecord() {
 function testAddSalesOrderOperation() {
     log:printInfo("testSalesOrderRecordOperation");
     RecordInputRef entity = {
-        internalId : "4045",
+        internalId: "4045",
         'type: "entity"
     };
     RecordRef itemValue = {
-        internalId : "961",
+        internalId: "961",
         'type: "item"
     };
     Address address = {
         country: "_sriLanka",
         addr1: "address01_3",
-        addr2:"address02_3",
-        city:"Colombo07",
+        addr2: "address02_3",
+        city: "Colombo07",
         override: true
     };
     RecordRef currency = {
-        internalId : "1",
+        internalId: "1",
         'type: "currency"
     };
 
     RecordRef location = {
-        internalId : "23",
+        internalId: "23",
         'type: "location"
     };
     Item item = {
@@ -268,10 +266,10 @@ function testAddSalesOrderOperation() {
         location: location
     };
     NewSalesOrder salesOrder = {
-        entity:entity,
+        entity: entity,
         billingAddress: address,
         currency: currency,
-        itemList:[item]
+        itemList: [item]
     };
     RecordAddResponse|error output = netsuiteClient->addNewSalesOrder(salesOrder);
     if (output is RecordAddResponse) {
@@ -290,9 +288,9 @@ function testAddClassificationRecord() {
         'type: "parent"
     };
     NewClassification classification = {
-        name:"Ballerina test class",
+        name: "Ballerina test class",
         parent: recordRef,
-        isInactive:false
+        isInactive: false
     };
     RecordAddResponse|error output = netsuiteClient->addNewClassification(classification);
     if (output is RecordAddResponse) {
@@ -319,30 +317,33 @@ function testAddAccountRecord() {
     RecordAddResponse|error output = netsuiteClient->addNewAccount(account);
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
-       customerAccountId = <@untainted>output.internalId;
+        customerAccountId = <@untainted>output.internalId;
     } else {
         test:assertFail(output.toString());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddNewCustomerRecord]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAddNewCustomerRecord]
+}
 function testUpdateCustomerRecord() {
     log:printInfo("testUpdateCustomerRecord");
     RecordRef subsidiary = {
-        internalId : "11",
+        internalId: "11",
         'type: "subsidiary"
     };
 
     Address ad02 = {
         country: "_sriLanka",
         addr1: "address01_4",
-        addr2:"address02_4",
-        city:"Colombo07",
+        addr2: "address02_4",
+        city: "Colombo07",
         override: true
     };
 
     RecordRef currency = {
-        internalId : "1",
+        internalId: "1",
         'type: "currency"
     };
 
@@ -354,23 +355,23 @@ function testUpdateCustomerRecord() {
         addressBookAddress: [ad02]
     };
 
-    CustomerCurrency  cur = {
-        currency:currency,
+    CustomerCurrency cur = {
+        currency: currency,
         balance: 1200.13,
         depositBalance: 10000,
         overdueBalance: 120,
         unbilledOrders: 1000,
         overrideCurrencyFormat: false
     };
-    
-    Customer customer= {
+
+    Customer customer = {
         internalId: customerId,
         entityId: "Test_Customer_test_Update",
         isPerson: true,
         salutation: "Mr",
         firstName: "TestFirstName",
         middleName: "TestMiddleName",
-        lastName: "TestLastName", 
+        lastName: "TestLastName",
         companyName: "Wso2",
         phone: "0123456784",
         fax: "0123456784",
@@ -382,8 +383,6 @@ function testUpdateCustomerRecord() {
         mobilePhone: "0123456784",
         accountNumber: "ac9092328483",
         addressbookList: [customerAddressbook]
-
-
     };
     RecordUpdateResponse|error output = netsuiteClient->updateCustomerRecord(customer);
     if (output is RecordUpdateResponse) {
@@ -393,11 +392,14 @@ function testUpdateCustomerRecord() {
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddSalesOrderOperation]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAddSalesOrderOperation]
+}
 function testSalesOrderUpdateOperation() {
     log:printInfo("testSalesOrderUpdateOperation");
     RecordRef itemValue = {
-        internalId : "961",
+        internalId: "961",
         'type: "item"
     };
     Item item = {
@@ -405,7 +407,7 @@ function testSalesOrderUpdateOperation() {
         amount: 1000
     };
     SalesOrder salesOrder = {
-        itemList:[item],
+        itemList: [item],
         internalId: salesOrderId
     };
     RecordUpdateResponse|error output = netsuiteClient->updateSalesOrderRecord(salesOrder);
@@ -417,11 +419,14 @@ function testSalesOrderUpdateOperation() {
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddClassificationRecord]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAddClassificationRecord]
+}
 function testUpdateClassificationRecord() {
     log:printInfo("testUpdateClassificationRecord");
     Classification classification = {
-        name:"Ballerina test class_Updated",
+        name: "Ballerina test class_Updated",
         internalId: classificationId
     };
     RecordUpdateResponse|error output = netsuiteClient->updateClassificationRecord(classification);
@@ -432,7 +437,10 @@ function testUpdateClassificationRecord() {
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddAccountRecord]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAddAccountRecord]
+}
 function testUpdateAccountRecord() {
     log:printInfo("testUpdateAccountRecord");
     Account account = {
@@ -447,7 +455,10 @@ function testUpdateAccountRecord() {
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddInvoiceRecord]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAddInvoiceRecord]
+}
 function testUpdateInvoiceRecord() {
     log:printInfo("testUpdateInvoiceRecord");
     Invoice invoice = {
@@ -462,7 +473,10 @@ function testUpdateInvoiceRecord() {
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddContactRecordOperation]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAddContactRecordOperation]
+}
 function testUpdateContactRecord() {
     log:printInfo("testUpdateContactRecord");
     Contact contact = {
@@ -477,14 +491,13 @@ function testUpdateContactRecord() {
     }
 }
 
-
 @test:Config {enable: true}
 function testCustomerSearchOperation() {
     log:printInfo("testCustomerSearchOperation");
     SearchElement searchRecord = {
         fieldName: "isInactive",
-        operator:"is",
-        searchType: SEARCH_BOOLEAN_FIELD ,
+        operator: "is",
+        searchType: SEARCH_BOOLEAN_FIELD,
         value1: "false"
     };
     SearchElement[] searchData = [];
@@ -492,10 +505,10 @@ function testCustomerSearchOperation() {
     var output = netsuiteClient->searchCustomerRecords(searchData);
     if (output is stream<Customer, error?>) {
         int index = 0;
-        error? e = output.forEach(function (Customer queryResult) {
-            index = index + 1;
-        });
-        log:printInfo("Total count of records : " +  index.toString());        
+        error? e = output.forEach(function(Customer queryResult) {
+                                      index = index + 1;
+                                  });
+        log:printInfo("Total count of records : " + index.toString());
     } else {
         test:assertFail(msg = output.toString());
     }
@@ -514,10 +527,10 @@ function testAccountSearchOperation() {
     var output = netsuiteClient->searchAccountRecords(searchElements);
     if (output is stream<Account, error?>) {
         int index = 0;
-        error? e = output.forEach(function (Account account) {
-            index = index + 1;
-        });
-        log:printInfo("Total count of records : " +  index.toString());     
+        error? e = output.forEach(function(Account account) {
+                                      index = index + 1;
+                                  });
+        log:printInfo("Total count of records : " + index.toString());
     } else {
         test:assertFail(msg = output.toString());
     }
@@ -536,10 +549,10 @@ function testContactSearchOperation() {
     var output = netsuiteClient->searchContactRecords(searchElements);
     if (output is stream<Contact, error?>) {
         int index = 0;
-        error? e = output.forEach(function (Contact contact) {
-            index = index + 1;
-        });
-        log:printInfo("Total count of records : " +  index.toString());     
+        error? e = output.forEach(function(Contact contact) {
+                                      index = index + 1;
+                                  });
+        log:printInfo("Total count of records : " + index.toString());
     } else {
         test:assertFail(msg = output.toString());
     }
@@ -562,36 +575,38 @@ function testTransactionSearchOperation() {
         operator: "anyOf",
         value1: "_salesOrder",
         value2: "_invoice",
-        multiValues: [TRANS_VENDOR_BILL,TRANS_VENDOR_PAYMENT,TRANS_INVENTORY_TRANSFER]
+        multiValues: [TRANS_VENDOR_BILL, TRANS_VENDOR_PAYMENT, TRANS_INVENTORY_TRANSFER]
     };
 
     SearchElement searchRecord2 = {
         fieldName: "lastModifiedDate",
         searchType: SEARCH_DATE_FIELD,
         operator: "within",
-        value1 : "2021-01-23T10:20:15",
-        value2 : "2021-03-23T10:20:15"
+        value1: "2021-01-23T10:20:15",
+        value2: "2021-03-23T10:20:15"
     };
     SearchElement[] searchElements = [searchRecord1];
     var output = netsuiteClient->searchTransactionRecords(searchElements);
     if (output is stream<RecordRef, error?>) {
         int index = 0;
-        error? e = output.forEach(function (RecordRef recordRef) {
-            index = index + 1;
-        });
-        log:printInfo("Total count of records : " +  index.toString());     
+        error? e = output.forEach(function(RecordRef recordRef) {
+                                      index = index + 1;
+                                  });
+        log:printInfo("Total count of records : " + index.toString());
     } else {
         test:assertFail(msg = output.toString());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testCustomerSearchOperation, testUpdateCustomerRecord, 
-testCustomerRecordGetOperation]}
+@test:Config {
+    enable: true,
+    dependsOn: [testCustomerSearchOperation, testUpdateCustomerRecord, testCustomerRecordGetOperation]
+}
 function testCustomerDeleteRecord() {
     log:printInfo("Record Deletion Start");
     log:printInfo("testCustomerDeleteRecord");
     RecordDetail recordDeletionInfo = {
-        recordInternalId : customerId,
+        recordInternalId: customerId,
         recordType: "customer"
     };
     RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
@@ -601,11 +616,15 @@ function testCustomerDeleteRecord() {
         test:assertFail(output.toString());
     }
 }
-@test:Config {enable: true, dependsOn:[testUpdateContactRecord, testContactGetOperation]}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testUpdateContactRecord, testContactGetOperation]
+}
 function testContactDeleteOperation() {
     log:printInfo("testContactDeleteRecord");
     RecordDetail recordDeletionInfo = {
-        recordInternalId : contactId,
+        recordInternalId: contactId,
         recordType: "contact"
     };
     RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
@@ -616,11 +635,14 @@ function testContactDeleteOperation() {
     }
 }
 
-@test:Config {enable: true, dependsOn:[testAddCurrencyRecord, testCurrencyRecordGetOperation]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAddCurrencyRecord, testCurrencyRecordGetOperation]
+}
 function testCurrencyDeleteOperation() {
     log:printInfo("testCurrencyDeleteRecord");
     RecordDetail recordDeletionInfo = {
-        recordInternalId : currencyId,
+        recordInternalId: currencyId,
         recordType: "currency"
     };
     RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
@@ -629,13 +651,16 @@ function testCurrencyDeleteOperation() {
     } else {
         test:assertFail(output.toString());
     }
-}   
-    
-@test:Config {enable: true, dependsOn:[testGetClassificationRecordOperation]}
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testGetClassificationRecordOperation]
+}
 function testDeleteClassificationRecord() {
     log:printInfo("testDeleteClassificationRecord");
     RecordDetail recordDeletionInfo = {
-        recordInternalId : classificationId,
+        recordInternalId: classificationId,
         recordType: "classification"
     };
     RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
@@ -646,11 +671,14 @@ function testDeleteClassificationRecord() {
     }
 }
 
-@test:Config {enable: true, dependsOn:[testAccountSearchOperation,testUpdateAccountRecord]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAccountSearchOperation, testUpdateAccountRecord]
+}
 function testDeleteAccountRecord() {
     log:printInfo("testDeleteAccountRecord");
     RecordDetail recordDeletionInfo = {
-        recordInternalId : customerAccountId,
+        recordInternalId: customerAccountId,
         recordType: ACCOUNT
     };
     RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
@@ -661,11 +689,14 @@ function testDeleteAccountRecord() {
     }
 }
 
-@test:Config {enable: true, dependsOn:[testSalesOrderGetOperation, testSalesOrderUpdateOperation]}
+@test:Config {
+    enable: true,
+    dependsOn: [testSalesOrderGetOperation, testSalesOrderUpdateOperation]
+}
 function testDeleteSalesOrderRecord() {
     log:printInfo("testDeleteSalesOrderRecord");
     RecordDetail recordDeletionInfo = {
-        recordInternalId : salesOrderId,
+        recordInternalId: salesOrderId,
         recordType: SALES_ORDER
     };
     RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
@@ -676,11 +707,14 @@ function testDeleteSalesOrderRecord() {
     }
 }
 
-@test:Config {enable: true, dependsOn:[testInvoiceRecordGetOperation, testUpdateInvoiceRecord]}
+@test:Config {
+    enable: true,
+    dependsOn: [testInvoiceRecordGetOperation, testUpdateInvoiceRecord]
+}
 function testDeleteInvoiceRecord() {
     log:printInfo("testDeleteInvoiceRecord");
     RecordDetail recordDeletionInfo = {
-        recordInternalId : invoiceId,
+        recordInternalId: invoiceId,
         recordType: INVOICE
     };
     RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
@@ -714,6 +748,7 @@ function testGetServerTime() {
 }
 
 string savedSearchID = "";
+
 @test:Config {enable: true}
 function testGetSavedSearchIds() {
     log:printInfo("testGetSavedSearchIds");
@@ -725,26 +760,31 @@ function testGetSavedSearchIds() {
     }
 }
 
-
-@test:Config {enable: true, dependsOn: [testGetSavedSearchIds]}
+@test:Config {
+    enable: true,
+    dependsOn: [testGetSavedSearchIds]
+}
 function testPerformSavedSearchById() {
     log:printInfo("testPerformSavedSearchById");
     var output = netsuiteClient->performSavedSearchById(savedSearchID, "VendorSearchAdvanced");
     if (output is stream<json, error?>) {
         int index = 0;
-        error? e = output.forEach(function (json queryResult) {
-            index = index + 1;
-            if(index == 1) {
-                log:printInfo(queryResult.toString());
-            }
-        });
-        log:printInfo("Total count of records in SavedSearchResults : " +  index.toString()); 
+        error? e = output.forEach(function(json queryResult) {
+                                      index = index + 1;
+                                      if (index == 1) {
+                                          log:printInfo(queryResult.toString());
+                                      }
+                                  });
+        log:printInfo("Total count of records in SavedSearchResults : " + index.toString());
     } else {
-         test:assertFalse(true, output.toString());
+        test:assertFalse(true, output.toString());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddNewCustomerRecord]} 
+@test:Config {
+    enable: true,
+    dependsOn: [testAddNewCustomerRecord]
+}
 function testCustomerRecordGetOperation() {
     log:printInfo("testCustomerRecordGetOperation");
     RecordInfo recordDetail = {
@@ -755,11 +795,14 @@ function testCustomerRecordGetOperation() {
     if (output is error) {
         test:assertFalse(true, output.toString());
     } else {
-       log:printInfo(output.toString()); 
+        log:printInfo(output.toString());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddCurrencyRecord]} 
+@test:Config {
+    enable: true,
+    dependsOn: [testAddCurrencyRecord]
+}
 function testCurrencyRecordGetOperation() {
     log:printInfo("testCurrencyRecordGetOperation");
     RecordInfo recordDetail = {
@@ -770,11 +813,14 @@ function testCurrencyRecordGetOperation() {
     if (output is error) {
         test:assertFalse(true, output.toString());
     } else {
-       log:printInfo(output.toString()); 
+        log:printInfo(output.toString());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testUpdateClassificationRecord]} 
+@test:Config {
+    enable: true,
+    dependsOn: [testUpdateClassificationRecord]
+}
 function testGetClassificationRecordOperation() {
     log:printInfo("testGetClassificationRecordOperation");
     RecordInfo recordDetail = {
@@ -785,11 +831,14 @@ function testGetClassificationRecordOperation() {
     if (output is error) {
         test:assertFalse(true, output.toString());
     } else {
-        log:printInfo(output.toString());  
+        log:printInfo(output.toString());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddInvoiceRecord]} 
+@test:Config {
+    enable: true,
+    dependsOn: [testAddInvoiceRecord]
+}
 function testInvoiceRecordGetOperation() {
     log:printInfo("testInvoiceRecordGetOperation");
     RecordInfo recordDetail = {
@@ -800,11 +849,14 @@ function testInvoiceRecordGetOperation() {
     if (output is error) {
         test:assertFalse(true, output.toString());
     } else {
-       log:printInfo(output.toString()); 
+        log:printInfo(output.toString());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddSalesOrderOperation]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAddSalesOrderOperation]
+}
 function testSalesOrderGetOperation() {
     log:printInfo("testSalesOrderGetOperation");
     RecordInfo recordDetail = {
@@ -815,11 +867,14 @@ function testSalesOrderGetOperation() {
     if (output is error) {
         test:assertFalse(true, output.toString());
     } else {
-       log:printInfo(output.toString()); 
+        log:printInfo(output.toString());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddContactRecordOperation]}
+@test:Config {
+    enable: true,
+    dependsOn: [testAddContactRecordOperation]
+}
 function testContactGetOperation() {
     log:printInfo("testContactGetOperation");
     RecordInfo recordDetail = {
@@ -830,11 +885,14 @@ function testContactGetOperation() {
     if (output is error) {
         test:assertFalse(true, output.toString());
     } else {
-       log:printInfo(output.toString()); 
+        log:printInfo(output.toString());
     }
 }
 
-@test:Config {enable: true, dependsOn: [testUpdateAccountRecord] }
+@test:Config {
+    enable: true,
+    dependsOn: [testUpdateAccountRecord]
+}
 function testAccountGetOperation() {
     log:printInfo("testAccountGetOperation");
     RecordInfo recordDetail = {
@@ -845,6 +903,238 @@ function testAccountGetOperation() {
     if (output is error) {
         test:assertFalse(true, output.toString());
     } else {
-       log:printInfo(output.toString()); 
+        log:printInfo(output.toString());
+    }
+}
+
+@test:Config {enable: true}
+function testAddNewVendor() {
+    log:printInfo("testAddNewVendor");
+    LongCustomFieldRef longCustomFieldRef = {
+        internalId: "11",
+        scriptId: "100_lk",
+        value: 30
+    };
+
+    StringOrDateCustomFieldRef stringCustomFieldRef = {
+        internalId: "21",
+        scriptId: "100_lk",
+        value: "test value"
+    };
+
+    BooleanCustomFieldRef booleanCustomFieldRef = {
+        internalId: "221",
+        scriptId: "bool_lk",
+        value: false
+    };
+
+    DoubleCustomFieldRef doubleCustomFieldRef = {
+        internalId: "2342",
+        scriptId: "wso2_script",
+        value: 2.34
+    };
+
+    MultiSelectCustomFieldRef multiSelectCustomFieldRef = {
+        internalId: "2342_multi",
+        scriptId: "wso2_script_2",
+        value: [{
+            recordName: "test_multiSelect1",
+            internalId: "1"
+        }, {
+            recordName: "test_multiSelect2",
+            internalId: "2"
+        }]
+    };
+
+    NewVendor vendor = {
+        subsidiary: {
+            internalId: "11",
+            'type: "subsidiary"
+        },
+        companyName: "Wso2Test",
+        isPerson: true,
+        lastName: "wso2",
+        firstName: "wso2_lanka",
+        customFieldList: {customFields: [booleanCustomFieldRef, longCustomFieldRef, stringCustomFieldRef, 
+            doubleCustomFieldRef, multiSelectCustomFieldRef]}
+    };
+    var output = netsuiteClient->addNewVendor(vendor);
+    if (output is RecordAddResponse) {
+        log:printInfo(output.toString());
+        vendorId = output.internalId;
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testAddNewVendor]
+}
+function testUpdateVendor() {
+    log:printInfo("testUpdateVendor");
+    Vendor vendor = {
+        internalId: vendorId,
+        companyName: "Wso2Test_updated"
+    };
+    var output = netsuiteClient->updateVendorRecord(vendor);
+    if (output is RecordAddResponse) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {enable: true}
+function testVendorGetOperation() {
+    log:printInfo("testVendorGetOperation");
+    RecordInfo recordInfo = {
+        recordInternalId: vendorId,
+        recordType: "vendor"
+    };
+    Vendor|error output = netsuiteClient->getVendorRecord(recordInfo);
+    if (output is Vendor) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testVendorGetOperation]
+}
+function testVendorRecordDeleteOperation() {
+    log:printInfo("testVendorDeleteOperation");
+    RecordDetail recordDeletionInfo = {
+        recordInternalId: vendorId,
+        recordType: "vendor"
+    };
+    RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
+    if (output is RecordDeletionResponse) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {enable: true}
+function testAddNewVendorBill() {
+    log:printInfo("testAddNewVendorBill");
+    VendorBillExpenseList vendorBillExpenseList = {expenses: [{
+            line: 1,
+            category: {
+                internalId: "16",
+                'type: "category"
+            },
+            account: {
+                internalId: "68",
+                'type: "account"
+            },
+            amount: 105.7,
+            isBillable: false
+        }]};
+    NewVendorBill vendorBill = {
+        subsidiary: {
+            internalId: "1",
+            'type: "subsidiary"
+        },
+        entity: {
+            'type: "entity",
+            internalId: "201"
+        },
+        expenseList: vendorBillExpenseList,
+        accountingBookDetailList: {accountingBookDetail: [{
+                accountingBook: {
+                    'type: "accountingBook",
+                    internalId: "201"
+                },
+                exchangeRate: 1
+            }]}
+    };
+    var output = netsuiteClient->addNewVendorBill(vendorBill);
+    if (output is RecordAddResponse) {
+        log:printInfo(output.toString());
+        vendorBillId = output.internalId;
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testAddNewVendorBill]
+}
+function testVendorBillGetOperation() {
+    log:printInfo("testVendorBillGetOperation");
+    RecordInfo recordInfo = {
+        recordInternalId: vendorBillId,
+        recordType: "vendorBill"
+    };
+    VendorBill|error output = netsuiteClient->getVendorBillRecord(recordInfo);
+    if (output is Vendor) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {
+    enable: true,
+    dependsOn: [testVendorBillGetOperation]
+}
+function testVendorBillRecordDeleteOperation() {
+    log:printInfo("testVendorDeleteOperation");
+    RecordDetail recordDeletionInfo = {
+        recordInternalId: vendorBillId,
+        recordType: "vendorBill"
+    };
+    RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
+    if (output is RecordDeletionResponse) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {enable: true}
+function testVendorSearchOperation() {
+    log:printInfo("testVendorSearchOperation");
+    SearchElement searchRecord1 = {
+        fieldName: "isInactive",
+        operator: "is",
+        searchType: SEARCH_BOOLEAN_FIELD,
+        value1: "true"
+    };
+
+    SearchElement searchRecord2 = {
+        fieldName: "email",
+        operator: "contains",
+        searchType: SEARCH_STRING_FIELD,
+        value1: "com"
+    };
+
+    SearchElement[] searchData = [searchRecord2];
+    var output = netsuiteClient->searchVendorRecords(searchData);
+    if (output is stream<Vendor, error?>) {
+        int index = 0;
+        error? e = output.forEach(function(Vendor queryResult) {
+                                      index = index + 1;
+                                  });
+        log:printInfo("Total count of records : " + index.toString());
+    } else {
+        test:assertFail(msg = output.toString());
+    }
+}
+
+@test:Config {enable: true}
+function testSendCustomRequest() {
+    log:printInfo("testCustomOperation");
+    string body = string ` <urn:getServerTime/>`;
+    xml|error output = netsuiteClient->makeCustomRequest(body, "getServerTime");
+    if (output is xml) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
     }
 }

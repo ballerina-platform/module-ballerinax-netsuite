@@ -194,7 +194,6 @@ isolated function mapContactRecord(xml response) returns Contact|error {
     return contact;
 }
 
-
 isolated function getContactsFromSearchResults(xml contactData) returns Contact[]|error{
     int size = contactData.length();
     Contact[] contacts =[];
@@ -205,14 +204,16 @@ isolated function getContactsFromSearchResults(xml contactData) returns Contact[
     return contacts;
 }
 
-isolated function getContactsNextPageResult(http:Response response) returns @tainted record {|Contact[] contacts; SearchResultStatus status;|}|error {
+isolated function getContactsNextPageResult(http:Response response) returns @tainted record {|Contact[] contacts; 
+                                            SearchResultStatus status;|}|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     return {contacts :check getContactsFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getContactsSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) returns @tainted stream<Contact, error?>|error {
+isolated function getContactsSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) 
+                                          returns @tainted stream<Contact, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
-    ContactStream objectInstance = check new (httpClient,resultStatus,config);
+    ContactStream objectInstance = check new (httpClient, resultStatus, config);
     stream<Contact, error?> finalStream = new (objectInstance);
     return finalStream;
 }
@@ -226,7 +227,7 @@ isolated function getContactSearchRequestBody(SearchElement[] searchElements) re
     </urn:searchRecord></urn:search></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function BuildContactSearchPayload(ConnectionConfig config,SearchElement[] searchElement) returns xml|error {
+isolated function buildContactSearchPayload(ConnectionConfig config, SearchElement[] searchElement) returns xml|error {
     string requestHeader = check buildXMLPayloadHeader(config);
     string requestBody = getContactSearchRequestBody(searchElement);
     return check getSoapPayload(requestHeader, requestBody);   

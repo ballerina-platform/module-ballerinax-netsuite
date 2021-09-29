@@ -15,7 +15,6 @@
 // under the License.
 
 import ballerina/http;
-import ballerina/lang.'xml as xmlLib;
 
 isolated  function getSearchElement(SearchElement[] searchElements) returns string{
     string searchElementInPayloadBody = EMPTY_STRING;
@@ -57,11 +56,6 @@ isolated  function getOptionalSearchValue(SearchElement element) returns string?
             return string `<urn1:searchValue2>${element?.value2.toString()}</urn1:searchValue2>`;
         }
     }
-}
-
-isolated  function getSoapPayload(string header, string body) returns xml|error {
-    string requestPayload = header + body;
-    return check xmlLib:fromString(requestPayload);
 }
 
 isolated function getNextPageRequestElement(int pageIndex, string searchId) returns string {

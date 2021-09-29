@@ -16,6 +16,7 @@
 
 import ballerina/http;
 import ballerina/lang.'xml;
+
 xmlns "urn:relationships_2020_2.lists.webservices.netsuite.com" as listRel;
 
 isolated function mapCustomerRecordFields(Customer customer) returns string {
@@ -261,7 +262,7 @@ isolated function mapCustomerRecord(xml response) returns Customer|error {
         salutation: extractStringFromXML(response/**/<listRel:salutation>/*),
         accountNumber: extractStringFromXML(response/**/<listRel:accountNumber>/*)
     };
-    boolean|error value = extractBooleanValueFromXMLOrText(response/**/<listRel:isPrivate>/*);
+    boolean|error value = extractBooleanValueFromXMLOrText(response/**/<listRel:isPerson>/*);
     if(value is boolean) {
         customer.isPerson = value;
     }

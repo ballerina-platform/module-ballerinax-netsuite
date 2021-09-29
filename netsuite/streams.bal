@@ -26,7 +26,7 @@ class CustomerStream {
     string searchId;
     ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
+    isolated function init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config)
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.customerEntries = check getCustomersFromSearchResults(resultStatus.recordList);
@@ -36,15 +36,15 @@ class CustomerStream {
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {| Customer value; |}|error? {
-        if(self.index < self.customerEntries.length()) {
-            record {| Customer value; |} singleRecord = {value: self.customerEntries[self.index]};
+    public isolated function next() returns @tainted record {|Customer value;|}|error? {
+        if (self.index < self.customerEntries.length()) {
+            record {|Customer value;|} singleRecord = {value: self.customerEntries[self.index]};
             self.index += 1;
             return singleRecord;
-        }else if (self.totalPages != self.currentPage ) {
+        } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.customerEntries = check self.fetchCustomers();
-            record {| Customer value; |} singleRecord = {value: self.customerEntries[self.index]};
+            record {|Customer value;|} singleRecord = {value: self.customerEntries[self.index]};
             self.index += 1;
             return singleRecord;
         }
@@ -55,7 +55,7 @@ class CustomerStream {
         http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
         record {|Customer[] customers; SearchResultStatus status;|} newPage = check getCustomersNextPageResult(
             response);
-        self.currentPage=newPage.status.pageIndex;
+        self.currentPage = newPage.status.pageIndex;
         return newPage.customers;
     }
 }
@@ -69,7 +69,7 @@ class AccountStream {
     string searchId;
     ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
+    isolated function init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config)
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.accountEntries = check getAccountsFromSearchResults(resultStatus.recordList);
@@ -79,15 +79,15 @@ class AccountStream {
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {| Account value; |}|error? {
-        if(self.index < self.accountEntries.length()) {
-            record {| Account value; |} singleRecord = {value: self.accountEntries[self.index]};
+    public isolated function next() returns @tainted record {|Account value;|}|error? {
+        if (self.index < self.accountEntries.length()) {
+            record {|Account value;|} singleRecord = {value: self.accountEntries[self.index]};
             self.index += 1;
             return singleRecord;
-        }else if (self.totalPages != self.currentPage ) {
+        } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.accountEntries = check self.fetchAccounts();
-            record {| Account value; |} singleRecord = {value: self.accountEntries[self.index]};
+            record {|Account value;|} singleRecord = {value: self.accountEntries[self.index]};
             self.index += 1;
             return singleRecord;
         }
@@ -98,7 +98,7 @@ class AccountStream {
         xml payload = check buildSearchMoreWithIdPayload(self.config, self.currentPage + 1, self.searchId);
         http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
         record {|Account[] accounts; SearchResultStatus status;|} newPage = check getAccountsNextPageResult(response);
-        self.currentPage=newPage.status.pageIndex;
+        self.currentPage = newPage.status.pageIndex;
         return newPage.accounts;
     }
 }
@@ -112,7 +112,7 @@ class TransactionStream {
     string searchId;
     ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
+    isolated function init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config)
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.transactionEntries = check getTransactionsFromSearchResults(resultStatus.recordList);
@@ -122,15 +122,15 @@ class TransactionStream {
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {| RecordRef value; |}|error? {
-        if(self.index < self.transactionEntries.length()) {
-            record {| RecordRef value; |} singleRecord = {value: self.transactionEntries[self.index]};
+    public isolated function next() returns @tainted record {|RecordRef value;|}|error? {
+        if (self.index < self.transactionEntries.length()) {
+            record {|RecordRef value;|} singleRecord = {value: self.transactionEntries[self.index]};
             self.index += 1;
             return singleRecord;
-        }else if (self.totalPages != self.currentPage ) {
+        } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.transactionEntries = check self.fetchTransactions();
-            record {| RecordRef value; |} singleRecord = {value: self.transactionEntries[self.index]};
+            record {|RecordRef value;|} singleRecord = {value: self.transactionEntries[self.index]};
             self.index += 1;
             return singleRecord;
         }
@@ -142,7 +142,7 @@ class TransactionStream {
         http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
         record {|RecordRef[] recordRefs; SearchResultStatus status;|} newPage = check getTransactionsNextPageResult(
             response);
-        self.currentPage=newPage.status.pageIndex;
+        self.currentPage = newPage.status.pageIndex;
         return newPage.recordRefs;
     }
 }
@@ -156,25 +156,25 @@ class ContactStream {
     string searchId;
     ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config) 
+    isolated function init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config)
                             returns @tainted error? {
         self.httpClient = httpClient;
-        self.contactEntries = check getTransactionsFromSearchResults(resultStatus.recordList);
+        self.contactEntries = check getContactsFromSearchResults(resultStatus.recordList);
         self.totalPages = resultStatus.totalPages;
         self.currentPage = resultStatus.pageIndex;
         self.searchId = resultStatus.searchId;
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {| Contact value; |}|error? {
-        if(self.index < self.contactEntries.length()) {
-            record {| Contact value; |} singleRecord = {value: self.contactEntries[self.index]};
+    public isolated function next() returns @tainted record {|Contact value;|}|error? {
+        if (self.index < self.contactEntries.length()) {
+            record {|Contact value;|} singleRecord = {value: self.contactEntries[self.index]};
             self.index += 1;
             return singleRecord;
-        }else if (self.totalPages != self.currentPage ) {
+        } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.contactEntries = check self.fetchTransactions();
-            record {| Contact value; |} singleRecord = {value: self.contactEntries[self.index]};
+            record {|Contact value;|} singleRecord = {value: self.contactEntries[self.index]};
             self.index += 1;
             return singleRecord;
         }
@@ -185,7 +185,7 @@ class ContactStream {
         xml payload = check buildSearchMoreWithIdPayload(self.config, self.currentPage + 1, self.searchId);
         http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
         record {|Contact[] contacts; SearchResultStatus status;|} newPage = check getContactsNextPageResult(response);
-        self.currentPage=newPage.status.pageIndex;
+        self.currentPage = newPage.status.pageIndex;
         return newPage.contacts;
     }
 }
@@ -199,7 +199,7 @@ class SavedSearchStream {
     string searchId;
     ConnectionConfig config;
 
-    isolated function  init(http:Client httpClient, SavedSearchResult resultStatus, ConnectionConfig config) 
+    isolated function init(http:Client httpClient, SavedSearchResult resultStatus, ConnectionConfig config)
                             returns @tainted error? {
         self.httpClient = httpClient;
         self.savedSearchRowEntries = resultStatus.recordList;
@@ -209,15 +209,15 @@ class SavedSearchStream {
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {| json value; |}|error? {
-        if(self.index < self.savedSearchRowEntries.length()) {
-            record {| json value; |} singleRecord = {value: self.savedSearchRowEntries[self.index]};
+    public isolated function next() returns @tainted record {|json value;|}|error? {
+        if (self.index < self.savedSearchRowEntries.length()) {
+            record {|json value;|} singleRecord = {value: self.savedSearchRowEntries[self.index]};
             self.index += 1;
             return singleRecord;
-        }else if (self.totalPages != self.currentPage ) {
+        } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.savedSearchRowEntries = check self.fetchNextSavedSearchResults();
-            record {| json value; |} singleRecord = {value: self.savedSearchRowEntries[self.index]};
+            record {|json value;|} singleRecord = {value: self.savedSearchRowEntries[self.index]};
             self.index += 1;
             return singleRecord;
         }
@@ -227,7 +227,50 @@ class SavedSearchStream {
         xml payload = check buildSearchMoreWithIdPayload(self.config, self.currentPage + 1, self.searchId);
         http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
         record {|json[] savedSearchRows; SavedSearchResult status;|} newPage = check getSavedSearchNextPageResult(response);
-        self.currentPage=newPage.status.pageIndex;
+        self.currentPage = newPage.status.pageIndex;
         return newPage.savedSearchRows;
+    }
+}
+
+class VendorStream {
+    private Vendor[] vendorEntries = [];
+    int index = 0;
+    private final http:Client httpClient;
+    int totalPages;
+    int currentPage;
+    string searchId;
+    ConnectionConfig config;
+
+    isolated function init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config)
+                            returns error? {
+        self.httpClient = httpClient;
+        self.vendorEntries = check getVendorsFromSearchResults(resultStatus.recordList);
+        self.totalPages = resultStatus.totalPages;
+        self.currentPage = resultStatus.pageIndex;
+        self.searchId = resultStatus.searchId;
+        self.config = config;
+    }
+
+    public isolated function next() returns record {|Vendor value;|}|error? {
+        if (self.index < self.vendorEntries.length()) {
+            record {|Vendor value;|} singleRecord = {value: self.vendorEntries[self.index]};
+            self.index += 1;
+            return singleRecord;
+        } else if (self.totalPages != self.currentPage) {
+            self.index = 0;
+            self.vendorEntries = check self.fetchTransactions();
+            record {|Vendor value;|} singleRecord = {value: self.vendorEntries[self.index]};
+            self.index += 1;
+            return singleRecord;
+        }
+    }
+
+    isolated function fetchTransactions() returns Vendor[]|error {
+        log:printInfo(REQUEST_NEXT_PAGE);
+        xml payload = check buildSearchMoreWithIdPayload(self.config, self.currentPage + 1, self.searchId);
+        http:Response response = check sendRequest(self.httpClient, SEARCH_MORE_WITH_ID, payload);
+        record {|Vendor[] vendors; SearchResultStatus status;|} newPage = check getVendorsNextPageResult(response);
+        self.currentPage = newPage.status.pageIndex;
+        return newPage.vendors;
     }
 }
