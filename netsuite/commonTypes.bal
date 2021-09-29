@@ -45,49 +45,87 @@ public type Address record {
     boolean override?;
 };
 
+# Represents NetSuite CustomFieldList type record
+#
+# + customFields - An array of customFields  
 public type CustomFieldList record {|
     CustomField[] customFields;
 |};
 
+# Represents a union type for custom field types.
 public type CustomField LongCustomFieldRef|DoubleCustomFieldRef|BooleanCustomFieldRef|StringOrDateCustomFieldRef|SelectCustomFieldRef|MultiSelectCustomFieldRef;
+
+# Represents integer custom Field Type in NetSuite UI
+#
+# + internalId - References a unique instance of a custom field type
+# + scriptId - Script Id
+# + value - Integer value
 public type LongCustomFieldRef record {|
     string internalId;
     string scriptId?;
     int? value;
 |};
 
+# Represents decimal number custom Field Type in NetSuite UI
+#
+# + internalId - References a unique instance of a custom field type
+# + scriptId - Script Id
+# + value - decimal value  
 public type DoubleCustomFieldRef record {|
     string internalId;
     string scriptId?;
     decimal? value;
 |};
 
+# Represents boolean number custom Field Type in NetSuite UI
+#
+# + internalId - References a unique instance of a custom field type
+# + scriptId - Script Id
+# + value - boolean value  
 public type BooleanCustomFieldRef record {|
     string internalId;
     string scriptId?;
     boolean value;
 |};
 
+# Represents free-form text, text area, phone number, e-mail address, hyperlink, rich text custom Field Type, date and time in NetSuite UI
+#
+# + internalId - References a unique instance of a custom field type
+# + scriptId - Script Id
+# + value - Custom field value  
 public type StringOrDateCustomFieldRef record {|
     string internalId;
     string scriptId?;
     string value;
 |};
 
+# Represents list/record, document custom Field Type in NetSuite UI
+#
+# + internalId - References a unique instance of a custom field type
+# + scriptId - Script Id
+# + value - The list/record or document
 public type SelectCustomFieldRef record {|
     string internalId;
     string scriptId?;
     ListOrRecordRef value;
 |};
 
+# Represents Multiple Select custom Field Type in NetSuite UI
+#
+# + internalId - References a unique instance of a custom field type
+# + scriptId - Script Id
+# + value - An array of lists/records or documents
 public type MultiSelectCustomFieldRef record {|
     string internalId;
     string scriptId?;
     ListOrRecordRef[] value;
 |};
 
+# Represents an array of type RecordRef
+# 
+# + recordName - name of the record
+# + internalId - internal Id of the record ref  
 public type ListOrRecordRef record {
     string recordName;
     string internalId;
 };
-

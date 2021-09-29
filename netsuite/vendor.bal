@@ -154,7 +154,7 @@ isolated function mapVendorRecord(xml response) returns Vendor|error {
         predConfidence: extractDecimalFromXML(response/**/<listRel:predConfidence>/*)
     };
 
-    var customFields = extractCustomFiledListFromXML(response/**/<listRel:customFieldList>/*);
+    CustomFieldList|error customFields = extractCustomFiledListFromXML(response/**/<listRel:customFieldList>/*);
     if (customFields is CustomFieldList) {
         vendor.customFieldList = customFields;
     }
@@ -163,7 +163,7 @@ isolated function mapVendorRecord(xml response) returns Vendor|error {
     if (value is boolean) {
         vendor.isInactive = value;
     }
-
+    
     value = extractBooleanValueFromXMLOrText(response/**/<listRel:requirePwdChange>/*);
     if (value is boolean) {
         vendor.requirePwdChange = value;

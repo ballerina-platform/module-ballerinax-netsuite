@@ -90,7 +90,7 @@ isolated function getAddXMLBodyWithParentElement(string subElements) returns str
     </soapenv:Envelope>`;
 }
 
-isolated function getCustomXMLBodyWithParentElement(xml|string customBody, ConnectionConfig config) returns xml|error {
+isolated function buildCustomXMLPayload(xml|string customBody, ConnectionConfig config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string body =  string `<soapenv:Body>${customBody.toString()}</soapenv:Body></soapenv:Envelope>`;
     return getSoapPayload(header, body);
@@ -114,7 +114,7 @@ isolated function getUpdateXMLBodyWithParentElement(string subElements) returns 
     </soapenv:Envelope>`;
 }
 
-isolated function getPayloadAddOp(NewRecordType recordType, RecordCoreType recordCoreType, ConnectionConfig config) 
+isolated function buildAddOperationPayload(NewRecordType recordType, RecordCoreType recordCoreType, ConnectionConfig config) 
                                 returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string subElements = check getAddOperationElements(recordType, recordCoreType);
@@ -122,14 +122,14 @@ isolated function getPayloadAddOp(NewRecordType recordType, RecordCoreType recor
     return getSoapPayload(header, body);
 }
 
-isolated function buildDeletePayload(RecordDetail recordType, ConnectionConfig config) returns xml|error {
+isolated function buildDeleteOperationPayload(RecordDetail recordType, ConnectionConfig config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string subElements = getDeletePayload(recordType);
     string body = getDeleteXMLBodyWithParentElement(subElements);
     return getSoapPayload(header, body);
 }
 
-isolated function buildUpdateRecord(ExistingRecordType recordType, RecordCoreType recordCoreType, ConnectionConfig 
+isolated function buildUpdateOperationPayload(ExistingRecordType recordType, RecordCoreType recordCoreType, ConnectionConfig 
                                     config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string elements = check getUpdateOperationElements(recordType, recordCoreType);
@@ -275,7 +275,7 @@ isolated function getXMLBodyForGetServerTime() returns string{
     return string`<soapenv:Body><urn:getServerTime/></soapenv:Body></soapenv:Envelope>`;
 }
 
-isolated function buildGetServerTime(ConnectionConfig config) returns xml|error {
+isolated function buildGetServerTimePayload(ConnectionConfig config) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
     string body = getXMLBodyForGetServerTime();
     return getSoapPayload(header, body);
@@ -309,7 +309,6 @@ isolated function extractBooleanValueFromXMLOrText(xml|string|error element) ret
    } else {
        return element;
    }
-   
 }
 
 isolated function getRecordRef(json element, json elementRecordType) returns RecordRef {
@@ -370,7 +369,7 @@ isolated function getXMLBodyForGetSavedSearchIDs(string searchType) returns stri
 isolated function getCustomElementList(CustomFieldList customFieldList, string namespace) returns string|error {
     string fieldsWithParentElement = string `<${namespace}:customFieldList xmlns:platformCore="urn:core_2020_2.platform.webservices.netsuite.com">`;
     foreach var item in customFieldList.customFields {
-        if(item is LongCustomFieldRef) {
+        if (item is LongCustomFieldRef) {
             fieldsWithParentElement += string `<platformCore:customField internalId="${item.internalId}" scriptId="${item?.scriptId.toString()}" xsi:type="platformCore:LongCustomFieldRef">
             <platformCore:value>${item.value.toString()}</platformCore:value></platformCore:customField>`;
         } else if(item is StringOrDateCustomFieldRef) {
@@ -503,5 +502,3 @@ isolated  function getSoapPayload(string header, string body) returns xml|error 
     string requestPayload = header + body;
     return check xmlLib:fromString(requestPayload);
 }
-
-
