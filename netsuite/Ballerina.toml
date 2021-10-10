@@ -1,10 +1,10 @@
 [package]
 org = "ballerinax"
 name = "netsuite"
-version = "0.9.6-SNAPSHOT"
+version = "2.0.0"
 authors = ["Ballerina"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-netsuite"
-keywords = ["business management/erp", "cost/paid"]
+keywords = ["Business Management/ERP", "Cost/Paid"]
 license = ["Apache-2.0"]
 
 [build-options]
