@@ -16,7 +16,6 @@
 
 import ballerina/http;
 import ballerina/lang.'decimal as decimalLib;
-import ballerina/lang.'string as stringLib;
 import ballerina/lang.'boolean as booleanLib;
 import ballerina/time;
 
@@ -29,7 +28,8 @@ isolated function sendRequest(http:Client basicClient, string action, xml payloa
 
 isolated function buildXMLPayloadHeader(NetSuiteConfiguration config) returns string|error {
     time:Utc timeNow = time:utcNow();
-    string timeToSend = stringLib:substring(timeNow.toString(), 0, 10);
+    var [timeInUTC, _] = timeNow;
+    string timeToSend = timeInUTC.toString();
     string uuid = getRandomString();
     string signature = check getNetsuiteSignature(timeToSend, uuid, config);
     string header = string `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
