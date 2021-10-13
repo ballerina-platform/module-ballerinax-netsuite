@@ -93,15 +93,17 @@ isolated function getAccountsFromSearchResults(xml accountData) returns Account[
     return accounts;
 }
 
-isolated function getAccountsNextPageResult(http:Response response) returns @tainted record {|Account[] accounts; SearchResultStatus status;|}|error {
+isolated function getAccountsNextPageResult(http:Response response) returns @tainted record {|Account[] accounts; 
+                                            SearchResultStatus status;|}|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     return {accounts :check getAccountsFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getAccountSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) returns @tainted stream<Account, error?>|error {
+isolated function getAccountSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) 
+                                         returns stream<SearchResult, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     AccountStream objectInstance = check new (httpClient,resultStatus,config);
-    stream<Account, error?> finalStream = new (objectInstance);
+    stream<SearchResult, error?> finalStream = new (objectInstance);
     return finalStream;
 }
 

@@ -168,14 +168,16 @@ isolated function getTransactionsFromSearchResults(xml TransactionData) returns 
     return recordRefs;
 }
 
-isolated function getTransactionsNextPageResult(http:Response response) returns @tainted record {|RecordRef[] recordRefs; SearchResultStatus status;|}|error {
+isolated function getTransactionsNextPageResult(http:Response response) returns @tainted record {|RecordRef[] recordRefs; 
+                                                SearchResultStatus status;|}|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     return {recordRefs :check getTransactionsFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getTransactionSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) returns @tainted stream<RecordRef, error?>|error {
+isolated function getTransactionSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) 
+                                            returns @tainted stream<SearchResult, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     TransactionStream objectInstance = check new (httpClient, resultStatus, config);
-    stream<RecordRef, error?> finalStream = new (objectInstance);
+    stream<SearchResult, error?> finalStream = new (objectInstance);
     return finalStream;
 }

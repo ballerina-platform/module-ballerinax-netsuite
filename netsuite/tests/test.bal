@@ -503,9 +503,9 @@ function testCustomerSearchOperation() {
     SearchElement[] searchData = [];
     searchData.push(searchRecord);
     var output = netsuiteClient->searchCustomerRecords(searchData);
-    if (output is stream<Customer, error?>) {
+    if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(Customer queryResult) {
+        error? e = output.forEach(function(SearchResult queryResult) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());
@@ -525,9 +525,9 @@ function testAccountSearchOperation() {
     };
     SearchElement[] searchElements = [searchRecord];
     var output = netsuiteClient->searchAccountRecords(searchElements);
-    if (output is stream<Account, error?>) {
+    if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(Account account) {
+        error? e = output.forEach(function(SearchResult account) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());
@@ -547,9 +547,9 @@ function testContactSearchOperation() {
     };
     SearchElement[] searchElements = [searchRecord];
     var output = netsuiteClient->searchContactRecords(searchElements);
-    if (output is stream<Contact, error?>) {
+    if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(Contact contact) {
+        error? e = output.forEach(function(SearchResult contact) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());
@@ -587,9 +587,9 @@ function testTransactionSearchOperation() {
     };
     SearchElement[] searchElements = [searchRecord1];
     var output = netsuiteClient->searchTransactionRecords(searchElements);
-    if (output is stream<RecordRef, error?>) {
+    if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(RecordRef recordRef) {
+        error? e = output.forEach(function(SearchResult recordRef) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());
@@ -767,9 +767,9 @@ function testGetSavedSearchIds() {
 function testPerformSavedSearchById() {
     log:printInfo("testPerformSavedSearchById");
     var output = netsuiteClient->performSavedSearchById(savedSearchID, "VendorSearchAdvanced");
-    if (output is stream<json, error?>) {
+    if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(json queryResult) {
+        error? e = output.forEach(function(SearchResult queryResult) {
                                       index = index + 1;
                                       if (index == 1) {
                                           log:printInfo(queryResult.toString());
@@ -1141,9 +1141,9 @@ function testVendorSearchOperation() {
 
     SearchElement[] searchData = [searchRecord2];
     var output = netsuiteClient->searchVendorRecords(searchData);
-    if (output is stream<Vendor, error?>) {
+    if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(Vendor queryResult) {
+        error? e = output.forEach(function(SearchResult queryResult) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());

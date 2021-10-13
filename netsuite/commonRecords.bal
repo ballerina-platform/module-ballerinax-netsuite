@@ -108,7 +108,7 @@ public type RecordInfo record {
 public type NewRecordType NewCustomer|NewContact|NewVendor|NewVendorBill|NewCurrency|NewInvoice|NewClassification|NewAccount|NewSalesOrder;
 
 # RecordType Connector supports for update operation for now.   
-public type ExistingRecordType Customer|Contact|Currency|Invoice|Classification|Account|SalesOrder|VendorBill;
+public type ExistingRecordType Customer|Contact|Currency|Invoice|Classification|Account|SalesOrder|VendorBill|Vendor;
 
 #Map type for record to Map conversion
 type MapAnyData map<anydata>;
@@ -157,8 +157,19 @@ type SavedSearchResult record {
     json[] recordList;
 };
 
-type CommonSearchResult record {
+public type CommonSearchResult record {
     int pageIndex;
     int totalPages;
     string searchId;
+    int totalRecords;
+    int pageSize;
 };
+
+# Represents search results 
+#
+# + result - Netsuite vendor type record  
+# + commonSearchResult - Description on search results  
+public type SearchResult record {|
+    Vendor|VendorBill|Contact|Customer|RecordRef|Account|json result;
+    CommonSearchResult commonSearchResult;
+|};

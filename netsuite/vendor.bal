@@ -236,11 +236,11 @@ isolated function buildVendorSearchPayload(ConnectionConfig config, SearchElemen
     return check getSoapPayload(requestHeader, requestBody);
 }
 
-isolated function getVendorSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config)
-                                        returns @tainted stream<Vendor, error?>|error {
+isolated function getSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config)
+                                        returns @tainted stream<SearchResult, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     VendorStream objectInstance = check new (httpClient, resultStatus, config);
-    stream<Vendor, error?> finalStream = new (objectInstance);
+    stream<SearchResult, error?> finalStream = new (objectInstance);
     return finalStream;
 }
 

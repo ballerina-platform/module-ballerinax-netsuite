@@ -314,7 +314,7 @@ public isolated client class Client {
     @display{label: "Perform saved search by ID"}
     isolated remote function performSavedSearchById(@display{label: "Saved Search ID"} string savedSearchId, 
                                                     @display{label: "Advanced Search type"} string advancedSearchType) returns 
-                                                    @tainted stream<json, error?>|error {
+                                                    @tainted stream<SearchResult, error?>|error {
         xml payload = check buildSavedSearchByIDPayload(self.config, savedSearchId, advancedSearchType);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getSavedSearchResult(response, self.basicClient, self.config);
@@ -328,7 +328,7 @@ public isolated client class Client {
     @display{label: "Search Customers"} 
     isolated remote function searchCustomerRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
                                                   returns @tainted @display{label: "Response"} 
-                                                  stream<Customer, error?>|error {
+                                                  stream<SearchResult, error?>|error {
         xml payload = check buildCustomerSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
         return getCustomerSearchResult(response,self.basicClient, self.config);
@@ -340,7 +340,7 @@ public isolated client class Client {
     # + return -  Ballerina stream of transaction type records otherwise the relevant error
     @display{label: "Search Transactions"}
     isolated remote function searchTransactionRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
-                                                     returns @tainted @display{label: "Response"} stream<RecordRef, 
+                                                     returns @tainted @display{label: "Response"} stream<SearchResult, 
                                                      error?>|error {
         xml payload = check buildTransactionSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
@@ -353,7 +353,7 @@ public isolated client class Client {
     # + return - Ballerina stream of account type records otherwise the relevant error
     @display{label: "Search Accounts"}
     isolated remote function searchAccountRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
-                                                 returns @tainted @display{label: "Response"} stream<Account, 
+                                                 returns @tainted @display{label: "Response"} stream<SearchResult, 
                                                  error?>|error {
         xml payload = check buildAccountSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
@@ -366,7 +366,7 @@ public isolated client class Client {
     # + return - Ballerina stream of contact type records otherwise the relevant error
     @display{label: "Search Contacts"}
     isolated remote function searchContactRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
-                                                 returns @tainted @display{label: "Response"} stream<Contact, 
+                                                 returns @tainted @display{label: "Response"} stream<SearchResult, 
                                                  error?>|error {
         xml payload = check buildContactSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
@@ -379,11 +379,11 @@ public isolated client class Client {
     # + return - Ballerina stream of vendor type records otherwise the relevant error
     @display{label: "Search Vendors"}
     isolated remote function searchVendorRecords(@display{label: "Search Elements"} SearchElement[] searchElements) 
-                                                 returns @tainted @display{label: "Response"} stream<Vendor, 
+                                                 returns @tainted @display{label: "Response"} stream<SearchResult, 
                                                  error?>|error {
         xml payload = check buildVendorSearchPayload(self.config, searchElements);
         http:Response response = check sendRequest(self.basicClient, SEARCH_SOAP_ACTION, payload);
-        return getVendorSearchResult(response, self.basicClient, self.config);
+        return getSearchResult(response, self.basicClient, self.config);
     }
 
     # Gets a vendor record from Netsuite by using internal ID.
