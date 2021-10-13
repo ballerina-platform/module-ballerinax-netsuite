@@ -747,7 +747,7 @@ function testGetServerTime() {
     }
 }
 
-string savedSearchID = "";
+string savedSearchID = EMPTY_STRING;
 
 @test:Config {enable: true}
 function testGetSavedSearchIds() {
@@ -1061,9 +1061,34 @@ function testAddNewVendorBill() {
     }
 }
 
+@test:Config {enable: true, dependsOn: [testAddNewVendorBill]}
+function testUpdateVendorBill() {
+    log:printInfo("testUpdateVendorBill");
+
+    VendorBill vendorBill = {
+        internalId: vendorBillId,
+        subsidiary: {
+            internalId: "1",
+            'type: "subsidiary"
+        },
+        entity: {
+            'type: "entity",
+            internalId: "201"
+        },
+        memo: "test_bill"
+    };
+    var output = netsuiteClient->updateVendorBillRecord(vendorBill);
+    if (output is RecordAddResponse) {
+        log:printInfo(output.toString());
+        vendorBillId = output.internalId;
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
 @test:Config {
     enable: true,
-    dependsOn: [testAddNewVendorBill]
+    dependsOn: [testUpdateVendorBill]
 }
 function testVendorBillGetOperation() {
     log:printInfo("testVendorBillGetOperation");
@@ -1084,7 +1109,7 @@ function testVendorBillGetOperation() {
     dependsOn: [testVendorBillGetOperation]
 }
 function testVendorBillRecordDeleteOperation() {
-    log:printInfo("testVendorDeleteOperation");
+    log:printInfo("testVendorBillDeleteOperation");
     RecordDetail recordDeletionInfo = {
         recordInternalId: vendorBillId,
         recordType: "vendorBill"

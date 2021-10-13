@@ -125,7 +125,7 @@ public type VendorBillCommon record {
     @display{label: "Posting Period"}
     RecordRef postingPeriod?;
     @display{label: "Transaction Date"}
-    RecordRef tranDate?;
+    string tranDate?;
     @display{label: "Currency Name"}
     string currencyName?;
     @display{label: "Billing Address"}

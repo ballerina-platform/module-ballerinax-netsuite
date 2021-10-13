@@ -253,6 +253,12 @@ isolated function wrapVendorBillElements(string subElements) returns string {
         </urn:record>`;
 }
 
+isolated function wrapVendorBillElementsWithParentElement(string subElements, string internalId) returns string {
+    return string `<urn:record xsi:type="tranPurch:VendorBill" internalId="${internalId}" xmlns:tranPurch="urn:purchases_2020_2.transactions.webservices.netsuite.com">
+            ${subElements}
+        </urn:record>`;
+}
+
 isolated function getVendorBillResult(http:Response response) returns Vendor|error {
     xml payload = check formatPayload(response);
     if (response.statusCode == http:STATUS_OK) { 
@@ -284,7 +290,7 @@ isolated function mapVendorBillRecord(xml payload) returns VendorBill {
         nextApprover: extractRecordRefFromXML(payload/**/<tranPurch:nextApprover>),
         vatRegNum : extractStringFromXML(payload/**/<tranPurch:vatRegNum>/*),
         postingPeriod: extractRecordRefFromXML(payload/**/<tranPurch:postingPeriod>),
-        tranDate: extractRecordRefFromXML(payload/**/<tranPurch:tranDate>),
+        tranDate: extractStringFromXML(payload/**/<tranPurch:tranDate>/*),
         currencyName : extractStringFromXML(payload/**/<tranPurch:currencyName>/*),
         exchangeRate: extractDecimalFromXML(payload/**/<tranPurch:exchangeRate>/*),
         entityTaxRegNum: extractRecordRefFromXML(payload/**/<tranPurch:entityTaxRegNum>),
@@ -306,7 +312,8 @@ isolated function mapVendorBillRecord(xml payload) returns VendorBill {
         location: extractRecordRefFromXML(payload/**/<tranPurch:location>),
         status : extractStringFromXML(payload/**/<tranPurch:status>/*),
         landedCostMethod : extractStringFromXML(payload/**/<tranPurch:landedCostMethod>/*),
-        transactionNumber : extractStringFromXML(payload/**/<tranPurch:transactionNumber>/*)
+        transactionNumber : extractStringFromXML(payload/**/<tranPurch:transactionNumber>/*),
+        entity: extractRecordRefFromXML(payload/**/<tranPurch:entity>)
     };
     var customFields = extractCustomFiledListFromXML(payload/**/<tranPurch:customFieldList>/*);
     if (customFields is CustomFieldList) {
@@ -337,5 +344,92 @@ isolated function mapVendorBillRecord(xml payload) returns VendorBill {
     if (value is boolean) {
         vendorBill.taxDetailsOverride = value;
     }
+
+    var expenseList = extractExpenseListFromXML(payload/**/<tranPurch:expenseList>/*);
+    vendorBill.expenseList = expenseList;
     return vendorBill;
+}
+
+isolated function extractExpenseListFromXML(xml expenseList) returns VendorBillExpenseList {
+    xmlns "urn:purchases_2020_2.transactions.webservices.netsuite.com" as tranPurch;
+    VendorBillExpense[] expenses = [];
+    foreach xml element in expenseList {
+        VendorBillExpense expense = {
+            orderDoc: extractIntegerFromXML(element/**/<tranPurch:orderDoc>/*),
+            orderLine: extractIntegerFromXML(element/**/<tranPurch:orderLine>/*),
+            line: extractIntegerFromXML(element/**/<tranPurch:line>/*),
+            category: extractRecordRefFromXML(element/**/<tranPurch:category>),
+            account: extractRecordRefFromXML(element/**/<tranPurch:account>),
+            amount: extractDecimalFromXML(element/**/<tranPurch:amount>/*),
+            taxAmount: extractDecimalFromXML(element/**/<tranPurch:taxAmount>/*),
+            tax1Amt: extractDecimalFromXML(element/**/<tranPurch:tax1Amt>/*),
+            memo: extractStringFromXML(element/**/<tranPurch:memo>/*),
+            grossAmt: extractDecimalFromXML(element/**/<tranPurch:grossAmt>/*),
+            taxDetailsReference: extractStringFromXML(element/**/<tranPurch:taxDetailsReference>/*),
+            department: extractRecordRefFromXML(element/**/<tranPurch:department>),
+            'class: extractRecordRefFromXML(element/**/<tranPurch:'class>),
+            location: extractRecordRefFromXML(element/**/<tranPurch:location>),
+            customer: extractRecordRefFromXML(element/**/<tranPurch:customer>),
+            projectTask: extractRecordRefFromXML(element/**/<tranPurch:projectTask>),
+            taxCode: extractRecordRefFromXML(element/**/<tranPurch:taxCode>),
+            taxRate1: extractDecimalFromXML(element/**/<tranPurch:taxRate1>/*),
+            taxRate2: extractDecimalFromXML(element/**/<tranPurch:taxRate2>/*),
+            amortizationSched: extractRecordRefFromXML(element/**/<tranPurch:amortizationSched>),
+            amortizStartDate: extractStringFromXML(element/**/<tranPurch:amortizStartDate>/*),
+            amortizationEndDate: extractStringFromXML(element/**/<tranPurch:amortizationEndDate>/*),
+            amortizationResidual: extractStringFromXML(element/**/<tranPurch:amortizationResidual>/*)
+        };
+        var customFields = extractCustomFiledListFromXML(element/**/<tranPurch:customFieldList>/*);
+        if (customFields is CustomFieldList) {
+            expense.customFieldList = customFields;
+        }
+
+        boolean|error value = extractBooleanValueFromXMLOrText(element/**/<tranPurch:isBillable>/*);
+        if (value is boolean) {
+            expense.isBillable = value;
+        }
+        expenses.push(expense);
+    }
+    VendorBillExpenseList vendorBillExpenseList = {
+        expenses: expenses
+    };
+    return vendorBillExpenseList;
+}
+
+isolated function mapVendorBillRecordFields(VendorBill vendorBill) returns string|error {
+    string finalResult = EMPTY_STRING;
+    map<anydata>|error vendorMap = vendorBill.cloneWithType(MapAnyData);
+    if (vendorMap is map<anydata>) {
+        string[] keys = vendorMap.keys();
+        int position = 0;
+        foreach var item in vendorBill {
+            if (item is string|boolean|int|decimal) {
+                finalResult += setSimpleType(keys[position], item, "tranPurch");
+            } else if (item is RecordRef) {
+                finalResult += getXMLRecordRef(<RecordRef>item);
+            } else if (item is RecordInputRef) {
+                finalResult += getXMLRecordInputRef(<RecordInputRef>item);
+            } else if (item is CustomFieldList) {
+                finalResult += check getCustomElementList(<CustomFieldList>item, "tranPurch");
+            } else if (item is VendorBillExpenseList) {
+                finalResult += check getXMLVendorBillExpenseList(<VendorBillExpenseList>item);
+            } else if (item is AccountingBookDetailList) {
+                finalResult += check getXMLAccountingBookDetailList(<AccountingBookDetailList>item);
+            } else if (item is VendorBillItemList) {
+                finalResult += check getXMLVendorBillItemList(<VendorBillItemList>item);
+            } else if (item is Installment[]) {
+                finalResult += check getXMLInstallmentList(<Installment[]>item);
+            } else if (item is PurchLandedCostList) {
+                finalResult += check getXMLPurchLandedCostList(<PurchLandedCostList>item);
+            } else if (item is RecordRef[]) {
+                finalResult += getXMLRecordRefList(<RecordRef[]>item);
+            } else if (item is TaxDetailsList) {
+                finalResult += getXMLTaxDetailsList(<TaxDetailsList>item);
+            } else if (item is CustomFieldList) {
+                finalResult += check getCustomElementList(<CustomFieldList>item, "tranPurch");
+            }
+            position += 1;
+        }
+    }
+    return finalResult;
 }

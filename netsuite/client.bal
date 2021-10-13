@@ -171,6 +171,20 @@ public isolated client class Client {
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
         return getUpdateResponse(response); 
     }
+
+    # Updates a NetSuite vendor bill instance by internal ID.
+    #
+    # + vendorBill - Vendor bill record with details and internal ID
+    # + return - RecordUpdateResponse type record otherwise the relevant error
+    @display{label: "Update Vendor Bill"}
+    isolated remote function updateVendorBillRecord(@display{label: "Vendor Bill"} VendorBill vendorBill) returns 
+                                                @display{label: "Response"} RecordUpdateResponse|error {
+        xml payload = check buildUpdateOperationPayload(vendorBill, VENDOR_BILL , self.config);
+        http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
+        return getUpdateResponse(response); 
+    }
+
+    
     
     # Updates a NetSuite customer instance by internal ID.
     #

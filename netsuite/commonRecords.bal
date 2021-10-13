@@ -108,7 +108,7 @@ public type RecordInfo record {
 public type NewRecordType NewCustomer|NewContact|NewVendor|NewVendorBill|NewCurrency|NewInvoice|NewClassification|NewAccount|NewSalesOrder;
 
 # RecordType Connector supports for update operation for now.   
-public type ExistingRecordType Customer|Contact|Currency|Invoice|Classification|Account|SalesOrder;
+public type ExistingRecordType Customer|Contact|Currency|Invoice|Classification|Account|SalesOrder|VendorBill;
 
 #Map type for record to Map conversion
 type MapAnyData map<anydata>;
@@ -128,6 +128,7 @@ public type RecordList record {|
 # + value1 - Primary search value   
 # + value2 - Secondary search value  
 # + multiValues - An array of strings for multi values in case there are more values excepts primary and secondary
+# + multiSelectValues - An array of record references for Search Multi Select Field.
 @display{label: "Search Element"}
 public type SearchElement record {
     @display{label: "Search Field Name"}
@@ -137,11 +138,13 @@ public type SearchElement record {
     @display{label: "Search Type"}
     SearchType searchType;
     @display{label: "First Search Value"}
-    string value1;
+    string value1 = EMPTY_STRING;
     @display{label: "Second Search Value"}
     string value2?;
     @display{label: "More Search Values"}
     string[] multiValues?;
+    @display{label: "Record References"}
+    RecordRef[] multiSelectValues?;
 };
 
 type SearchResultStatus record {

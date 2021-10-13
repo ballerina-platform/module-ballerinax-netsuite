@@ -24,7 +24,22 @@ isolated  function getSearchElement(SearchElement[] searchElements) returns stri
     return searchElementInPayloadBody;
 }
 
+isolated function getMultiValues(SearchElement element) returns string {
+    string multiSelectValues  = EMPTY_STRING;
+    if (element?.multiSelectValues is RecordRef[]) {
+        foreach RecordRef reference in  <RecordRef[]>element?.multiSelectValues {
+            multiSelectValues += string `<urn1:searchValue internalId="${reference.internalId}"  xsi:type="urn1:RecordRef"/> `;
+        }
+    }
+    return multiSelectValues;
+}
+
 isolated  function getXMLSearchElement(SearchElement element) returns string {
+    if (element.searchType == SEARCH_MULTI_SELECT_FIELD) {
+        return string `<ns1:${element.fieldName} ${getSearchElementOperator(element).toString()} xsi:type="urn1:SearchMultiSelectField">
+          ${getMultiValues(element)}
+         </ns1:${element.fieldName}>`;
+    }
     return string `<ns1:${element.fieldName} 
         ${getSearchElementOperator(element).toString()}
         xsi:type="urn1:${element.searchType.toString()}">
