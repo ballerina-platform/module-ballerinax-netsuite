@@ -13,7 +13,7 @@ jobs:
               uses: ballerina-platform/ballerina-action@slbeta3
               with:
                   args:
-                      build -c ./netsuite --skip-tests
+                      build -c --skip-tests ./netsuite
               env:
                   NS_BASE_URL: ${{ secrets.BASEURL }}
                   NS_TOKEN_SECRET: ${{ secrets.TOKENSECRET }}
