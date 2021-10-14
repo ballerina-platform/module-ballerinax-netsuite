@@ -558,6 +558,3 @@ public type Vendor record {
     RecordRef subsidiary?;
     *VendorCommon; 
 };
-
-
-

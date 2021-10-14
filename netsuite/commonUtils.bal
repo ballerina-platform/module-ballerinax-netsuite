@@ -149,6 +149,10 @@ isolated function getUpdateOperationElements(ExistingRecordType recordType, Reco
             subElements = check mapVendorRecordFields(<Vendor>recordType);
             return wrapVendorElementsWithParent(subElements, recordType?.internalId.toString());
         }
+        VENDOR_BILL => {
+            subElements = check mapVendorBillRecordFields(<VendorBill>recordType);
+            return wrapVendorBillElementsWithParentElement(subElements, recordType?.internalId.toString());
+        }
         CONTACT => {
              subElements = mapContactRecordFields(<Contact>recordType); 
              return wrapContactElementsToBeUpdatedWithParentElement(subElements, recordType?.internalId.toString());
@@ -393,7 +397,7 @@ isolated function getCustomElementList(CustomFieldList customFieldList, string n
 }
 
 isolated function getMultiSelectCustomFields(ListOrRecordRef[] value) returns string {
-    string multiField = "";
+    string multiField = EMPTY_STRING;
     foreach ListOrRecordRef item in value {
         multiField += string  `<platformCore:value internalId="${item.internalId}"><platformCore:name>${item.recordName}</platformCore:name>
         </platformCore:value>`;

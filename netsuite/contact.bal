@@ -211,10 +211,10 @@ isolated function getContactsNextPageResult(http:Response response) returns @tai
 }
 
 isolated function getContactsSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) 
-                                          returns @tainted stream<Contact, error?>|error {
+                                          returns @tainted stream<SearchResult, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     ContactStream objectInstance = check new (httpClient, resultStatus, config);
-    stream<Contact, error?> finalStream = new (objectInstance);
+    stream<SearchResult, error?> finalStream = new (objectInstance);
     return finalStream;
 }
 

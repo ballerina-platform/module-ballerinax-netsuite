@@ -227,9 +227,12 @@ isolated function getXMLRecordListFromSearchResult(http:Response response) retur
         xml output  = payload/**/<status>;
         boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess); 
         if(isSuccess == true) {
-            int pageIndex = let var value = 'int:fromString((payload/**/<pageIndex>/*).toString()) in value is int ? value : 0; 
+            int pageIndex = let var value = 'int:fromString((payload/**/<pageIndex>/*).toString()) in value is int ? 
+                value : 0; 
             int totalPages = check 'int:fromString((payload/**/<totalPages>/*).toString());
             int totalRecords = check 'int:fromString((payload/**/<totalRecords>/*).toString());
+            int pageSize =  let var value = 'int:fromString((payload/**/<pageSize>/*).toString()) in value is int ? 
+                value : 0;
             string searchId = (payload/**/<searchId>/*).toString();
             xml:Element records = <xml:Element> payload/**/<recordList>;
             xml children  = 'xml:getChildren(records); 
@@ -240,8 +243,11 @@ isolated function getXMLRecordListFromSearchResult(http:Response response) retur
                 recordList: children,
                 pageIndex: pageIndex,
                 totalPages: totalPages,
-                searchId: searchId
+                searchId: searchId,
+                totalRecords: totalRecords,
+                pageSize: pageSize
             };
+            
             return searchResultStatus;
         } else {
             json errorMessage= check xmldata:toJson(payload/**/<statusDetail>);
@@ -259,9 +265,12 @@ isolated function getXMLRecordListFromSavedSearchResult(http:Response response) 
         xml output  = payload/**/<platformCore:status>;
         boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess); 
         if(isSuccess == true) {
-            int pageIndex = let var value = 'int:fromString((payload/**/<platformCore:pageIndex>/*).toString()) in value is int ? value : 0; 
+            int pageIndex = let var value = 'int:fromString((payload/**/<platformCore:pageIndex>/*).toString()) in value 
+                is int ? value : 0; 
             int totalPages = check 'int:fromString((payload/**/<platformCore:totalPages>/*).toString());
             int totalRecords = check 'int:fromString((payload/**/<platformCore:totalRecords>/*).toString());
+            int pageSize =  let var value = 'int:fromString((payload/**/<pageSize>/*).toString()) in value is int ? 
+                value : 0;
             string searchId = (payload/**/<platformCore:searchId>/*).toString();
             xml:Element records = <xml:Element> payload/**/<platformCore:searchRowList>;
             xml children  = 'xml:getChildren(records); 
@@ -273,7 +282,9 @@ isolated function getXMLRecordListFromSavedSearchResult(http:Response response) 
                 recordList: <json[]>searchRows,
                 pageIndex: pageIndex,
                 totalPages: totalPages,
-                searchId: searchId
+                searchId: searchId,
+                totalRecords: totalRecords,
+                pageSize: pageSize
             };
         } else {
             json errorMessage= check xmldata:toJson(payload/**/<platformCore:statusDetail>/*, {preserveNamespaces: false});

@@ -129,7 +129,8 @@ public enum SearchType {
    SEARCH_LONG_FIELD = "SearchLongField",
    SEARCH_TEXT_NUMBER_FIELD = "SearchTextNumberField",
    SEARCH_DATE_FIELD = "SearchDateField",
-   SEARCH_ENUM_MULTI_SELECT_FIELD = "SearchEnumMultiSelectField"
+   SEARCH_ENUM_MULTI_SELECT_FIELD = "SearchEnumMultiSelectField",
+   SEARCH_MULTI_SELECT_FIELD = "SearchMultiSelectField"
 }
 
 public enum BasicSearchOperator {

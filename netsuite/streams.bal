@@ -24,6 +24,8 @@ class CustomerStream {
     int totalPages;
     int currentPage;
     string searchId;
+    int totalRecords;
+    int pageSize;
     ConnectionConfig config;
 
     isolated function init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config)
@@ -32,19 +34,31 @@ class CustomerStream {
         self.customerEntries = check getCustomersFromSearchResults(resultStatus.recordList);
         self.totalPages = resultStatus.totalPages;
         self.currentPage = resultStatus.pageIndex;
+        self.totalPages = resultStatus.totalPages;
+        self.pageSize = resultStatus?.pageSize;
+        self.totalRecords = resultStatus.totalRecords;
         self.searchId = resultStatus.searchId;
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {|Customer value;|}|error? {
+    public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
+        CommonSearchResult commonSearchResult = {
+            pageIndex: self.currentPage,
+            totalPages: self.totalPages,
+            searchId: self.searchId,
+            totalRecords: self.totalRecords,
+            pageSize: self.pageSize  
+        };
         if (self.index < self.customerEntries.length()) {
-            record {|Customer value;|} singleRecord = {value: self.customerEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: { result: self.customerEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.customerEntries = check self.fetchCustomers();
-            record {|Customer value;|} singleRecord = {value: self.customerEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: { result: self.customerEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         }
@@ -67,6 +81,8 @@ class AccountStream {
     int totalPages;
     int currentPage;
     string searchId;
+    int totalRecords;
+    int pageSize;
     ConnectionConfig config;
 
     isolated function init(http:Client httpClient, SearchResultStatus resultStatus, ConnectionConfig config)
@@ -76,18 +92,29 @@ class AccountStream {
         self.totalPages = resultStatus.totalPages;
         self.currentPage = resultStatus.pageIndex;
         self.searchId = resultStatus.searchId;
+        self.totalRecords = resultStatus.totalRecords;
+        self.pageSize = resultStatus?.pageSize;
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {|Account value;|}|error? {
+    public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
+        CommonSearchResult commonSearchResult = {
+            pageIndex: self.currentPage,
+            totalPages: self.totalPages,
+            searchId: self.searchId,
+            totalRecords: self.totalRecords,
+            pageSize: self.pageSize  
+        };
         if (self.index < self.accountEntries.length()) {
-            record {|Account value;|} singleRecord = {value: self.accountEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: { result: self.accountEntries[self.index], 
+                commonSearchResult: commonSearchResult }};
             self.index += 1;
             return singleRecord;
         } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.accountEntries = check self.fetchAccounts();
-            record {|Account value;|} singleRecord = {value: self.accountEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: { result: self.accountEntries[self.index], 
+                commonSearchResult: commonSearchResult }};
             self.index += 1;
             return singleRecord;
         }
@@ -109,6 +136,8 @@ class TransactionStream {
     private final http:Client httpClient;
     int totalPages;
     int currentPage;
+    int totalRecords;
+    int pageSize;
     string searchId;
     ConnectionConfig config;
 
@@ -118,19 +147,30 @@ class TransactionStream {
         self.transactionEntries = check getTransactionsFromSearchResults(resultStatus.recordList);
         self.totalPages = resultStatus.totalPages;
         self.currentPage = resultStatus.pageIndex;
+        self.totalRecords = resultStatus.totalRecords;
+        self.pageSize = resultStatus?.pageSize;        
         self.searchId = resultStatus.searchId;
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {|RecordRef value;|}|error? {
+    public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
+        CommonSearchResult commonSearchResult = {
+            pageIndex: self.currentPage,
+            totalPages: self.totalPages,
+            searchId: self.searchId,
+            totalRecords: self.totalRecords,
+            pageSize: self.pageSize  
+        };
         if (self.index < self.transactionEntries.length()) {
-            record {|RecordRef value;|} singleRecord = {value: self.transactionEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: {result: self.transactionEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.transactionEntries = check self.fetchTransactions();
-            record {|RecordRef value;|} singleRecord = {value: self.transactionEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: {result: self.transactionEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         }
@@ -153,6 +193,8 @@ class ContactStream {
     private final http:Client httpClient;
     int totalPages;
     int currentPage;
+    int totalRecords;
+    int pageSize;
     string searchId;
     ConnectionConfig config;
 
@@ -162,19 +204,30 @@ class ContactStream {
         self.contactEntries = check getContactsFromSearchResults(resultStatus.recordList);
         self.totalPages = resultStatus.totalPages;
         self.currentPage = resultStatus.pageIndex;
+        self.totalRecords = resultStatus.totalRecords;
+        self.pageSize = resultStatus?.pageSize;
         self.searchId = resultStatus.searchId;
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {|Contact value;|}|error? {
+    public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
+        CommonSearchResult commonSearchResult = {
+            pageIndex: self.currentPage,
+            totalPages: self.totalPages,
+            searchId: self.searchId,
+            totalRecords: self.totalRecords,
+            pageSize: self.pageSize  
+        };
         if (self.index < self.contactEntries.length()) {
-            record {|Contact value;|} singleRecord = {value: self.contactEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: {result: self.contactEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.contactEntries = check self.fetchTransactions();
-            record {|Contact value;|} singleRecord = {value: self.contactEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: {result: self.contactEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         }
@@ -196,6 +249,8 @@ class SavedSearchStream {
     private final http:Client httpClient;
     int totalPages;
     int currentPage;
+    int totalRecords;
+    int pageSize;
     string searchId;
     ConnectionConfig config;
 
@@ -205,19 +260,30 @@ class SavedSearchStream {
         self.savedSearchRowEntries = resultStatus.recordList;
         self.totalPages = resultStatus.totalPages;
         self.currentPage = resultStatus.pageIndex;
+        self.totalRecords = resultStatus.totalRecords;
+        self.pageSize = resultStatus?.pageSize;
         self.searchId = resultStatus.searchId;
         self.config = config;
     }
 
-    public isolated function next() returns @tainted record {|json value;|}|error? {
+    public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
+        CommonSearchResult commonSearchResult = {
+            pageIndex: self.currentPage,
+            totalPages: self.totalPages,
+            searchId: self.searchId,
+            totalRecords: self.totalRecords,
+            pageSize: self.pageSize  
+        };
         if (self.index < self.savedSearchRowEntries.length()) {
-            record {|json value;|} singleRecord = {value: self.savedSearchRowEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: {result: self.savedSearchRowEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.savedSearchRowEntries = check self.fetchNextSavedSearchResults();
-            record {|json value;|} singleRecord = {value: self.savedSearchRowEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = {value: {result: self.savedSearchRowEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         }
@@ -238,6 +304,8 @@ class VendorStream {
     private final http:Client httpClient;
     int totalPages;
     int currentPage;
+    int totalRecords;
+    int pageSize;
     string searchId;
     ConnectionConfig config;
 
@@ -247,19 +315,30 @@ class VendorStream {
         self.vendorEntries = check getVendorsFromSearchResults(resultStatus.recordList);
         self.totalPages = resultStatus.totalPages;
         self.currentPage = resultStatus.pageIndex;
+        self.totalRecords = resultStatus.totalRecords;
+        self.pageSize = resultStatus?.pageSize;
         self.searchId = resultStatus.searchId;
         self.config = config;
     }
 
-    public isolated function next() returns record {|Vendor value;|}|error? {
+    public isolated function next() returns record {|SearchResult value;|}|error? {
+        CommonSearchResult commonSearchResult = {
+            pageIndex: self.currentPage,
+            totalPages: self.totalPages,
+            searchId: self.searchId,
+            totalRecords: self.totalRecords,
+            pageSize: self.pageSize  
+        };
         if (self.index < self.vendorEntries.length()) {
-            record {|Vendor value;|} singleRecord = {value: self.vendorEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = { value:{ result :self.vendorEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         } else if (self.totalPages != self.currentPage) {
             self.index = 0;
             self.vendorEntries = check self.fetchTransactions();
-            record {|Vendor value;|} singleRecord = {value: self.vendorEntries[self.index]};
+            record {|SearchResult value;|} singleRecord = { value:{ result :self.vendorEntries[self.index], 
+                commonSearchResult: commonSearchResult}};
             self.index += 1;
             return singleRecord;
         }

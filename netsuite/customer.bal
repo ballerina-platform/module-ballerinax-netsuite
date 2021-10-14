@@ -161,10 +161,11 @@ isolated function getCustomersNextPageResult(http:Response response) returns @ta
     return {customers :check getCustomersFromSearchResults(resultStatus.recordList), status: resultStatus};
 }
 
-isolated function getCustomerSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) returns @tainted stream<Customer, error?>|error {
+isolated function getCustomerSearchResult(http:Response response, http:Client httpClient, ConnectionConfig config) 
+                                         returns @tainted stream<SearchResult, error?>|error {
     SearchResultStatus resultStatus = check getXMLRecordListFromSearchResult(response);
     CustomerStream objectInstance = check new (httpClient,resultStatus,config);
-    stream<Customer, error?> finalStream = new (objectInstance);
+    stream<SearchResult, error?> finalStream = new (objectInstance);
     return finalStream;
 }
 
