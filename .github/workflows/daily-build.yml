@@ -22,7 +22,7 @@ jobs:
               uses: ballerina-platform/ballerina-action/@nightly
               with:
                   args:
-                      build -c ./netsuite
+                      pack --with-tests ./netsuite
               env:
                 JAVA_HOME: /usr/lib/jvm/default-jvm
                 NS_BASE_URL: ${{ secrets.BASEURL }}
