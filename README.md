@@ -32,11 +32,11 @@ Execute the commands below to build from the source.
  
 * To build the package:
    ```   
-   bal build -c
+   bal pack --with-tests
    ```
 * To build the package the without tests:
    ```
-   bal build -c --skip-tests
+   bal pack
    ```
 ## Contributing to Ballerina
  
