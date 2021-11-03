@@ -22,7 +22,14 @@ jobs:
               uses: ballerina-platform/ballerina-action/@nightly
               with:
                   args:
-                      pack --with-tests ./netsuite
+                      pack ./netsuite
+
+            # Test the ballerina project
+            - name: Ballerina Test
+              uses: ballerina-platform/ballerina-action/@nightly
+              with:
+                  args:
+                      test ./netsuite
               env:
                 JAVA_HOME: /usr/lib/jvm/default-jvm
                 NS_BASE_URL: ${{ secrets.BASEURL }}
