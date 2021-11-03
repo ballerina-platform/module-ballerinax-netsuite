@@ -13,7 +13,12 @@ jobs:
               uses: ballerina-platform/ballerina-action/@nightly
               with:
                   args:
-                      pack --with-tests ./netsuite
+                      pack ./netsuite
+            - name: Ballerina Test
+              uses: ballerina-platform/ballerina-action/@nightly
+              with:
+                  args:
+                      test ./netsuite
               env:
                   NS_BASE_URL: ${{ secrets.BASEURL }}
                   NS_TOKEN_SECRET: ${{ secrets.TOKENSECRET }}
