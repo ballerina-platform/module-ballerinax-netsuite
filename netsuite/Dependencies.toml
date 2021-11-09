@@ -354,7 +354,7 @@ modules = [
 [[package]]
 org = "ballerinax"
 name = "netsuite"
-version = "2.0.1"
+version = "2.0.0"
 dependencies = [
 	{org = "ballerina", name = "crypto"},
 	{org = "ballerina", name = "http"},
