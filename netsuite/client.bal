@@ -38,6 +38,7 @@ public isolated client class Client {
     public isolated function init(ConnectionConfig config, http:ClientConfiguration httpClientConfig = {})returns error? {
         self.config = config.cloneReadOnly();
         self.basicClient = check new (config.baseURL + NETSUITE_ENDPOINT, httpClientConfig);
+        return;
     }
 
     # Creates a new vendor record instance in NetSuite according to the given detail.

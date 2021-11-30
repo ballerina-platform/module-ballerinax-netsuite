@@ -115,7 +115,8 @@ isolated function mapAccountFields(json accountTypeJson, Account account) return
     account.legalName = getValidJson(valueList.legalName).toString();
     account.acctType = getValidJson(valueList.acctType).toString();
     account.generalRate = getValidJson(valueList.generalRate).toString();
-    account.cashFlowRate = getValidJson(valueList.cashFlowRate).toString();   
+    account.cashFlowRate = getValidJson(valueList.cashFlowRate).toString();
+    return;   
 }
 
 isolated function getAccountResult(http:Response response) returns @tainted Account|error {

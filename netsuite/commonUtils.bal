@@ -289,18 +289,21 @@ isolated function getValidJson(json|error element) returns json?{
     if(element is json) {
         return element;
     } 
+    return;
 }
 
 isolated function checkXmlElementValidity(xml|error element) returns xml?{
     if(element is xml) {
         return element;
-    } 
+    }
+    return;
 }
 
 isolated function checkStringValidity(string|error element) returns string?{
     if(element is string) {
         return element;
-    } 
+    }
+    return;
 }
 
 isolated function extractBooleanValueFromJson(json|error element) returns boolean|error {
@@ -329,7 +332,8 @@ isolated function extractDecimalFromXML(xml element) returns decimal? {
     decimal|error castedValue = trap decimalLib:fromString((element).toString());
     if(castedValue is decimal) {
          return castedValue;
-    }  
+    }
+    return;
 }
 
 isolated function extractIntegerFromXML(xml element) returns int? {
@@ -337,6 +341,7 @@ isolated function extractIntegerFromXML(xml element) returns int? {
     if (castedValue is int) {
          return castedValue;
     }
+    return;
 }
 
 isolated function extractStringFromXML(xml|string|error element) returns string {

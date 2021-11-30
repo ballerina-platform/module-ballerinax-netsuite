@@ -243,6 +243,7 @@ isolated function mapCustomerFields(json customerTypeJson, Customer customer) re
             customer.accountNumber = getValidJson(element.accountNumber).toString();
         }
     }
+    return;
 }
 
 isolated function mapCustomerRecord(xml response) returns Customer|error {

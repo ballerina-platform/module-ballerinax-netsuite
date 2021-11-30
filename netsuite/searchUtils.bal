@@ -51,7 +51,8 @@ isolated  function getXMLSearchElement(SearchElement element) returns string {
 isolated function getSearchElementOperator(SearchElement element) returns string? {
     if (element.searchType != SEARCH_BOOLEAN_FIELD) {
         return string `operator="${element.operator.toString()}"`;
-    } 
+    }
+    return;
 }
 
 isolated  function getOptionalSearchValue(SearchElement element) returns string? {
@@ -71,6 +72,7 @@ isolated  function getOptionalSearchValue(SearchElement element) returns string?
             return string `<urn1:searchValue2>${element?.value2.toString()}</urn1:searchValue2>`;
         }
     }
+    return;
 }
 
 isolated function getNextPageRequestElement(int pageIndex, string searchId) returns string {
