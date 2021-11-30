@@ -39,6 +39,7 @@ class CustomerStream {
         self.totalRecords = resultStatus.totalRecords;
         self.searchId = resultStatus.searchId;
         self.config = config;
+        return;
     }
 
     public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
@@ -62,6 +63,7 @@ class CustomerStream {
             self.index += 1;
             return singleRecord;
         }
+        return;
     }
 
     isolated function fetchCustomers() returns @tainted Customer[]|error {
@@ -95,6 +97,7 @@ class AccountStream {
         self.totalRecords = resultStatus.totalRecords;
         self.pageSize = resultStatus?.pageSize;
         self.config = config;
+        return;
     }
 
     public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
@@ -118,6 +121,7 @@ class AccountStream {
             self.index += 1;
             return singleRecord;
         }
+        return;
     }
 
     isolated function fetchAccounts() returns @tainted Account[]|error {
@@ -151,6 +155,7 @@ class TransactionStream {
         self.pageSize = resultStatus?.pageSize;        
         self.searchId = resultStatus.searchId;
         self.config = config;
+        return;
     }
 
     public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
@@ -174,6 +179,7 @@ class TransactionStream {
             self.index += 1;
             return singleRecord;
         }
+        return;
     }
 
     isolated function fetchTransactions() returns @tainted RecordRef[]|error {
@@ -208,6 +214,7 @@ class ContactStream {
         self.pageSize = resultStatus?.pageSize;
         self.searchId = resultStatus.searchId;
         self.config = config;
+        return;
     }
 
     public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
@@ -231,6 +238,7 @@ class ContactStream {
             self.index += 1;
             return singleRecord;
         }
+        return;
     }
 
     isolated function fetchTransactions() returns @tainted Contact[]|error {
@@ -264,6 +272,7 @@ class SavedSearchStream {
         self.pageSize = resultStatus?.pageSize;
         self.searchId = resultStatus.searchId;
         self.config = config;
+        return;
     }
 
     public isolated function next() returns @tainted record {|SearchResult value;|}|error? {
@@ -287,6 +296,7 @@ class SavedSearchStream {
             self.index += 1;
             return singleRecord;
         }
+        return;
     }
 
     isolated function fetchNextSavedSearchResults() returns @tainted json[]|error {
@@ -319,6 +329,7 @@ class VendorStream {
         self.pageSize = resultStatus?.pageSize;
         self.searchId = resultStatus.searchId;
         self.config = config;
+        return;
     }
 
     public isolated function next() returns record {|SearchResult value;|}|error? {
@@ -342,6 +353,7 @@ class VendorStream {
             self.index += 1;
             return singleRecord;
         }
+        return;
     }
 
     isolated function fetchTransactions() returns Vendor[]|error {
