@@ -279,7 +279,7 @@ isolated function getXMLRecordListFromSavedSearchResult(http:Response response) 
             } 
             json searchRows = check xmldata:toJson(payload/**/<platformCore:searchRowList>/*, {preserveNamespaces: false});
             return {
-                recordList: <json[]> searchRows,
+                recordList: <json[]> check searchRows.searchRow,
                 pageIndex: pageIndex,
                 totalPages: totalPages,
                 searchId: searchId,

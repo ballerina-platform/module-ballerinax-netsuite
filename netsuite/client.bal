@@ -430,7 +430,6 @@ public isolated client class Client {
     @display{label: "Get Contact"}  
     isolated remote function getContactRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                               @tainted @display{label: "Response"} Contact|error {
-        http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
         return getContactResult(response);
@@ -443,7 +442,6 @@ public isolated client class Client {
     @display{label: "Get Currency"}
     isolated remote function getCurrencyRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                @tainted @display{label: "Response"} Currency|error {
-        http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
         return getCurrencyResult(response);
@@ -456,7 +454,6 @@ public isolated client class Client {
     @display{label: "Get Classification"}
     isolated remote function getClassificationRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                      @tainted @display{label: "Response"} Classification|error {
-        http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
         return getClassificationResult(response);
@@ -469,7 +466,6 @@ public isolated client class Client {
     @display{label: "Get Invoice"}
     isolated remote function getInvoiceRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                               @tainted @display{label: "Response"} Invoice|error {
-        http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
         return getInvoiceResult(response);
@@ -482,7 +478,6 @@ public isolated client class Client {
     @display{label: "Get Sales Order"}
     isolated remote function getSalesOrderRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                  @tainted @display{label: "Response"} SalesOrder|error {
-        http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
         return getSalesOrderResult(response);
@@ -495,7 +490,6 @@ public isolated client class Client {
     @display{label: "Get Account"}
     isolated remote function getAccountRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
                                                  @tainted @display{label: "Response"} Account|error {
-        http:Request request = new;
         xml payload = check buildGetOperationPayload(recordInfo, self.config);
         http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
         return getAccountResult(response);
