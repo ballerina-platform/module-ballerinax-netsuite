@@ -60,11 +60,6 @@ function testAddContactRecordOperation() {
         'type: "subsidiary"
     };
 
-    RecordRef category = {
-        internalId: "12",
-        'type: "category"
-    };
-
     Address ad01 = {
         country: "_sriLanka",
         addr1: "address01_1",
@@ -129,26 +124,12 @@ function testAddNewCustomerRecord() {
         override: true
     };
 
-    RecordRef currency = {
-        internalId: "1",
-        'type: "currency"
-    };
-
     CustomerAddressbook customerAddressbook = {
         defaultShipping: true,
         defaultBilling: true,
         label: "myAddress",
         isResidential: true,
         addressBookAddress: [ad02]
-    };
-
-    CustomerCurrency cur = {
-        currency: currency,
-        balance: 1200.13,
-        depositBalance: 10000,
-        overdueBalance: 120,
-        unbilledOrders: 1000,
-        overrideCurrencyFormat: false
     };
 
     NewCustomer customer = {
@@ -342,26 +323,12 @@ function testUpdateCustomerRecord() {
         override: true
     };
 
-    RecordRef currency = {
-        internalId: "1",
-        'type: "currency"
-    };
-
     CustomerAddressbook customerAddressbook = {
         defaultShipping: true,
         defaultBilling: true,
         label: "myAddress",
         isResidential: true,
         addressBookAddress: [ad02]
-    };
-
-    CustomerCurrency cur = {
-        currency: currency,
-        balance: 1200.13,
-        depositBalance: 10000,
-        overdueBalance: 120,
-        unbilledOrders: 1000,
-        overrideCurrencyFormat: false
     };
 
     Customer customer = {
@@ -505,7 +472,7 @@ function testCustomerSearchOperation() {
     var output = netsuiteClient->searchCustomerRecords(searchData);
     if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(SearchResult queryResult) {
+        error? response = output.forEach(function(SearchResult queryResult) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());
@@ -527,7 +494,7 @@ function testAccountSearchOperation() {
     var output = netsuiteClient->searchAccountRecords(searchElements);
     if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(SearchResult account) {
+        error? response = output.forEach(function(SearchResult account) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());
@@ -549,7 +516,7 @@ function testContactSearchOperation() {
     var output = netsuiteClient->searchContactRecords(searchElements);
     if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(SearchResult contact) {
+        error? response = output.forEach(function(SearchResult contact) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());
@@ -568,28 +535,11 @@ function testTransactionSearchOperation() {
         value1: "150000",
         value2: "200000"
     };
-
-    SearchElement searchRecord3 = {
-        fieldName: "type",
-        searchType: SEARCH_ENUM_MULTI_SELECT_FIELD,
-        operator: "anyOf",
-        value1: "_salesOrder",
-        value2: "_invoice",
-        multiValues: [TRANS_VENDOR_BILL, TRANS_VENDOR_PAYMENT, TRANS_INVENTORY_TRANSFER]
-    };
-
-    SearchElement searchRecord2 = {
-        fieldName: "lastModifiedDate",
-        searchType: SEARCH_DATE_FIELD,
-        operator: "within",
-        value1: "2021-01-23T10:20:15",
-        value2: "2021-03-23T10:20:15"
-    };
     SearchElement[] searchElements = [searchRecord1];
     var output = netsuiteClient->searchTransactionRecords(searchElements);
     if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(SearchResult recordRef) {
+        error? response = output.forEach(function(SearchResult recordRef) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());
@@ -769,7 +719,7 @@ function testPerformSavedSearchById() {
     var output = netsuiteClient->performSavedSearchById(savedSearchID, "VendorSearchAdvanced");
     if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(SearchResult queryResult) {
+        error? response = output.forEach(function(SearchResult queryResult) {
                                       index = index + 1;
                                       if (index == 1) {
                                           log:printInfo(queryResult.toString());
@@ -1125,25 +1075,17 @@ function testVendorBillRecordDeleteOperation() {
 @test:Config {enable: true}
 function testVendorSearchOperation() {
     log:printInfo("testVendorSearchOperation");
-    SearchElement searchRecord1 = {
-        fieldName: "isInactive",
-        operator: "is",
-        searchType: SEARCH_BOOLEAN_FIELD,
-        value1: "true"
-    };
-
     SearchElement searchRecord2 = {
         fieldName: "email",
         operator: "contains",
         searchType: SEARCH_STRING_FIELD,
         value1: "com"
     };
-
     SearchElement[] searchData = [searchRecord2];
     var output = netsuiteClient->searchVendorRecords(searchData);
     if (output is stream<SearchResult, error?>) {
         int index = 0;
-        error? e = output.forEach(function(SearchResult queryResult) {
+        error? response = output.forEach(function(SearchResult queryResult) {
                                       index = index + 1;
                                   });
         log:printInfo("Total count of records : " + index.toString());
