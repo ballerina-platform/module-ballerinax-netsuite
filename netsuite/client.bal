@@ -21,7 +21,7 @@ import ballerina/http;
 # Invoice, Classifications etc.
 #
 # + basicClient - NetSuite HTTP Client
-@display{label: "NetSuite Client", iconPath: "resources/netsuite.svg"} 
+@display{label: "NetSuite Client", iconPath: "icon.png"} 
 public isolated client class Client {
     final http:Client basicClient;
     final readonly & ConnectionConfig config;
