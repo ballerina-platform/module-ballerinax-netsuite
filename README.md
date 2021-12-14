@@ -23,7 +23,7 @@ For more information, see [Ballerina Documentation - ballerinax/netsuite](https:
        > **Note:** Set the JAVA_HOME environment variable to the path name of the directory into which you installed
        JDK.
  
-2. Download and install [Ballerina Swan Lake Beta3](https://ballerina.io/)
+2. Download and install [Ballerina Swan Lake](https://ballerina.io/)
  
  
 ### Building the Source
