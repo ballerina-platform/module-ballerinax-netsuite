@@ -10,12 +10,12 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: ballerina-platform/ballerina-action/@nightly
+              uses: ballerina-platform/ballerina-action@2201.0.0
               with:
                   args:
                       pack ./netsuite
             - name: Ballerina Test
-              uses: ballerina-platform/ballerina-action/@nightly
+              uses: ballerina-platform/ballerina-action@2201.0.0
               with:
                   args:
                       test ./netsuite
