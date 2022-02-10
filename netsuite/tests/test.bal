@@ -56,7 +56,7 @@ function testAddContactRecordOperation() {
     };
 
     RecordInputRef subsidiary = {
-        internalId: "11",
+        internalId: "1",
         'type: "subsidiary"
     };
 
@@ -112,7 +112,7 @@ function testAddContactRecordOperation() {
 function testAddNewCustomerRecord() {
     log:printInfo("testAddCustomerRecord");
     RecordInputRef subsidiary = {
-        internalId: "11",
+        internalId: "1",
         'type: "subsidiary"
     };
 
@@ -133,7 +133,6 @@ function testAddNewCustomerRecord() {
     };
 
     NewCustomer customer = {
-        entityId: "BallerinaTest01",
         isPerson: true,
         salutation: "Mr",
         firstName: "TestName",
@@ -184,19 +183,19 @@ function testAddCurrencyRecord() {
 function testAddInvoiceRecord() {
     log:printInfo("testAddInvoiceRecord");
     RecordInputRef entity = {
-        internalId: "5530",
+        internalId: "1306",
         'type: "entity"
     };
     Item item01 = {
         item: {
-            internalId: "560",
+            internalId: "5",
             'type: "item"
         },
         amount: 1000
     };
     Item item02 = {
         item: {
-            internalId: "570",
+            internalId: "8",
             'type: "item"
         },
         amount: 2000
@@ -218,38 +217,19 @@ function testAddInvoiceRecord() {
 function testAddSalesOrderOperation() {
     log:printInfo("testSalesOrderRecordOperation");
     RecordInputRef entity = {
-        internalId: "4045",
+        internalId: "1407",
         'type: "entity"
     };
     RecordRef itemValue = {
-        internalId: "961",
+        internalId: "8",
         'type: "item"
-    };
-    Address address = {
-        country: "_sriLanka",
-        addr1: "address01_3",
-        addr2: "address02_3",
-        city: "Colombo07",
-        override: true
-    };
-    RecordRef currency = {
-        internalId: "1",
-        'type: "currency"
-    };
-
-    RecordRef location = {
-        internalId: "23",
-        'type: "location"
     };
     Item item = {
         item: itemValue,
-        amount: 100,
-        location: location
+        amount: 100.00
     };
     NewSalesOrder salesOrder = {
         entity: entity,
-        billingAddress: address,
-        currency: currency,
         itemList: [item]
     };
     RecordAddResponse|error output = netsuiteClient->addNewSalesOrder(salesOrder);
@@ -265,7 +245,7 @@ function testAddSalesOrderOperation() {
 function testAddClassificationRecord() {
     log:printInfo("testAddClassificationRecord");
     RecordInputRef recordRef = {
-        internalId: "10",
+        internalId: "1",
         'type: "parent"
     };
     NewClassification classification = {
@@ -305,13 +285,13 @@ function testAddAccountRecord() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddNewCustomerRecord]
 }
 function testUpdateCustomerRecord() {
     log:printInfo("testUpdateCustomerRecord");
     RecordRef subsidiary = {
-        internalId: "11",
+        internalId: "1",
         'type: "subsidiary"
     };
 
@@ -333,7 +313,6 @@ function testUpdateCustomerRecord() {
 
     Customer customer = {
         internalId: customerId,
-        entityId: "Test_Customer_test_Update",
         isPerson: true,
         salutation: "Mr",
         firstName: "TestFirstName",
@@ -360,18 +339,18 @@ function testUpdateCustomerRecord() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddSalesOrderOperation]
 }
 function testSalesOrderUpdateOperation() {
     log:printInfo("testSalesOrderUpdateOperation");
     RecordRef itemValue = {
-        internalId: "961",
+        internalId: "8",
         'type: "item"
     };
     Item item = {
         item: itemValue,
-        amount: 1000
+        amount: 200.00
     };
     SalesOrder salesOrder = {
         itemList: [item],
@@ -387,7 +366,7 @@ function testSalesOrderUpdateOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddClassificationRecord]
 }
 function testUpdateClassificationRecord() {
@@ -405,7 +384,7 @@ function testUpdateClassificationRecord() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddAccountRecord]
 }
 function testUpdateAccountRecord() {
@@ -423,7 +402,7 @@ function testUpdateAccountRecord() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddInvoiceRecord]
 }
 function testUpdateInvoiceRecord() {
@@ -441,7 +420,7 @@ function testUpdateInvoiceRecord() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddContactRecordOperation]
 }
 function testUpdateContactRecord() {
@@ -549,7 +528,7 @@ function testTransactionSearchOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testCustomerSearchOperation, testUpdateCustomerRecord, testCustomerRecordGetOperation]
 }
 function testCustomerDeleteRecord() {
@@ -568,7 +547,7 @@ function testCustomerDeleteRecord() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testUpdateContactRecord, testContactGetOperation]
 }
 function testContactDeleteOperation() {
@@ -586,7 +565,7 @@ function testContactDeleteOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddCurrencyRecord, testCurrencyRecordGetOperation]
 }
 function testCurrencyDeleteOperation() {
@@ -604,7 +583,7 @@ function testCurrencyDeleteOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testGetClassificationRecordOperation]
 }
 function testDeleteClassificationRecord() {
@@ -622,7 +601,7 @@ function testDeleteClassificationRecord() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAccountSearchOperation, testUpdateAccountRecord]
 }
 function testDeleteAccountRecord() {
@@ -640,7 +619,7 @@ function testDeleteAccountRecord() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testSalesOrderGetOperation, testSalesOrderUpdateOperation]
 }
 function testDeleteSalesOrderRecord() {
@@ -658,7 +637,7 @@ function testDeleteSalesOrderRecord() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testInvoiceRecordGetOperation, testUpdateInvoiceRecord]
 }
 function testDeleteInvoiceRecord() {
@@ -711,7 +690,7 @@ function testGetSavedSearchIds() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testGetSavedSearchIds]
 }
 function testPerformSavedSearchById() {
@@ -732,7 +711,7 @@ function testPerformSavedSearchById() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddNewCustomerRecord]
 }
 function testCustomerRecordGetOperation() {
@@ -750,7 +729,7 @@ function testCustomerRecordGetOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddCurrencyRecord]
 }
 function testCurrencyRecordGetOperation() {
@@ -768,7 +747,7 @@ function testCurrencyRecordGetOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testUpdateClassificationRecord]
 }
 function testGetClassificationRecordOperation() {
@@ -786,7 +765,7 @@ function testGetClassificationRecordOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddInvoiceRecord]
 }
 function testInvoiceRecordGetOperation() {
@@ -804,7 +783,7 @@ function testInvoiceRecordGetOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddSalesOrderOperation]
 }
 function testSalesOrderGetOperation() {
@@ -822,7 +801,7 @@ function testSalesOrderGetOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddContactRecordOperation]
 }
 function testContactGetOperation() {
@@ -840,7 +819,7 @@ function testContactGetOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testUpdateAccountRecord]
 }
 function testAccountGetOperation() {
@@ -898,7 +877,7 @@ function testAddNewVendor() {
 
     NewVendor vendor = {
         subsidiary: {
-            internalId: "11",
+            internalId: "1",
             'type: "subsidiary"
         },
         companyName: "Wso2Test",
@@ -918,7 +897,7 @@ function testAddNewVendor() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testAddNewVendor]
 }
 function testUpdateVendor() {
@@ -951,7 +930,7 @@ function testVendorGetOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testVendorGetOperation]
 }
 function testVendorRecordDeleteOperation() {
@@ -973,16 +952,11 @@ function testAddNewVendorBill() {
     log:printInfo("testAddNewVendorBill");
     VendorBillExpenseList vendorBillExpenseList = {expenses: [{
             line: 1,
-            category: {
-                internalId: "16",
-                'type: "category"
-            },
             account: {
-                internalId: "68",
+                internalId: "58",
                 'type: "account"
             },
-            amount: 105.7,
-            isBillable: false
+            amount: 105.7
         }]};
     NewVendorBill vendorBill = {
         subsidiary: {
@@ -991,7 +965,7 @@ function testAddNewVendorBill() {
         },
         entity: {
             'type: "entity",
-            internalId: "201"
+            internalId: "1305"
         },
         expenseList: vendorBillExpenseList,
         accountingBookDetailList: {accountingBookDetail: [{
@@ -1023,7 +997,7 @@ function testUpdateVendorBill() {
         },
         entity: {
             'type: "entity",
-            internalId: "201"
+            internalId: "1305"
         },
         memo: "test_bill"
     };
@@ -1037,7 +1011,7 @@ function testUpdateVendorBill() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testUpdateVendorBill]
 }
 function testVendorBillGetOperation() {
@@ -1055,7 +1029,7 @@ function testVendorBillGetOperation() {
 }
 
 @test:Config {
-    enable: true,
+      enable: true,
     dependsOn: [testVendorBillGetOperation]
 }
 function testVendorBillRecordDeleteOperation() {
