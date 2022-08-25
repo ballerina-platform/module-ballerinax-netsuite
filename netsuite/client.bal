@@ -33,10 +33,25 @@ public isolated client class Client {
     # to Obtain token for NetSuite connector configuration.
     #
     # + config - NetSuite connection configuration
-    # + httpClientConfig - HTTP configuration
     # + return - `http:Error` in case of failure to initialize or `null` if successfully initialized 
-    public isolated function init(ConnectionConfig config, http:ClientConfiguration httpClientConfig = {})returns error? {
+    public isolated function init(ConnectionConfig config)returns error? {
         self.config = config.cloneReadOnly();
+        http:ClientConfiguration httpClientConfig = {
+            httpVersion: config.httpVersion,
+            http1Settings: {...config.http1Settings},
+            http2Settings: config.http2Settings,
+            timeout: config.timeout,
+            forwarded: config.forwarded,
+            poolConfig: config.poolConfig,
+            cache: config.cache,
+            compression: config.compression,
+            circuitBreaker: config.circuitBreaker,
+            retryConfig: config.retryConfig,
+            responseLimits: config.responseLimits,
+            secureSocket: config.secureSocket,
+            proxy: config.proxy,
+            validation: config.validation
+        };
         self.basicClient = check new (config.baseURL + NETSUITE_ENDPOINT, httpClientConfig);
         return;
     }
@@ -520,28 +535,3 @@ public isolated client class Client {
         return response.getXmlPayload();
     }
  }
-
-# Configuration record for NetSuite.
-#
-# + accountId - NetSuite Account ID  
-# + consumerSecret - Netsuite Integration application consumer secret
-# + baseURL - Netsuite SuiteTalk URLs for SOAP web services (Available at Setup->Company->Company Information->Company 
-# URLs)
-# + consumerId - Netsuite Integration App consumer ID   
-# + tokenSecret - Netsuite user role access secret 
-# + token - Netsuite user role access token
-@display{label: "Connection Config"}  
-public type ConnectionConfig record {
-    @display{label: "Account ID"}
-    string accountId;
-    @display{label: "Consumer Id"}
-    string consumerId;
-    @display{label: "Consumer Secret"}
-    string consumerSecret;
-    @display{label: "Access Token"}
-    string token;
-    @display{label: "Access Secret"}
-    string tokenSecret;
-    @display{label: "NetSuite SuiteTalk WebService URL"}
-    string baseURL;
-};
