@@ -13,7 +13,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-import ballerina/http;
+
 import ballerina/test;
 import ballerina/log;
 import ballerina/os;
@@ -31,12 +31,11 @@ ConnectionConfig config = {
     consumerSecret: consumerSecret,
     token: token,
     tokenSecret: tokenSecret,
-    baseURL: baseURL
+    baseURL: baseURL,
+    timeout: 120
 };
 
-http:ClientConfiguration httpClientConfig = {timeout: 120};
-
-Client netsuiteClient = check new (config, httpClientConfig);
+Client netsuiteClient = check new (config);
 string customerId = EMPTY_STRING;
 string contactId = EMPTY_STRING;
 string currencyId = EMPTY_STRING;
