@@ -14,6 +14,39 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerinax/'client.config;
+
+# Netsuite Client Config.
+@display {label: "Connection Config"}
+public type ConnectionConfig record {|
+    *config:ConnectionConfig;
+    never auth?;
+    # NetSuite Account ID
+    string accountId;
+    # Netsuite Integration App consumer ID
+    string consumerId;
+    # Netsuite Integration application consumer secret
+    @display{
+        label: "",
+        kind: "password"
+    }
+    string consumerSecret;
+    # Netsuite user role access token
+    @display{
+        label: "",
+        kind: "password"
+    }
+    string token;
+    # Netsuite user role access secret
+    @display{
+        label: "",
+        kind: "password"
+    }
+    string tokenSecret;
+    # Netsuite SuiteTalk URLs for SOAP web services (Available at Setup->Company->Company Information->Company URLs)
+    string baseURL;
+|};
+
 # Represents an address record in NetSuite
 #
 # + internalId - Netsuite Internal ID  
