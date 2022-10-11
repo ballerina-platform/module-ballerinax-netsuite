@@ -14,6 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
+import ballerina/http;
 import ballerinax/'client.config;
 
 # Netsuite Client Config.
@@ -45,6 +46,8 @@ public type ConnectionConfig record {|
     string tokenSecret;
     # Netsuite SuiteTalk URLs for SOAP web services (Available at Setup->Company->Company Information->Company URLs)
     string baseURL;
+    # The HTTP version understood by the client
+    http:HttpVersion httpVersion = http:HTTP_1_1;
 |};
 
 # Represents an address record in NetSuite
