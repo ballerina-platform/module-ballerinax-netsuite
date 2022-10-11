@@ -15,6 +15,7 @@
 // under the License.
 
 import ballerina/http;
+import ballerinax/'client.config;
 
 # NetSuite's [SuiteTalk SOAP API](https://www.netsuite.com/portal/developers/resources/suitetalk-documentation.shtml) provides 
 # capability to access NetSuite operations related different kind of NetSuite records such as Account, Client, Transactions, 
@@ -36,22 +37,7 @@ public isolated client class Client {
     # + return - `http:Error` in case of failure to initialize or `null` if successfully initialized 
     public isolated function init(ConnectionConfig config)returns error? {
         self.config = config.cloneReadOnly();
-        http:ClientConfiguration httpClientConfig = {
-            httpVersion: config.httpVersion,
-            http1Settings: {...config.http1Settings},
-            http2Settings: config.http2Settings,
-            timeout: config.timeout,
-            forwarded: config.forwarded,
-            poolConfig: config.poolConfig,
-            cache: config.cache,
-            compression: config.compression,
-            circuitBreaker: config.circuitBreaker,
-            retryConfig: config.retryConfig,
-            responseLimits: config.responseLimits,
-            secureSocket: config.secureSocket,
-            proxy: config.proxy,
-            validation: config.validation
-        };
+        http:ClientConfiguration httpClientConfig = check config:constructHTTPClientConfig(config);
         self.basicClient = check new (config.baseURL + NETSUITE_ENDPOINT, httpClientConfig);
         return;
     }
