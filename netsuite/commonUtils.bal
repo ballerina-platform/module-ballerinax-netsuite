@@ -130,15 +130,15 @@ isolated function buildDeleteOperationPayload(RecordDetail recordType, Connectio
 }
 
 isolated function buildUpdateOperationPayload(ExistingRecordType recordType, RecordCoreType recordCoreType, ConnectionConfig 
-                                    config) returns xml|error {
+                                    config, boolean replaceAll = false) returns xml|error {
     string header = check buildXMLPayloadHeader(config);
-    string elements = check getUpdateOperationElements(recordType, recordCoreType);
+    string elements = check getUpdateOperationElements(recordType, recordCoreType, replaceAll);
     string body = getUpdateXMLBodyWithParentElement(elements);
     return getSoapPayload(header, body);    
 }
 
-isolated function getUpdateOperationElements(ExistingRecordType recordType, RecordCoreType recordCoreType) returns 
-                                             string|error {
+isolated function getUpdateOperationElements(ExistingRecordType recordType, RecordCoreType recordCoreType, 
+        boolean replaceAll= false) returns string|error {
     string subElements = EMPTY_STRING;   
     match recordCoreType {
         CUSTOMER => {
@@ -174,7 +174,7 @@ isolated function getUpdateOperationElements(ExistingRecordType recordType, Reco
             return wrapAccountElementsToUpdatedWithParentElement(subElements, recordType?.internalId.toString());
         }
         INVOICE => {
-            subElements = check mapInvoiceRecordFields(<Invoice>recordType); 
+            subElements = check mapInvoiceRecordFields(<Invoice>recordType, replaceAll); 
             return wrapInvoiceElementsToBeUpdatedWithParentElement(subElements, recordType?.internalId.toString());
         }
         _ => {
@@ -221,6 +221,10 @@ isolated function getAddOperationElements(NewRecordType recordType, RecordCoreTy
         ACCOUNT => {
             subElements = mapNewAccountRecordFields(<NewAccount>recordType); 
             return wrapAccountElements(subElements);
+        }
+        ITEM_GROUP => {
+            subElements = check mapNewItemGroupRecordFields(<NewItemGroup>recordType); 
+            return wrapItemGroupElements(subElements);
         }
         _ => {
                 fail error(UNKNOWN_TYPE);

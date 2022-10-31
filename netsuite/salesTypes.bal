@@ -27,7 +27,9 @@
 # + rate - Defines the rate for this item.   
 # + amount - Amount of the item  
 # + isTaxable - Shows whether item is taxable
-# + location - Locations for details 
+# + location - Locations for details
+# + line - Line number of the invoice item list
+# + excludeFromRateRequest - Whether to exclude from the rate request
 public type Item record {
     RecordRef subscription?;
     RecordRef item;
@@ -41,6 +43,8 @@ public type Item record {
     decimal? amount;
     boolean isTaxable?;
     RecordRef location?;
+    decimal? line?;
+    boolean excludeFromRateRequest?;
 };
 
 # Netsuite Sales Order type record
