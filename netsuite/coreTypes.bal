@@ -36,7 +36,7 @@ public type RecordBaseRef record {
 public type RecordRef record {
     *RecordBaseRef;
     @display{label: "Record Type"}
-    string 'type;
+    string? 'type;
 };
 
 # References to NetSuite Records for Input operations
