@@ -150,6 +150,19 @@ public isolated client class Client {
         return getRecordAddResponse(response); 
     }
 
+    # Creates a new Item Group record instance in NetSuite according to given item detail.
+    #
+    # + itemGroup - ItemGroup type record with detail
+    # + return - RecordAddResponse type record otherwise the relevant error
+    @display{label: "Add New Item Group"}
+    isolated remote function addNewItemGroup(@display{label: "Item Group"}ItemGroupCommon itemGroup) returns @tainted
+                                           @display{label: "Response"} RecordAddResponse|error {
+        xml payload = check buildAddOperationPayload(itemGroup, ITEM_GROUP, self.config);
+        http:Response response = check sendRequest(self.basicClient, ADD_SOAP_ACTION, payload);
+        return getRecordAddResponse(response); 
+    }
+
+
     # Deletes a record instance from NetSuite according to the given detail if they are valid.
     #
     # + info - Details of NetSuite record instance to be deleted
@@ -186,14 +199,12 @@ public isolated client class Client {
         return getUpdateResponse(response); 
     }
 
-    
-    
     # Updates a NetSuite customer instance by internal ID.
     #
     # + customer - Customer record with details and internal ID
     # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Customer"}   
-    isolated remote function updateCustomerRecord(@display{label: "Customer"} Customer customer) returns @tainted
+    isolated remote function updateCustomerRecord(@display{label: "Customer"} Customer customer) returns
                                                   @display{label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateOperationPayload(customer, CUSTOMER , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
@@ -205,7 +216,7 @@ public isolated client class Client {
     # + contact - Contact record with details and internal ID
     # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Contact"} 
-    isolated remote function updateContactRecord(@display{label: "Contact"} Contact contact) returns @tainted
+    isolated remote function updateContactRecord(@display{label: "Contact"} Contact contact) returns
                                                  @display{label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateOperationPayload(contact, CONTACT , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
@@ -217,7 +228,7 @@ public isolated client class Client {
     # + currency - Currency record with details and internal ID
     # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Currency"} 
-    isolated remote function updateCurrencyRecord(@display{label: "Currency"} Currency currency) returns @tainted
+    isolated remote function updateCurrencyRecord(@display{label: "Currency"} Currency currency) returns
                                                   @display{label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateOperationPayload(currency, CURRENCY , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
@@ -227,11 +238,13 @@ public isolated client class Client {
     # Updates a NetSuite invoice instance by internal ID.
     #
     # + invoice - Invoice record with details and internalId
+    # + replaceAll - if true, replaces all items with new items in the invoice
     # + return - RecordUpdateResponse type record otherwise the relevant error 
     @display{label: "Update Invoice"}
-    isolated remote function updateInvoiceRecord(@display{label: "Invoice"} Invoice invoice) returns @tainted
-                                                 @display{label: "Response"} RecordUpdateResponse|error {
-        xml payload = check buildUpdateOperationPayload(invoice, INVOICE , self.config);
+    isolated remote function updateInvoiceRecord(@display{label: "Invoice"} Invoice invoice,
+                                                @display{label: "Replace all items"} boolean replaceAll) returns
+                                                @display{label: "Response"} RecordUpdateResponse|error {
+        xml payload = check buildUpdateOperationPayload(invoice, INVOICE , self.config, replaceAll);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
         return getUpdateResponse(response); 
     }
@@ -266,7 +279,7 @@ public isolated client class Client {
     # + account - Account record with details and internal ID
     # + return - RecordUpdateResponse type record otherwise the relevant error
     @display{label: "Update Account"} 
-    isolated remote function updateAccountRecord(@display{label: "Account"} Account account) returns @tainted @display 
+    isolated remote function updateAccountRecord(@display{label: "Account"} Account account) returns @display 
                                                 {label: "Response"} RecordUpdateResponse|error {
         xml payload = check buildUpdateOperationPayload(account, ACCOUNT , self.config);
         http:Response response = check sendRequest(self.basicClient, UPDATE_SOAP_ACTION, payload);
@@ -293,7 +306,7 @@ public isolated client class Client {
     # + searchType - Netsuite saved search types
     # + return - If success returns the list of saved search references otherwise the relevant error
     @display{label: "Get saved search IDs by record type"} 
-    isolated remote function getSavedSearchIDs(@display{label: "Record type"} string searchType) returns @tainted 
+    isolated remote function getSavedSearchIDs(@display{label: "Record type"} string searchType) returns 
                                                @display{label: "Response"} SavedSearchResponse|error {
         xml payload = check BuildSavedSearchRequestPayload(self.config, searchType);
         http:Response response = check sendRequest(self.basicClient, GET_SAVED_SEARCH_ACTION, payload);
@@ -424,6 +437,18 @@ public isolated client class Client {
         return getCustomerResult(response);
     }
 
+    # Gets a item group record from Netsuite by using internal ID.
+    #
+    # + recordInfo - Ballerina record for Netsuite record information
+    # + return - Customer type record otherwise the relevant error
+    @display{label: "Get ItemGroup"}
+    isolated remote function getItemGroupRecord(@display{label: "Record Detail"} RecordInfo recordInfo) returns 
+                                                @display{label: "Response"} ItemGroup|error {
+        xml payload = check buildGetOperationPayload(recordInfo, self.config);
+        http:Response response = check sendRequest(self.basicClient, GET_SOAP_ACTION, payload);
+        return getItemGroupResult(response);
+    }
+
     # Gets a contact record from Netsuite by using internal ID.
     #
     # + recordInfo - Ballerina record for Netsuite record information
@@ -520,4 +545,4 @@ public isolated client class Client {
         http:Response response = check sendRequest(self.basicClient, soapAction, payload);
         return response.getXmlPayload();
     }
- }
+}

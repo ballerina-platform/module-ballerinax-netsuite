@@ -2,7 +2,7 @@
 distribution = "2201.2.1"
 org = "ballerinax"
 name = "netsuite"
-version = "3.0.0"
+version = "2.2.1"
 authors = ["Ballerina"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-netsuite"
 keywords = ["Business Management/ERP", "Cost/Paid"]

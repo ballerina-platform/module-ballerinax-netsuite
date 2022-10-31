@@ -92,7 +92,7 @@ public type RecordDetail record {
     string deletionReasonMemo?;
 };
 
-# Ballerina record for Netsuite record delete response
+# Ballerina record for Netsuite record response
 #
 # + recordType - NetSuite Record type Eg: "currency","invoice", netsuite:INVOICE etc. 
 # + recordInternalId - Internal ID of the Netsuite record
@@ -105,7 +105,8 @@ public type RecordInfo record {
 };
 
 # RecordType Connector supports for creation operation for now.  
-public type NewRecordType NewCustomer|NewContact|NewVendor|NewVendorBill|NewCurrency|NewInvoice|NewClassification|NewAccount|NewSalesOrder;
+public type NewRecordType NewCustomer|NewContact|NewVendor|NewVendorBill|NewCurrency|NewInvoice|NewClassification|
+    NewAccount|NewSalesOrder|NewItemGroup;
 
 # RecordType Connector supports for update operation for now.   
 public type ExistingRecordType Customer|Contact|Currency|Invoice|Classification|Account|SalesOrder|VendorBill|Vendor;
