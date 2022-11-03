@@ -16,24 +16,24 @@
 
 import ballerina/http;
 
-isolated function mapInvoiceRecordFields(Invoice invoice) returns string|error {
+isolated function mapInvoiceRecordFields(Invoice invoice, boolean replaceAll = false) returns string|error {
     string finalResult = EMPTY_STRING;
     map<anydata>|error invoiceMap = invoice.cloneWithType(MapAnyData);
-    if (invoiceMap is map<anydata>) {
+    if invoiceMap is map<anydata> {
         string[] keys = invoiceMap.keys();
         int position = 0;
         foreach var invoiceField in invoice {
-            if (invoiceField is string|decimal) {
+            if invoiceField is string|decimal {
                 finalResult += setSimpleType(keys[position], invoiceField, TRAN_SALES);
-            } else if (invoiceField is RecordRef) {
+            } else if invoiceField is RecordRef {
                 finalResult += getXMLRecordRef(<RecordRef>invoiceField);
-            } else if (invoiceField is Item[]) {
+            } else if invoiceField is Item[] {
                 string itemXMLList = EMPTY_STRING;
                 foreach Item item in invoiceField {
                     string itemElements = check buildInvoiceItemElement(item);
                     itemXMLList += itemElements;
                 }
-                finalResult += string`<itemList>${itemXMLList}</itemList>`;  
+                finalResult += string`<itemList replaceAll="${replaceAll}">${itemXMLList}</itemList>`;  
             } 
             position += 1;
         }
@@ -113,9 +113,42 @@ isolated function mapInvoiceRecord(xml response) returns Invoice|error {
         status: extractStringFromXML(response/**/<tranSales:status>/*),
         entity: extractRecordRefFromXML(response/**/<tranSales:entity>),
         currency: extractRecordRefFromXML(response/**/<tranSales:currency>),
-        internalId: extractRecordInternalIdFromXMLAttribute(response/**/<'record>)
+        internalId: extractRecordInternalIdFromXMLAttribute(response/**/<'record>),
+        itemList: check mapItemListMemberRecord(response/**/<tranSales:itemList>/*)
     };
     return invoice;
+}
+
+isolated function mapItemListMemberRecord(xml itemMembersXml) returns Item[]|error {
+    xmlns "urn:sales_2020_2.transactions.webservices.netsuite.com" as tranSales;
+    Item[] itemMembers = [];
+    foreach xml element in itemMembersXml {
+        xml elementItem = element/*;
+        Item itemMember = {
+            subscription: extractRecordRefFromXML(elementItem/**/<tranSales:subscription>/*),
+            item: extractRecordRefFromXML(elementItem/**/<tranSales:item>),
+            quantityAvailable: extractDecimalFromXML(elementItem/**/<tranSales:quantityAvailable>/*),
+            quantityOnHand: extractDecimalFromXML(elementItem/**/<tranSales:quantityOnHand>/*),
+            quantity: extractDecimalFromXML(elementItem/**/<tranSales:quantity>/*),
+            units: extractRecordRefFromXML(elementItem/**/<tranSales:units>),
+            description: extractStringFromXML(elementItem/**/<tranSales:description>/*),
+            price: extractRecordRefFromXML(elementItem/**/<tranSales:price>),
+            rate: extractStringFromXML(elementItem/**/<tranSales:rate>/*),
+            amount: extractDecimalFromXML(elementItem/**/<tranSales:amount>/*),  
+            location: extractRecordRefFromXML(elementItem/**/<tranSales:location>/*),
+            line: extractDecimalFromXML(elementItem/**/<tranSales:line>/*)
+        };
+        boolean|error value = extractBooleanValueFromXMLOrText(element/**/<tranSales:excludeFromRateRequest>/*);
+        if value is boolean {
+            itemMember.excludeFromRateRequest = value;
+        }
+        value = extractBooleanValueFromXMLOrText(element/**/<tranSales:isTaxable>/*);
+        if value is boolean {
+            itemMember.isTaxable = value;
+        }
+        itemMembers.push(itemMember);
+    }
+    return itemMembers;
 }
 
 isolated function getInvoiceResult(http:Response response) returns @tainted Invoice|error {

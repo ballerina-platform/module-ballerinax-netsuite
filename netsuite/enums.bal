@@ -250,7 +250,7 @@ public enum RecordCoreType {
     ITEMCUSTOMFIELD = "itemCustomField",
     ITEMDEMANDPLAN = "itemDemandPlan",
     ITEMFULFILLMENT = "itemFulfillment",
-    ITEMGROUP = "itemGroup",
+    ITEM_GROUP = "itemGroup",
     ITEMNUMBERCUSTOMFIELD = "itemNumberCustomField",
     ITEMOPTIONCUSTOMFIELD = "itemOptionCustomField",
     ITEMSUPPLYPLAN = "itemSupplyPlan",
