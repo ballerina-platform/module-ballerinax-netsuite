@@ -45,6 +45,60 @@ string customerAccountId = EMPTY_STRING;
 string invoiceId = EMPTY_STRING;
 string vendorId = EMPTY_STRING;
 string vendorBillId = EMPTY_STRING;
+string itemGroupId = EMPTY_STRING;
+
+@test:Config {enable: true}
+function testAddItemGroupRecordOperation() {
+    log:printInfo("testItemGroupRecord");
+    RecordInputRef subsidiary = {
+        internalId: "1",
+        'type: "subsidiary"
+    };
+    ItemMember itemMember01 = {
+        quantity: 1,
+        item: {
+            internalId: "8",
+            'type: "item"
+        }
+    };
+    ItemMember itemMember02 = {
+        quantity: 2,
+        item: {
+            internalId: "14",
+            'type: "item"
+        }
+    };
+    NewItemGroup itemGroup = {
+        isVsoeBundle: false,
+        itemId: "Netsuite Test Item Group_04",
+        displayName: "Netsuite  test item group_04",
+        description: "This is test item group",
+        subsidiaryList: [subsidiary],
+        memberList:[itemMember01, itemMember02]
+    };
+    RecordAddResponse|error output = netsuiteClient->addNewItemGroup(itemGroup);
+    if output is RecordAddResponse {
+        log:printInfo(output.toString());
+        itemGroupId = output.internalId;
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
+@test:Config {enable: true, dependsOn: [testAddItemGroupRecordOperation]}
+function testGetItemGroupRecord() {
+    log:printInfo("testGetItemGroupRecord");
+    RecordInfo ref = {
+        recordInternalId: itemGroupId,
+        recordType: "itemGroup"
+    };
+    ItemGroup|error output = netsuiteClient->getItemGroupRecord(ref);
+    if output is ItemGroup {
+        log:printInfo(output.internalId.toString());
+    } else {
+        test:assertFalse(true, output.toString());
+    }
+}
 
 @test:Config {enable: true}
 function testAddContactRecordOperation() {
@@ -206,7 +260,7 @@ function testAddInvoiceRecord() {
     RecordAddResponse|error output = netsuiteClient->addNewInvoice(invoice);
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
-        invoiceId = <@untainted>output.internalId;
+        invoiceId = output.internalId;
     } else {
         test:assertFail(output.toString());
     }
@@ -234,7 +288,7 @@ function testAddSalesOrderOperation() {
     RecordAddResponse|error output = netsuiteClient->addNewSalesOrder(salesOrder);
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
-        salesOrderId = <@untainted>output.internalId;
+        salesOrderId = output.internalId;
     } else {
         test:assertFail(output.toString());
     }
@@ -255,7 +309,7 @@ function testAddClassificationRecord() {
     RecordAddResponse|error output = netsuiteClient->addNewClassification(classification);
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
-        classificationId = <@untainted>output.internalId;
+        classificationId = output.internalId;
     } else {
         test:assertFail(output.toString());
     }
@@ -277,7 +331,7 @@ function testAddAccountRecord() {
     RecordAddResponse|error output = netsuiteClient->addNewAccount(account);
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
-        customerAccountId = <@untainted>output.internalId;
+        customerAccountId = output.internalId;
     } else {
         test:assertFail(output.toString());
     }
@@ -358,7 +412,7 @@ function testSalesOrderUpdateOperation() {
     RecordUpdateResponse|error output = netsuiteClient->updateSalesOrderRecord(salesOrder);
     if (output is RecordUpdateResponse) {
         log:printInfo(output.toString());
-        salesOrderId = <@untainted>output.internalId;
+        salesOrderId = output.internalId;
     } else {
         test:assertFail(output.toString());
     }
@@ -402,15 +456,25 @@ function testUpdateAccountRecord() {
 
 @test:Config {
       enable: true,
-    dependsOn: [testAddInvoiceRecord]
+        dependsOn: [testAddInvoiceRecord]
 }
 function testUpdateInvoiceRecord() {
     log:printInfo("testUpdateInvoiceRecord");
+    Item item01 = {
+        item: {
+            internalId: "14",
+            'type: "item"
+        },
+        quantity: 20,
+        amount: 1040,
+        line: 2
+    }; 
     Invoice invoice = {
         internalId: invoiceId,
-        email: "test@ecosystem.com"
+        email: "test@ecosystem.com",
+        itemList: [item01]
     };
-    RecordUpdateResponse|error output = netsuiteClient->updateInvoiceRecord(invoice);
+    RecordUpdateResponse|error output = netsuiteClient->updateInvoiceRecord(invoice, false);
     if (output is RecordAddResponse) {
         log:printInfo(output.toString());
     } else {
@@ -653,6 +717,24 @@ function testDeleteInvoiceRecord() {
     }
 }
 
+@test:Config {
+      enable: true,
+    dependsOn: [testAddItemGroupRecordOperation, testGetItemGroupRecord]
+}
+function testDeleteItemGroupRecord() {
+    log:printInfo("testDeleteItemGroupRecord");
+    RecordDetail recordDeletionInfo = {
+        recordInternalId: itemGroupId,
+        recordType: ITEM_GROUP
+    };
+    RecordDeletionResponse|error output = netsuiteClient->deleteRecord(recordDeletionInfo);
+    if (output is RecordDeletionResponse) {
+        log:printInfo(output.toString());
+    } else {
+        test:assertFail(output.toString());
+    }
+}
+
 @test:Config {enable: true}
 function testGetAllCurrencyRecords() {
     log:printInfo("testGetAllCurrencyRecords");
@@ -765,7 +847,7 @@ function testGetClassificationRecordOperation() {
 
 @test:Config {
       enable: true,
-    dependsOn: [testAddInvoiceRecord]
+      dependsOn: [testAddInvoiceRecord]
 }
 function testInvoiceRecordGetOperation() {
     log:printInfo("testInvoiceRecordGetOperation");
