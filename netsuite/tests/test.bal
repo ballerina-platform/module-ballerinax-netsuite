@@ -47,7 +47,7 @@ string vendorId = EMPTY_STRING;
 string vendorBillId = EMPTY_STRING;
 string itemGroupId = EMPTY_STRING;
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddItemGroupRecordOperation() {
     log:printInfo("testItemGroupRecord");
     RecordInputRef subsidiary = {
@@ -85,7 +85,7 @@ function testAddItemGroupRecordOperation() {
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddItemGroupRecordOperation]}
+@test:Config {enable: false, dependsOn: [testAddItemGroupRecordOperation]}
 function testGetItemGroupRecord() {
     log:printInfo("testGetItemGroupRecord");
     RecordInfo ref = {
@@ -100,7 +100,7 @@ function testGetItemGroupRecord() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddContactRecordOperation() {
     log:printInfo("testAddContactRecord");
     RecordRef cusForm = {
@@ -161,7 +161,7 @@ function testAddContactRecordOperation() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddNewCustomerRecord() {
     log:printInfo("testAddCustomerRecord");
     RecordInputRef subsidiary = {
@@ -213,7 +213,7 @@ function testAddNewCustomerRecord() {
 
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddCurrencyRecord() {
     log:printInfo("testAddCurrencyRecord");
     NewCurrency currency = {
@@ -232,7 +232,7 @@ function testAddCurrencyRecord() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddInvoiceRecord() {
     log:printInfo("testAddInvoiceRecord");
     RecordInputRef entity = {
@@ -266,7 +266,7 @@ function testAddInvoiceRecord() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddSalesOrderOperation() {
     log:printInfo("testSalesOrderRecordOperation");
     RecordInputRef entity = {
@@ -294,7 +294,7 @@ function testAddSalesOrderOperation() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddClassificationRecord() {
     log:printInfo("testAddClassificationRecord");
     RecordInputRef recordRef = {
@@ -315,7 +315,7 @@ function testAddClassificationRecord() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddAccountRecord() {
     log:printInfo("testAddAccountRecord");
     RecordInputRef currency = {
@@ -338,7 +338,7 @@ function testAddAccountRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddNewCustomerRecord]
 }
 function testUpdateCustomerRecord() {
@@ -392,7 +392,7 @@ function testUpdateCustomerRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddSalesOrderOperation]
 }
 function testSalesOrderUpdateOperation() {
@@ -419,7 +419,7 @@ function testSalesOrderUpdateOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddClassificationRecord]
 }
 function testUpdateClassificationRecord() {
@@ -437,7 +437,7 @@ function testUpdateClassificationRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddAccountRecord]
 }
 function testUpdateAccountRecord() {
@@ -455,7 +455,7 @@ function testUpdateAccountRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
         dependsOn: [testAddInvoiceRecord]
 }
 function testUpdateInvoiceRecord() {
@@ -483,7 +483,7 @@ function testUpdateInvoiceRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddContactRecordOperation]
 }
 function testUpdateContactRecord() {
@@ -500,7 +500,7 @@ function testUpdateContactRecord() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testCustomerSearchOperation() {
     log:printInfo("testCustomerSearchOperation");
     SearchElement searchRecord = {
@@ -523,7 +523,7 @@ function testCustomerSearchOperation() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAccountSearchOperation() {
     log:printInfo("testAccountSearchOperation");
     SearchElement searchRecord = {
@@ -545,7 +545,7 @@ function testAccountSearchOperation() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testContactSearchOperation() {
     log:printInfo("testContactSearchOperation");
     SearchElement searchRecord = {
@@ -567,7 +567,7 @@ function testContactSearchOperation() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testTransactionSearchOperation() {
     log:printInfo("testTransactionSearchOperation");
     SearchElement searchRecord1 = {
@@ -591,7 +591,7 @@ function testTransactionSearchOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testCustomerSearchOperation, testUpdateCustomerRecord, testCustomerRecordGetOperation]
 }
 function testCustomerDeleteRecord() {
@@ -610,7 +610,7 @@ function testCustomerDeleteRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testUpdateContactRecord, testContactGetOperation]
 }
 function testContactDeleteOperation() {
@@ -628,7 +628,7 @@ function testContactDeleteOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddCurrencyRecord, testCurrencyRecordGetOperation]
 }
 function testCurrencyDeleteOperation() {
@@ -646,7 +646,7 @@ function testCurrencyDeleteOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testGetClassificationRecordOperation]
 }
 function testDeleteClassificationRecord() {
@@ -664,7 +664,7 @@ function testDeleteClassificationRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAccountSearchOperation, testUpdateAccountRecord]
 }
 function testDeleteAccountRecord() {
@@ -682,7 +682,7 @@ function testDeleteAccountRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testSalesOrderGetOperation, testSalesOrderUpdateOperation]
 }
 function testDeleteSalesOrderRecord() {
@@ -700,7 +700,7 @@ function testDeleteSalesOrderRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testInvoiceRecordGetOperation, testUpdateInvoiceRecord]
 }
 function testDeleteInvoiceRecord() {
@@ -718,7 +718,7 @@ function testDeleteInvoiceRecord() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddItemGroupRecordOperation, testGetItemGroupRecord]
 }
 function testDeleteItemGroupRecord() {
@@ -735,7 +735,7 @@ function testDeleteItemGroupRecord() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testGetAllCurrencyRecords() {
     log:printInfo("testGetAllCurrencyRecords");
     Currency[]|error output = netsuiteClient->getAllCurrencyRecords();
@@ -746,7 +746,7 @@ function testGetAllCurrencyRecords() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testGetServerTime() {
     log:printInfo("testGetNetSuiteServerTime");
     string|error output = netsuiteClient->getNetSuiteServerTime();
@@ -759,7 +759,7 @@ function testGetServerTime() {
 
 string savedSearchID = EMPTY_STRING;
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testGetSavedSearchIds() {
     log:printInfo("testGetSavedSearchIds");
     SavedSearchResponse|error output = netsuiteClient->getSavedSearchIDs("vendor");
@@ -771,7 +771,7 @@ function testGetSavedSearchIds() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testGetSavedSearchIds]
 }
 function testPerformSavedSearchById() {
@@ -792,7 +792,7 @@ function testPerformSavedSearchById() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddNewCustomerRecord]
 }
 function testCustomerRecordGetOperation() {
@@ -810,7 +810,7 @@ function testCustomerRecordGetOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddCurrencyRecord]
 }
 function testCurrencyRecordGetOperation() {
@@ -828,7 +828,7 @@ function testCurrencyRecordGetOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testUpdateClassificationRecord]
 }
 function testGetClassificationRecordOperation() {
@@ -846,7 +846,7 @@ function testGetClassificationRecordOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
       dependsOn: [testAddInvoiceRecord]
 }
 function testInvoiceRecordGetOperation() {
@@ -864,7 +864,7 @@ function testInvoiceRecordGetOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddSalesOrderOperation]
 }
 function testSalesOrderGetOperation() {
@@ -882,7 +882,7 @@ function testSalesOrderGetOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddContactRecordOperation]
 }
 function testContactGetOperation() {
@@ -900,7 +900,7 @@ function testContactGetOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testUpdateAccountRecord]
 }
 function testAccountGetOperation() {
@@ -917,7 +917,7 @@ function testAccountGetOperation() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddNewVendor() {
     log:printInfo("testAddNewVendor");
     LongCustomFieldRef longCustomFieldRef = {
@@ -978,7 +978,7 @@ function testAddNewVendor() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testAddNewVendor]
 }
 function testUpdateVendor() {
@@ -995,7 +995,7 @@ function testUpdateVendor() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testVendorGetOperation() {
     log:printInfo("testVendorGetOperation");
     RecordInfo recordInfo = {
@@ -1011,7 +1011,7 @@ function testVendorGetOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testVendorGetOperation]
 }
 function testVendorRecordDeleteOperation() {
@@ -1028,7 +1028,7 @@ function testVendorRecordDeleteOperation() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testAddNewVendorBill() {
     log:printInfo("testAddNewVendorBill");
     VendorBillExpenseList vendorBillExpenseList = {expenses: [{
@@ -1066,7 +1066,7 @@ function testAddNewVendorBill() {
     }
 }
 
-@test:Config {enable: true, dependsOn: [testAddNewVendorBill]}
+@test:Config {enable: false, dependsOn: [testAddNewVendorBill]}
 function testUpdateVendorBill() {
     log:printInfo("testUpdateVendorBill");
 
@@ -1092,7 +1092,7 @@ function testUpdateVendorBill() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testUpdateVendorBill]
 }
 function testVendorBillGetOperation() {
@@ -1110,7 +1110,7 @@ function testVendorBillGetOperation() {
 }
 
 @test:Config {
-      enable: true,
+      enable: false,
     dependsOn: [testVendorBillGetOperation]
 }
 function testVendorBillRecordDeleteOperation() {
@@ -1127,7 +1127,7 @@ function testVendorBillRecordDeleteOperation() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testVendorSearchOperation() {
     log:printInfo("testVendorSearchOperation");
     SearchElement searchRecord2 = {
@@ -1149,7 +1149,7 @@ function testVendorSearchOperation() {
     }
 }
 
-@test:Config {enable: true}
+@test:Config {enable: false}
 function testSendCustomRequest() {
     log:printInfo("testCustomOperation");
     string body = string ` <urn:getServerTime/>`;
