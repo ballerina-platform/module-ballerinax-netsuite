@@ -10,7 +10,7 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: Ballerina Build
-              uses: ballerina-platform/ballerina-action/@2201.3.1
+              uses: ballerina-platform/ballerina-action/@2201.4.1
               with:
                   args:
                       pack ./netsuite
@@ -22,7 +22,7 @@ jobs:
                   NS_CLIENT_SECRET: ${{ secrets.CONSUMERSECRET }}
                   NS_ACCOUNTID: ${{secrets.ACCOUNTID}}
             - name: Ballerina Push
-              uses: ballerina-platform/ballerina-action/@2201.3.1
+              uses: ballerina-platform/ballerina-action/@2201.4.1
               with:
                   args:
                       push
