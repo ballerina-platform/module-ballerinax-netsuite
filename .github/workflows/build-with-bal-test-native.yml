@@ -32,7 +32,7 @@ jobs:
                 version: latest
 
             - name: Run Ballerina tests using the native executable
-              run: bal test --native ./netsuite
+              run: bal test --graalvm ./netsuite
               env:
                 JAVA_HOME: /usr/lib/jvm/default-jvm
                 NS_BASE_URL: ${{ secrets.BASEURL }}
