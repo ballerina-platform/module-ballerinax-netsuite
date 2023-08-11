@@ -53,19 +53,25 @@ public function main() returns error? {
         value2: "2021-03-23T10:20:15"
     };
     netsuite:SearchElement[] searchElements = [searchRecord1];
-    netsuite:RecordList recordList = check netSuiteClient->searchTransactionRecord(searchElements);
+
+    var output = netSuiteClient->searchTransactionRecords(searchElements);
+    netsuite:Invoice[] invoicesList = [];
 
     //Get invoices from the record list provided by the transaction search operation
-    netsuite:Invoice[] invoicesList = [];
-    foreach netsuite:RecordRef recordRef in recordList.records {
-        if (recordRef?.'type == "tranSales:Invoice") {
-            netsuite:RecordDetail recordDetail = {
-                recordInternalId: recordRef.internalId,
-                recordType: netsuite:INVOICE
-            };
-            netsuite:Invoice invoice = check netSuiteClient->getInvoiceRecord(recordDetail);
-            invoicesList.push(invoice);
-        }
+    if (output is stream<netsuite:SearchResult, error?>) {
+        error? response = output.forEach(function(netsuite:SearchResult result) {
+            var recordRef = result.result;
+            if (recordRef is netsuite:RecordRef && recordRef?.'type == "tranSales:Invoice") {
+                netsuite:RecordDetail recordDetail = {
+                    recordInternalId: recordRef.internalId,
+                    recordType: netsuite:INVOICE
+                };
+                netsuite:Invoice|error invoice = netSuiteClient->getInvoiceRecord(recordDetail);
+                if invoice is netsuite:Invoice {
+                    invoicesList.push(invoice);
+                }
+            }
+        });
     }
     log:printInfo(invoicesList.toString());
 }
