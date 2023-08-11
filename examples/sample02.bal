@@ -49,16 +49,16 @@ public function main() returns error? {
         fieldName: "lastModifiedDate",
         searchType: netsuite:SEARCH_DATE_FIELD,
         operator: "within",
-        value1 : "2020-12-23T10:20:15",
-        value2 : "2021-03-23T10:20:15"
+        value1: "2020-12-23T10:20:15",
+        value2: "2021-03-23T10:20:15"
     };
     netsuite:SearchElement[] searchElements = [searchRecord1];
     netsuite:RecordList recordList = check netSuiteClient->searchTransactionRecord(searchElements);
 
     //Get invoices from the record list provided by the transaction search operation
-    netsuite:Invoice[] invoicesList =[];
+    netsuite:Invoice[] invoicesList = [];
     foreach netsuite:RecordRef recordRef in recordList.records {
-        if(recordRef?.'type == "tranSales:Invoice") {
+        if (recordRef?.'type == "tranSales:Invoice") {
             netsuite:RecordDetail recordDetail = {
                 recordInternalId: recordRef.internalId,
                 recordType: netsuite:INVOICE

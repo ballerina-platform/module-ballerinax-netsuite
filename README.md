@@ -1,7 +1,7 @@
 Ballerina NetSuite Connector
 ===================
  
-[![CI](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/ci.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/ci.yml)
+[![Build Status](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/ci.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/ballerina-platform/module-ballerinax-netsuite/branch/master/graph/badge.svg)](https://codecov.io/gh/ballerina-platform/module-ballerinax-netsuite)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/ballerina-platform/module-ballerinax-netsuite?color=green&include_prereleases&label=latest%20release)
 [![GraalVM Check](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/build-with-bal-test-native.yml/badge.svg)](https://github.com/ballerina-platform/module-ballerinax-netsuite/actions/workflows/build-with-bal-test-native.yml)
