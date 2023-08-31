@@ -13,3 +13,6 @@
 
 # Ignore Gradle build output directory
 build
+
+# Ignore .jar files
+*.jar

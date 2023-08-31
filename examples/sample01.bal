@@ -47,20 +47,20 @@ public function main() returns error? {
     //create a Netsuite customer record
     log:printInfo("AddCustomerRecord");
     netsuite:RecordInputRef subsidiary = {
-        internalId : "12",
+        internalId: "12",
         'type: "subsidiary"
     };
 
     netsuite:Address ad02 = {
         country: "_sriLanka",
         addr1: "Wso2_address_part01",
-        addr2:"Wso2_address_part02",
-        city:"wso2_city",
+        addr2: "Wso2_address_part02",
+        city: "wso2_city",
         override: true
     };
 
     netsuite:RecordRef currencyReference = {
-        internalId : "1",
+        internalId: "1",
         'type: "currency"
     };
 
@@ -72,7 +72,7 @@ public function main() returns error? {
         addressBookAddress: [ad02]
     };
 
-    netsuite:CustomerCurrency  cur = {
+    netsuite:CustomerCurrency cur = {
         currency: currencyReference,
         balance: 1200.13,
         depositBalance: 10000,
@@ -80,8 +80,8 @@ public function main() returns error? {
         unbilledOrders: 1000,
         overrideCurrencyFormat: false
     };
-    
-    netsuite:NewCustomer customer= {
+
+    netsuite:NewCustomer customer = {
         entityId: "Ballerina_Test_Customer_Sample",
         isPerson: true,
         salutation: "Mr",
@@ -99,7 +99,7 @@ public function main() returns error? {
         mobilePhone: "1234567893",
         accountNumber: "ac1234567894",
         addressbookList: [customerAddressbook]
-        
+
     };
 
     netsuite:RecordAddResponse customerRecordResponse = check netSuiteClient->addNewCustomer(customer);
@@ -108,7 +108,7 @@ public function main() returns error? {
     //Adds Netsuite entity instance for the invoice record
     log:printInfo("AddInvoiceRecord");
     netsuite:RecordInputRef entity = {
-        internalId : customerRecordResponse.internalId,
+        internalId: customerRecordResponse.internalId,
         'type: "entity"
     };
 
@@ -117,16 +117,16 @@ public function main() returns error? {
         item: {
             internalId: "560",
             'type: "item"
-         },
+        },
         amount: 1000
     };
 
     //Creates an item for the invoice item list
-    netsuite: Item item02 = {
+    netsuite:Item item02 = {
         item: {
             internalId: "570",
             'type: "item"
-         },
+        },
         amount: 2000
     };
 
@@ -134,7 +134,7 @@ public function main() returns error? {
     netsuite:NewInvoice invoice = {
         entity: entity,
         itemList: [item01, item02],
-        currency : {
+        currency: {
             internalId: currencyReference.internalId,
             'type: netsuite:CURRENCY
         }
@@ -147,7 +147,7 @@ public function main() returns error? {
     //Delete the record from Netsuite
     log:printInfo("DeleteInvoiceRecord");
     netsuite:RecordDetail recordDeletionInfo = {
-        recordInternalId : invoiceRecordResponse.internalId,
+        recordInternalId: invoiceRecordResponse.internalId,
         recordType: netsuite:INVOICE
     };
     netsuite:RecordDeletionResponse output = check netSuiteClient->deleteRecord(recordDeletionInfo);

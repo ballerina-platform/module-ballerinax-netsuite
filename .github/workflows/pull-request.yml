@@ -1,36 +1,44 @@
-name: Pull_Request
+name: Pull Request
 
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+on: [ pull_request ]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-            - name: Set Up Ballerina
-              uses: ballerina-platform/setup-ballerina@v1.1.0
-              with:
-                  version: latest
+      # Setup Ballerina Environment
+      - name: Set Up Ballerina
+        uses: ballerina-platform/setup-ballerina@v1.1.0
+        with:
+          version: latest
 
-            - name: Ballerina Build
-              run: bal pack ./netsuite
-              env:
-                  JAVA_HOME: /usr/lib/jvm/default-jvm
+      # Build Ballerina Project
+      - name: Ballerina Build
+        run: bal pack ./ballerina
+        env:
+          JAVA_HOME: /usr/lib/jvm/default-jvm
 
-            - name: Ballerina Tests
-              # tests will be skipped if the PR is from a forked repository (as the secrets are not available)
-              if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-              run: bal test --test-report --code-coverage --coverage-format=xml ./netsuite
-              env:
-                  NS_BASE_URL: ${{ secrets.BASEURL }}
-                  NS_TOKEN_SECRET: ${{ secrets.TOKENSECRET }}
-                  NS_TOKEN: ${{ secrets.TOKEN }}
-                  NS_CLIENT_ID: ${{ secrets.CONSUMERID }}
-                  NS_CLIENT_SECRET: ${{ secrets.CONSUMERSECRET }}
-                  NS_ACCOUNTID: ${{secrets.ACCOUNTID}}
+      # Build Module Examples
+      - name: Ballerina Examples Build
+        run: chmod +x ./examples/build.sh && ./examples/build.sh build
+        env:
+          JAVA_HOME: /usr/lib/jvm/default-jvm
 
-            - name: Upload coverage reports to Codecov
-              uses: codecov/codecov-action@v3
+      # Test Ballerina Project
+      - name: Ballerina Test
+        # tests will be skipped if the PR is from a forked repository (as the secrets are not available)
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        run: bal test ./ballerina --test-report --code-coverage --coverage-format=xml
+        env:
+          JAVA_HOME: /usr/lib/jvm/default-jvm
+          NS_BASE_URL: ${{ secrets.BASEURL }}
+          NS_TOKEN_SECRET: ${{ secrets.TOKENSECRET }}
+          NS_TOKEN: ${{ secrets.TOKEN }}
+          NS_CLIENT_ID: ${{ secrets.CONSUMERID }}
+          NS_CLIENT_SECRET: ${{ secrets.CONSUMERSECRET }}
+          NS_ACCOUNTID: ${{secrets.ACCOUNTID}}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
