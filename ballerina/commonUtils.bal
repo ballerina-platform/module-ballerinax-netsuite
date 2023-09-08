@@ -364,6 +364,14 @@ isolated function extractRecordRefFromXML(xml element) returns RecordRef {
     }; 
 }
 
+isolated function extractClassificationFromXML(xml element) returns Classification {
+    return {
+        internalId: let var  internalId = element.internalId in internalId is error ? EMPTY_STRING : (internalId.toString()),
+        name: extractStringFromXML(element/<name>/*),
+        "type": let var recordType = element.\'type in recordType is error ? EMPTY_STRING : (recordType.toString())
+    }; 
+}
+
 isolated function extractRecordInternalIdFromXMLAttribute(xml element) returns string {
     return let var internalId = element.internalId in internalId is error ? EMPTY_STRING : internalId;
 }

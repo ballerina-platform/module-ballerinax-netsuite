@@ -1102,7 +1102,7 @@ function testVendorBillGetOperation() {
         recordType: "vendorBill"
     };
     VendorBill|error output = netsuiteClient->getVendorBillRecord(recordInfo);
-    if (output is Vendor) {
+    if (output is VendorBill) {
         log:printInfo(output.toString());
     } else {
         test:assertFail(output.toString());
