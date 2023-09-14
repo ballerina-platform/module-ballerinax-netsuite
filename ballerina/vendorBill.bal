@@ -261,7 +261,7 @@ isolated function wrapVendorBillElementsWithParentElement(string subElements, st
 
 isolated function getVendorBillResult(http:Response response) returns VendorBill|error {
     xml payload = check formatPayload(response);
-    if (response.statusCode == http:STATUS_OK) { 
+    if response.statusCode == http:STATUS_OK { 
         xml output  = payload/**/<status>;
         boolean isSuccess = check extractBooleanValueFromXMLOrText(output.isSuccess);
         if(isSuccess) {
