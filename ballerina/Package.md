@@ -7,7 +7,7 @@ This package provides the capability to access NetSuite and manipulate NetSuite 
 ### Compatibility
 |                               | Version                   |
 |-------------------------------|---------------------------|
-| Ballerina Language            | Swan Lake 2201.3.1        |
+| Ballerina Language            | Swan Lake 2201.8.0        |
 | SOAP API                      | SOAP 1.1                  |
 | WSDL                          | 2020.2.0                  |
 

@@ -105,7 +105,7 @@ isolated function mapInvoiceRecord(xml response) returns Invoice|error {
         recognizedRevenue: extractDecimalFromXML(response/**/<tranSales:recognizedRevenue>/*),
         deferredRevenue: extractDecimalFromXML(response/**/<tranSales:deferredRevenue>/*),
         subsidiary: extractRecordRefFromXML(response/**/<tranSales:subsidiary>),
-        classification:extractRecordRefFromXML(response/**/<tranSales:'class>),
+        classification: extractClassificationFromXML(response/**/<tranSales:'class>),
         total:extractDecimalFromXML(response/**/<tranSales:total>/*),
         department: extractRecordRefFromXML(response/**/<tranSales:department>),
         createdDate: (response/**/<tranSales:createdDate>/*).toString(),

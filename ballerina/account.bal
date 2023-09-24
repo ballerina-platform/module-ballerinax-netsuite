@@ -118,23 +118,39 @@ isolated function mapNewItemGroupRecordFields(NewItemGroup itemGroup) returns st
     return finalResult;
 }
 
-isolated function getTranslationOrHierarchyVRecordsInXML(Translation translation) returns string {
+isolated function getTranslationOrHierarchyVRecordsInXML(Translation|ItemGroupHierarchyVersions translationOrVersions) returns string {
     string finalResult = EMPTY_STRING;
-    map<anydata>|error translationMap = translation.cloneWithType(MapAnyData);
-    if translationMap is map<anydata> {
-        string[] keys = translationMap.keys();
-        int position = 0;
-        foreach var item in translation {
+    map<anydata>|error translationMap = translationOrVersions.cloneWithType(MapAnyData);
+    if translationMap is error {
+        return finalResult;
+    }
+
+    string[] keys = translationMap.keys();
+    int position = 0;
+    if translationOrVersions is ItemGroupHierarchyVersions {
+        foreach anydata item in translationOrVersions {
             if item is string|boolean|decimal {
                 finalResult += setSimpleType(keys[position], item, LIST_ACCT);
             } else if item is RecordInputRef {
-                finalResult += getXMLRecordInputRef(<RecordInputRef>item);
+                finalResult += getXMLRecordInputRef(item);
             } else if item is RecordRef {
-                finalResult += getXMLRecordRef(<RecordRef>item);
+                finalResult += getXMLRecordRef(item);
+            }
+            position += 1;
+        }
+    } else if translationOrVersions is Translation {
+        foreach anydata item in translationOrVersions {
+            if item is string|boolean|decimal {
+                finalResult += setSimpleType(keys[position], item, LIST_ACCT);
+            } else if item is RecordInputRef {
+                finalResult += getXMLRecordInputRef(item);
+            } else if item is RecordRef {
+                finalResult += getXMLRecordRef(item);
             }
             position += 1;
         }
     }
+
     return finalResult;
 }
 

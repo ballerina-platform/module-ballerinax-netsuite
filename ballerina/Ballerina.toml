@@ -1,8 +1,8 @@
 [package]
-distribution = "2201.3.1"
+distribution = "2201.8.0"
 org = "ballerinax"
 name = "netsuite"
-version = "3.1.0"
+version = "3.3.0"
 authors = ["Ballerina"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-netsuite"
 keywords = ["Business Management/ERP", "Cost/Paid"]
