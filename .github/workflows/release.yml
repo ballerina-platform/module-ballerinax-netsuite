@@ -33,5 +33,5 @@ jobs:
         run: bal push
         working-directory: ./ballerina
         env:
-          BALLERINA_CENTRAL_ACCESS_TOKEN: ${{ secrets.BALLERINA_CENTRAL_DEV_ACCESS_TOKEN }}
+          BALLERINA_CENTRAL_ACCESS_TOKEN: ${{ secrets.BALLERINA_CENTRAL_ACCESS_TOKEN }}
           JAVA_HOME: /usr/lib/jvm/default-jvm
