@@ -1,8 +1,13 @@
-Connects to Oracle NetSuite from Ballerina
+## Overview
 
-## Package Overview
-The `ballerinax/netsuite` is a [Ballerina Swan Lake](https://ballerina.io/) connector for NetSuite.
-This package provides the capability to access NetSuite and manipulate NetSuite records.
+The NetSuite connector provides the capability to access [Oracle NetSuite](https://www.netsuite.com) and manipulate NetSuite records via the SuiteTalk SOAP API.
+
+### Key Features
+
+- Access and manipulate NetSuite records including accounts, clients, and transactions
+- Support for Token Based Authentication (TBA)
+- Compatible with NetSuite WSDL 2020.2.0
+- Operations for adding, updating, and querying NetSuite entities
 
 ### Compatibility
 |                               | Version                   |

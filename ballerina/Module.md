@@ -1,8 +1,15 @@
 ## Overview
 
-NetSuite's [SuiteTalk SOAP API](https://www.netsuite.com/portal/developers/resources/suitetalk-documentation.shtml) provides the capability to access NetSuite operations related to different kinds of NetSuite records such as Account, Client, Transactions, Invoice, Classifications etc.
+The NetSuite connector provides access to NetSuite operations related to different kinds of NetSuite records such as Account, Client, Transactions, Invoice, Classifications, etc. via the [SuiteTalk SOAP API](https://www.netsuite.com/portal/developers/resources/suitetalk-documentation.shtml).
 
 This module supports [NetSuite WSDL 2020.2.0](https://system.netsuite.com/help/helpcenter/en_US/srbrowser/Browser2020_2/schema/record/account.html) version.
+
+### Key Features
+
+- Access and manipulate NetSuite records including accounts, clients, and transactions
+- Support for Token Based Authentication (TBA)
+- Compatible with NetSuite WSDL 2020.2.0
+- Operations for adding, updating, and querying NetSuite entities
 
 ## Prerequisites
 Before using this connector in your Ballerina application, complete the following:
