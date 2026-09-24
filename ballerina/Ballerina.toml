@@ -5,7 +5,7 @@ name = "netsuite"
 version = "3.3.0"
 authors = ["Ballerina"]
 repository = "https://github.com/ballerina-platform/module-ballerinax-netsuite"
-keywords = ["Business Management/ERP", "Cost/Paid"]
+keywords = ["Business Management/ERP", "Cost/Paid", "Area/ERP & Business Operations", "Type/Connector", "Name/NetSuite"]
 icon = "icon.png"
 license = ["Apache-2.0"]
 
